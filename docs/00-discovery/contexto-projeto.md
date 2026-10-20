@@ -242,7 +242,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 - [x] Diagrama de fluxo do usuário (`docs/00-discovery/fluxo-usuario.md`)
 - [ ] Modelagem de dados
 - [ ] Plano de arquitetura e descritivo das decisões
-- [ ] Definição da stack
+- [x] Definição da stack (ADR-0001)
 - [x] Executar o spike SP01 (Câmara)
 - [x] Decidir S1–S4 do SP01
 - [ ] SP01-B: mesmo spike para o Senado, antes da sprint do Senado
@@ -253,6 +253,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | Stack definida no ADR-0001. |
 | 2026-10-20 | Estudo de projetos semelhantes; diferencial (§2.3); DA06 explicita computador e celular; DA08 (código aberto, AGPL-3.0); RN11 (mediana) e RN12 (período padrão). |
 | 2026-10-20 | Fluxo do usuário do Marco 1; RF09 (home com gráficos), RF10 (compartilhamento) e RN10 (taxa do partido) entram no M1. |
 | 2026-10-20 | Escopo do Marco 1 (§4.1): presença, perfil e metodologia, só 57ª legislatura; RN09 só com link; planejamento a 8 h/semana. |

@@ -19,10 +19,10 @@
 
 | Camada | Ferramenta |
 |---|---|
-| Unit / adaptadores / ETL | **Pendente — ADR-0001** (ETL em Python: candidato natural `pytest`) |
-| Integração | Pendente — ADR-0001 (banco efêmero em container) |
-| Frontend | Pendente — ADR-0001 |
-| E2E UI | Pendente — ADR-0001 |
+| Unit / adaptadores / ETL | pytest (ADR-0001) |
+| Integração | pytest + Postgres efêmero em container, com as migrations do Prisma aplicadas (ADR-0001) |
+| Frontend | Vitest + Testing Library (ADR-0001) |
+| E2E UI | Playwright, viewports de celular e computador; axe (RNF05); Lighthouse mobile (RNF03) |
 
 ## Cobertura mínima (gate no CI)
 
