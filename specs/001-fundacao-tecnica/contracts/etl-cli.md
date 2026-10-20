@@ -17,7 +17,7 @@ O cron do Railway roda `python -m etl agendado`, que decide pelo horário UTC: 0
 1. Inserir `execucao_etl` (`em_andamento`) e armar o vigia de 60 min.
 2. Coletar a lista de deputados em exercício e escolher o selecionado (FR-006). Lista vazia ou com menos de 500 → `falha` (FR-007b).
 3. Coletar o histórico do selecionado e de todos os parlamentares já armazenados.
-4. Guardar as respostas brutas sanitizadas cujo hash mudou (R2 `fiscaldogov-brutos`).
+4. Guardar as respostas brutas sanitizadas cujo hash mudou (R2 `fiscaldogov-brutos`) e registrar cada uma em `coleta_bruta` numa transação própria, que não é desfeita se a etapa 5 falhar.
 5. Gravar parlamentar, identificadores, mandato, períodos e filiações numa **única transação**; `COMMIT`.
 6. `pg_dump` → R2 `fiscaldogov-backup/diario/` (e `semanal/` aos domingos); baixar de volta e conferir com `pg_restore --list` (FR-024).
 7. Disparar a publicação (`workflow_dispatch` de `publicar.yml`, com `execucao_id`).

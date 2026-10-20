@@ -36,14 +36,14 @@ erDiagram
 |---|---|---|
 | `casa_legislativa` | `id`, `sigla` (`CD`, `SF`), `nome` | Carga fixa (seed). |
 | `legislatura` | `numero` (PK: 56, 57, 58), `inicio`, `fim` | R03, RNF10. |
-| `partido` | `id`, `sigla`, `nome` | Identificado pelo id da Câmara em `identificador_externo`. |
+| `partido` | `id`, `sigla`, `nome` | Identificado pelo id da Câmara em `identificador_externo` (`camara_v2_partido`). |
 
 ### Pessoas e mandatos
 
 | Tabela | Colunas principais | Observações |
 |---|---|---|
 | `parlamentar` | `id`, `nome_parlamentar`, `nome_ordenacao`, `url_foto`, `fonte_url`, `coletado_em` | **Não armazena CPF nem nome civil** — ambos só vêm do endpoint que devolve CPF (spec 001, research §4). `nome_ordenacao` = nome em minúsculas, sem acento. |
-| `identificador_externo` | `parlamentar_id`, `sistema` (`camara_v2`, `camara_carteira`, `senado`), `valor`, `legislatura_numero` (só para identificadores por legislatura) | Único por (`sistema`, `valor`, `legislatura_numero`). Base da reconciliação (ADR-0003 §2). |
+| `identificador_externo` | `parlamentar_id` (nulo), `partido_id` (nulo), `sistema`, `valor`, `legislatura_numero` (só para identificadores por legislatura) | Exatamente um entre `parlamentar_id` e `partido_id`. Único por (`sistema`, `valor`, `legislatura_numero`). Valores de `sistema` entram com cada feature: `camara_v2` e `camara_v2_partido` (spec 001), `camara_carteira` (HU01), `senado` (F6). Base da reconciliação (ADR-0003 §2). |
 | `mandato` | `id`, `parlamentar_id`, `casa_id`, `legislatura_numero`, `uf` | Único por (parlamentar, casa, legislatura). DA03. |
 | `periodo_exercicio` | `id`, `mandato_id`, `inicio`, `fim` (nulo = em exercício), `condicao` (`titular`, `suplente`), `motivo_inicio`, `motivo_fim`, `fonte_url` | Derivado de `/deputados/{id}/historico`. Períodos de um mesmo mandato **não se sobrepõem**. |
 | `filiacao` | `id`, `parlamentar_id`, `partido_id`, `inicio`, `fim` (nulo = atual), `fonte_url` | No máximo **uma filiação aberta** por parlamentar (RN01). |

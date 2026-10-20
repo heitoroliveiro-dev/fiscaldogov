@@ -88,6 +88,7 @@ Decisões técnicas da feature, com alternativas descartadas. Versões verificad
 - **Respostas brutas (FR-011):**
   - bucket `fiscaldogov-brutos`, chave `camara/api-v2/<caminho>/<sha256>.json.gz`;
   - só grava se o hash difere da última `coleta_bruta` da mesma URL;
+  - o registro em `coleta_bruta` usa transação própria (como `execucao_etl`), para que a evidência de uma execução com falha continue ligada a ela (FR-012);
   - **regra de ciclo de vida do R2** apaga após 365 dias.
 - **Backup (FR-024):**
   - `pg_dump --format=custom` ao fim de cada coleta bem-sucedida;

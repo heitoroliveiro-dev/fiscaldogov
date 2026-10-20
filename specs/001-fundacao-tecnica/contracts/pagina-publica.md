@@ -22,7 +22,7 @@ O parlamentar com período de exercício aberto (`fim` nulo) na 57ª legislatura
 ## Requisitos não funcionais verificados
 
 - `<meta name="robots" content="noindex">` no HTML e `X-Robots-Tag: noindex` no cabeçalho (arquivo `_headers`) — FR-005.
-- Sem rolagem horizontal em 360 px e 1440 px, nos dois temas — FR-003.
+- Sem rolagem horizontal em 360 px e 1440 px, nos dois temas; a partir de 1024 px, fonte e data ao lado do nome e largura máxima de 1200 px — FR-003.
 - Zero violações do axe (regras WCAG 2.2 A/AA) nas quatro combinações — FR-004.
 - Corpo de texto ≥ 16 px e alvos de toque ≥ 44 px abaixo de 1024 px (D1, D2).
 - `lang="pt-BR"`.

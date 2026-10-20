@@ -75,6 +75,11 @@ Roteiros checáveis: **ação → resultado esperado**. Cada um gera a evidênci
 5. Lighthouse em perfil mobile no endereço publicado. **Esperado:** LCP ≤ 2,5 s (SC-001).
 6. `prisma migrate diff` entre as migrations do repositório e o banco de produção (lendo com `site_leitura`). **Esperado:** sem diferenças (SC-008).
 
+## R9b — Migration que falha (FR-017a)
+
+1. Numa branch de teste, com um serviço de homologação do Railway (ou banco local com o mesmo comando de pré-deploy), aplicar uma migration propositalmente inválida.
+2. **Esperado:** `prisma migrate deploy` falha, a implantação é abortada, a versão anterior do ETL continua sendo a ativa e o banco fica sem a mudança parcial.
+
 ## R10 — Custo (SC-009, FR-031)
 
 Conferir no painel do Railway o alerta de gasto em US$ 10 e o limite rígido em US$ 20. Após 7 dias em produção, conferir o uso do Railway e da Cloudflare. **Esperado:** limites configurados; projeção mensal ≤ US$ 10.

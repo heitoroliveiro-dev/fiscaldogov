@@ -139,14 +139,14 @@ A cada coleta bem-sucedida (normalmente uma por dia) uma cópia de segurança do
 - **FR-001**: A página pública DEVE exibir nome parlamentar, partido atual e UF de um deputado em exercício na 57ª legislatura.
 - **FR-002**: A página DEVE exibir a casa de origem como fonte, um link para o registro original do deputado na fonte oficial e "Conferido na fonte oficial em" seguido da data e hora da última coleta bem-sucedida, no horário de Brasília — mesmo que nenhum dado tenha mudado nela (RF07, RF08, princípio I).
 - **FR-002a**: Quando a última conferência tiver mais de 48 horas no momento da visita, a página DEVE exibir o aviso "Atenção: os dados podem estar desatualizados". O cálculo DEVE ser feito no aparelho do visitante, para funcionar mesmo que coleta e publicação estejam paradas.
-- **FR-003**: A página DEVE funcionar de 360 px a 1440 px sem rolagem horizontal, com layout próprio para telas grandes, nos temas claro e escuro (seguindo a preferência do sistema, com troca manual), usando o design system do projeto (RNF09, diretrizes de UI D1–D3).
+- **FR-003**: A página DEVE funcionar de 360 px a 1440 px sem rolagem horizontal, com layout próprio para telas grandes — a partir de 1024 px, o bloco de fonte e data fica ao lado do nome, e não abaixo, e o conteúdo tem largura máxima de 1200 px, centralizado —, nos temas claro e escuro (seguindo a preferência do sistema, com troca manual), usando o design system do projeto (RNF09, diretrizes de UI D1–D3).
 - **FR-004**: A página DEVE passar na verificação automática de acessibilidade WCAG 2.2 AA sem violações (RNF05).
 - **FR-005**: A página DEVE se identificar como versão de testes e instruir buscadores a não indexá-la até o Marco 1.
 - **FR-006**: O deputado exibido DEVE ser escolhido por regra objetiva e documentada — o primeiro em ordem alfabética do nome parlamentar entre os em exercício na data da coleta — para não destacar ninguém por escolha pessoal (princípio II).
 
 **Coleta**
 
-- **FR-007**: A coleta DEVE obter, na fonte oficial da Câmara, a lista de deputados da 57ª legislatura e o histórico do deputado selecionado, e guardar parlamentar, identificador na fonte, mandato, períodos de exercício e filiações conforme `docs/01-architecture/modelagem-dados.md`. A cada execução também DEVE atualizar o histórico de todos os parlamentares já guardados.
+- **FR-007**: A coleta DEVE obter, na fonte oficial da Câmara, a lista de deputados em exercício no momento da coleta e o histórico do deputado selecionado, e guardar parlamentar, identificador na fonte, mandato, períodos de exercício e filiações conforme `docs/01-architecture/modelagem-dados.md`. A cada execução também DEVE atualizar o histórico de todos os parlamentares já guardados.
 - **FR-007a**: Executar a coleta duas vezes sem mudança na fonte DEVE produzir o mesmo estado, sem registros duplicados.
 - **FR-007b**: A coleta DEVE falhar, sem gravar, se a fonte devolver lista vazia, menos de 500 deputados em exercício ou o deputado selecionado sem histórico; eventos do histórico DEVEM ser ordenados por data e hora antes da derivação.
 - **FR-008**: Todo registro guardado DEVE ter a URL da fonte e a data e hora da coleta.

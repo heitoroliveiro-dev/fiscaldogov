@@ -213,7 +213,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 | R03 | Nova legislatura a partir de fevereiro de 2027. | Médio. | Modelo de dados preparado para múltiplas legislaturas desde o início. |
 | R04 | Percepção de parcialidade política. | Alto. | DA04, linguagem neutra, metodologia pública. |
 | R05 | Projetos semelhantes já existem (ex.: Ranking dos Políticos, Operação Serenata de Amor). | Baixo para aprendizado, médio para adoção. | Estudo feito em 2026-10-20 (`docs/00-discovery/estudo-semelhantes.md`); diferencial definido (§2.3). O Radar do Congresso é concorrente direto da HU01. |
-| R06 | Prazo do Marco 1 apertado: ~15 semanas × 5–10 h = 75–150 h para fechar a especificação, arquitetura, fundação técnica e as features da Câmara, com duas legislaturas de dados. | Alto para o prazo. | Marco 1 mínimo definido (§4.1): estimativa de 89–140 h contra ~115 h (inclui RF09 e RF10). Checkpoints com data no ROADMAP; atraso de mais de 1 semana em um checkpoint obriga a reavaliar o escopo. |
+| R06 | Prazo do Marco 1 apertado: ~15 semanas × 5–10 h = 75–150 h para fechar a especificação, arquitetura, fundação técnica e as features da Câmara, com duas legislaturas de dados. | Alto para o prazo. | Marco 1 mínimo definido (§4.1): estimativa de 95–151 h contra ~115 h (inclui RF09, RF10 e a F2 revista após o `/speckit-tasks`; F0 e F1 já concluídas em 2026-10-20). Checkpoints com data no ROADMAP; atraso de mais de 1 semana em um checkpoint obriga a reavaliar o escopo. |
 | R07 | Tráfego viral concentrado (o site se espalha). | Alto para custo e disponibilidade se cada acesso chegar ao servidor. | RNF04: páginas públicas servidas por cache/CDN; a busca é o ponto dinâmico a proteger com cache e limite de requisições. |
 
 ## 11. Glossário

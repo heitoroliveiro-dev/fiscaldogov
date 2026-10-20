@@ -24,12 +24,12 @@ Capacidade: 8 h/semana (~115 h até 31/01/2027). Horas são estimativa de ordem 
 | F0.2 | Constituição | `.specify/memory/constitution.md` | — | — | Ratificada | ✓ v1.0.0 |
 | SP01 | Spike Câmara | Fontes de presença, justificativa e autoria | — | — | Relatório + decisões S1–S4 | ✓ |
 | F1 | Arquitetura | ADR-0001 stack; ADR-0002 hospedagem; ADR-0003 domínio e adaptadores; modelagem de dados | 10–15 | 02/11 | Todo ADR crítico aceito com alternativas | ✓ 2026-10-20 |
-| F2 | Fundação técnica | Scaffold com o design system, projeto do ETL, banco + migrations, CI, deploy de um "esqueleto" em produção | 15–25 | 23/11 | Página vazia no ar via CI; ETL grava um deputado com fonte e data | |
+| F2 | Fundação técnica | Scaffold com o design system, projeto do ETL, banco + migrations, CI, deploy de um "esqueleto" em produção; alertas de falha (antecipados da F4); backup conferido | 25–40 (revisto em 2026-10-20 após `/speckit-tasks`: 88 tarefas; alavanca de corte: adiar a US5 — backup — para a F3.1) | 23/11 | Página vazia no ar via CI; ETL grava um deputado com fonte e data | |
 | F3.1 | ETL base da Câmara | Deputados, mandatos, partidos da 57ª (paginação, DA03) | 12–20 | 07/12 | Banco com os 513 deputados e mandatos da 57ª, conferidos contra a API | |
 | F3.2 | HU01 Presença | Presença e justificativa (DA07), cálculo RN03–RN05 e RN08, ranking, link oficial (RN09) | 20–30 | 04/01 | Taxa de deputados de amostra confere com o cálculo manual documentado | |
 | F3.3 | Perfil + home + metodologia | RF05 (troca de partido), RF06–RF08, RF09 (home com gráficos, RN10), RF10 (prévia de compartilhamento) | 19–31 | 18/01 | Toda tela de dado mostra fonte, link e data; metodologia publicada; link compartilhado mostra a prévia | |
-| F4 | Operação mínima | Monitor externo de disponibilidade e sinal periódico de vida da coleta (RNF02, RNF07); o alerta de falha no Telegram foi antecipado para a F2 | 6–10 | 31/01 | Site fora do ar ou coleta sem sinal em 26 h geram alerta | |
-| ⭐ M1 | **Câmara no ar** | Eleitor consulta a presença dos deputados da 57ª pelo celular, com metodologia e fonte | **89–140** | **31/01/2027** | Pessoa real sem conhecimento técnico responde "meu deputado comparece?" sem ajuda | |
+| F4 | Operação mínima | Monitor externo de disponibilidade e sinal periódico de vida da coleta (RNF02, RNF07); o alerta de falha no Telegram foi antecipado para a F2 | 4–8 | 31/01 | Site fora do ar ou coleta sem sinal em 26 h geram alerta | |
+| ⭐ M1 | **Câmara no ar** | Eleitor consulta a presença dos deputados da 57ª pelo celular, com metodologia e fonte | **95–151** | **31/01/2027** | Pessoa real sem conhecimento técnico responde "meu deputado comparece?" sem ajuda | |
 | F5.1 | HU02 Propostas | Ranking por tipo, autoria, coautoria e apoios | 15–20 | pós-M1 | — | |
 | F5.2 | 56ª legislatura | Carga histórica, lacuna de 2020 (S1), divergência de 2019 (S4) | 6–10 | pós-M1 | RNF10 completo | |
 | F5.3 | HU03 Tramitação | Busca, detalhe, votos nominais | 25–35 | pós-M1 | — | |

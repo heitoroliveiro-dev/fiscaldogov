@@ -56,7 +56,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 ### Testes primeiro (devem falhar)
 
-- [ ] T008 [P] Escrever `etl/tests/integracao/conftest.py`: conexão com `DATABASE_URL_TESTE` (papel dono), `DATABASE_URL_ESCRITA_TESTE` e `DATABASE_URL_LEITURA_TESTE`, com fixture que abre a transação e faz rollback ao fim de cada teste; pular com mensagem clara se as variáveis não existirem localmente (no CI, obrigatórias)
+- [ ] T008 [P] Escrever `etl/tests/integracao/conftest.py`: conexão com `DATABASE_URL_TESTE` (papel dono), `DATABASE_URL_ESCRITA_TESTE` e `DATABASE_URL_LEITURA_TESTE`, com fixture que abre a transação e faz rollback ao fim de cada teste. Localmente, sem as variáveis, os testes de integração são pulados com mensagem clara; com `ETL_EXIGIR_INTEGRACAO=1` (definida no CI), variável ausente é **erro**, nunca pulo (princípio III: nenhum teste mascarado)
 - [ ] T009 [P] Escrever `etl/tests/integracao/test_invariantes.py`, um teste por invariante de `data-model.md`:
   1. `periodo_exercicio.fim > inicio` quando `fim` não é nulo.
   2. Períodos do mesmo mandato não se sobrepõem.
@@ -87,7 +87,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - cargas fixas de casa e legislatura;
   - `GRANT SELECT, INSERT, UPDATE, DELETE` e `ALTER DEFAULT PRIVILEGES` para `etl_escrita`;
   - `GRANT SELECT` e `ALTER DEFAULT PRIVILEGES` para `site_leitura`;
-  - uso das sequences para `etl_escrita`.
+  - `GRANT USAGE, SELECT ON ALL SEQUENCES` e privilégios padrão equivalentes para `etl_escrita` (o `pg_dump` da US5 roda com esse papel e precisa ler sequences e `_prisma_migrations`).
 
   Rodar T009 até ficar verde.
 - [ ] T015 [P] Implementar `etl/src/etl/config.py` (leitura e validação das variáveis de `contracts/ambientes-e-segredos.md`; `ConfiguracaoInvalida`) até T012 passar
@@ -132,7 +132,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - nenhuma coluna ou valor de CPF no banco (FR-009);
   - rodar duas vezes produz o mesmo estado, sem duplicar (FR-007a);
   - os parlamentares já armazenados têm o histórico atualizado (FR-007);
-  - erro na gravação desfaz tudo (FR-012);
+  - erro na gravação desfaz os dados de domínio, mas mantém os registros de `coleta_bruta` da execução que falhou (FR-012);
   - `execucao_etl` termina `sucesso`, com contagens.
 - [ ] T028 [P] [US1] Escrever `web/tests/formatar-data.test.ts`: "Conferido na fonte oficial em DD/MM/AAAA às HH:MM (horário de Brasília)" em `America/Sao_Paulo`, inclusive para um horário UTC que vira o dia anterior em Brasília
 - [ ] T029 [P] [US1] Escrever `web/tests/aviso-desatualizado.test.tsx`: aviso "Atenção: os dados podem estar desatualizados." com conferência de 49 h atrás; ausente com 47 h (FR-002a, SC-011)
@@ -143,7 +143,8 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - `/versao.json` com `execucao_id` e commit;
   - 360 px e 1440 px × claro e escuro, sem rolagem horizontal;
   - zero violações do `@axe-core/playwright` (WCAG 2.2 A/AA);
-  - alvos ≥ 44 px abaixo de 1024 px.
+  - alvos ≥ 44 px abaixo de 1024 px;
+  - em 1440 px, o bloco `data-testid=fonte` está à direita do `h1` (mesma faixa vertical), e abaixo dele em 360 px (FR-003).
 
 ### Implementação da US1
 
@@ -158,7 +159,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - `FonteIncompleta` e `RespostaInvalida`.
 
   Rodar até T024 e T025 passarem.
-- [ ] T037 [US1] Implementar `etl/src/etl/adaptadores/brutos_r2/armazem.py` (boto3 no endpoint S3 do R2, gzip, sha256, deduplicação consultando `coleta_bruta`) e um `ArmazemDeBrutosEmDisco` para testes e desenvolvimento, até T026 passar
+- [ ] T037 [US1] Implementar `etl/src/etl/adaptadores/brutos_r2/armazem.py` (boto3 no endpoint S3 do R2, gzip, sha256, deduplicação consultando `coleta_bruta`; o registro em `coleta_bruta` é gravado em **transação própria**, como `execucao_etl`, para sobreviver ao rollback da coleta — FR-012) e um `ArmazemDeBrutosEmDisco` para testes e desenvolvimento, até T026 passar
 - [ ] T038 [US1] Implementar `etl/src/etl/adaptadores/persistencia/repositorio.py`:
   - `upsert` de parlamentar (por `identificador_externo` `camara_v2`), partido (por `camara_v2_partido`) e mandato;
   - substituição dos períodos e filiações do parlamentar dentro da transação;
@@ -175,7 +176,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - `<meta name="versao-publicada">` com `execucao` e `commit`;
   - nome como `h1` e `data-testid=partido-uf`;
   - corpo 16 px e alvos de 44 px abaixo de `lg` (D1, D2);
-  - layout próprio a partir de `lg`.
+  - a partir de `lg` (1024 px): bloco de fonte e data ao lado do nome, conteúdo com largura máxima de 1200 px centralizado (FR-003).
 - [ ] T046 [P] [US1] Criar `web/src/app/versao.json/route.ts` (`dynamic = 'force-static'`, retorna `execucao_id` e commit — FR-028) e `web/public/_headers` com `X-Robots-Tag: noindex` para `/*` (FR-005)
 - [ ] T047 [US1] Criar `web/prisma/seed-e2e.sql` (um parlamentar com período aberto e uma execução `sucesso`), usado no build de teste, e rodar T031 até ficar verde localmente
 - [ ] T048 [US1] Criar `web/wrangler.jsonc` (sem script; `assets.directory = "./out"`) e `.github/workflows/publicar.yml`:
@@ -183,7 +184,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - `concurrency: { group: publicar, cancel-in-progress: true }`;
   - ambiente `producao`;
   - passos 1–5 de `contracts/publicacao.md`.
-- [ ] T049 [US1] Criar `etl/Dockerfile`:
+- [ ] T049 [US1] Criar `etl/Dockerfile`, construído com **contexto na raiz do repositório** (o serviço do Railway usa a raiz como diretório de build e `dockerfilePath = etl/Dockerfile`, porque a imagem precisa de `web/prisma/`), e `.dockerignore` na raiz excluindo `web/node_modules`, `web/.next`, `web/out`, `etl/.venv`, `.git`:
   - base Python 3.14 slim;
   - `postgresql-client` na major de T001;
   - Node 24 só com o CLI do Prisma e `web/prisma/`;
@@ -228,7 +229,10 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   | `etl-test` | unidade + arquitetura |
   | `etl-integration` | Postgres de serviço + papéis + migrations + `pytest -m integration` |
 
-  O Postgres de serviço usa a major de T001, e o workflow não tem segredos.
+  Regras do workflow:
+  - todos os jobs de `web/` rodam `npm run db:generate` antes de lint, typecheck, teste ou build (o cliente do Prisma não é versionado — T007);
+  - `etl-integration` define `ETL_EXIGIR_INTEGRACAO=1` e falha se nenhum teste com o marcador `integration` for coletado;
+  - o Postgres de serviço usa a major de T001, e o workflow não tem segredos.
 - [ ] T057 [US3] ⚠️ Configurar a proteção de `main` e `develop` no GitHub: PR obrigatório, os 7 jobs de T056 como checks obrigatórios, sem force push; registrar a captura da regra em `specs/001-fundacao-tecnica/evidencias.md`
 - [ ] T058 [US3] Executar o quickstart R7 (commits com erro de estilo, de formatação e com teste quebrado bloqueados; PR com teste falhando impedido) e anexar a evidência em `specs/001-fundacao-tecnica/evidencias.md`
 
@@ -288,7 +292,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [ ] T069 [US2] Implementar `etl/src/etl/pipeline/vigia.py` (`signal.alarm` com `ETL_TEMPO_LIMITE_S`, padrão 3600; rollback; motivo "tempo esgotado") até T064 passar
 - [ ] T070 [US2] Implementar em `etl/src/etl/pipeline/coletar.py` a recusa com código 3, o fechamento de `em_andamento` com mais de 60 min e o envio de alerta para `falha`/`com_pendencias` (etapa 9 de `contracts/etl-cli.md`) até T063 e T066 passarem
 - [ ] T071 [US2] Implementar `etl/src/etl/pipeline/reserva.py` e os comandos `reserva` e `agendado` em `etl/src/etl/__main__.py` até T062 passar
-- [ ] T072 [US2] Criar `etl/railway.json`:
+- [ ] T072 [US2] Criar `etl/railway.json` (no serviço do Railway, apontar o caminho do arquivo de configuração para `etl/railway.json`, mantendo o diretório de build na raiz — T049):
   - `deploy.cronSchedule = "0 6,8 * * *"`;
   - `deploy.startCommand = "python -m etl agendado"`;
   - `deploy.preDeployCommand` = `prisma migrate deploy`;
@@ -301,9 +305,10 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - entender os códigos de saída;
   - tabela de credenciais com data de expiração (FR-020a);
   - ajuste do horário se o horário de verão voltar;
-  - o que fazer quando o limite rígido de gasto for atingido.
+  - o que fazer quando o limite rígido de gasto for atingido;
+  - migration que falhou no pré-deploy: como confirmar que o deploy foi abortado e a versão anterior segue agendada, e como reverter (migration corretiva ou restauração — FR-017a).
 - [ ] T075 [US2] ⚠️ Criar o bot do Telegram (BotFather), obter o `chat_id`, cadastrar `ALERTA_TELEGRAM_*` no Railway e no ambiente `producao` do GitHub; enviar mensagem de teste e registrar a captura em `specs/001-fundacao-tecnica/evidencias.md`
-- [ ] T076 [US2] Executar os quickstart R5, R6 e R9.4 e iniciar a observação de 5 dias do R9.3 (SC-002); anexar a evidência e as mensagens de alerta recebidas em `specs/001-fundacao-tecnica/evidencias.md`
+- [ ] T076 [US2] Executar os quickstart R5, R6, R9.4 e R9b e iniciar a observação de 5 dias do R9.3 (SC-002); anexar a evidência e as mensagens de alerta recebidas em `specs/001-fundacao-tecnica/evidencias.md`
 
 **Checkpoint**: a coleta roda sozinha, se recupera de quedas e avisa o responsável quando falha.
 
@@ -319,11 +324,11 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - chave `diario/AAAA-MM-DD.dump` todo dia;
   - também `semanal/AAAA-MM-DD.dump` quando o dia, em Brasília, for domingo.
 - [ ] T078 [US5] Escrever `etl/tests/integracao/test_backup.py`, com armazenamento falso em disco:
-  - `pg_dump --format=custom` do banco de teste;
+  - `pg_dump --format=custom` do banco de teste **com o papel `etl_escrita`** (prova que as permissões de T014 bastam);
   - o envio é conferido com `pg_restore --list`;
   - arquivo corrompido → `BackupInvalido`;
   - falha no envio ou na conferência → execução `com_pendencias` e alerta, com a publicação ainda disparada (FR-024, FR-026).
-- [ ] T079 [US5] Implementar `etl/src/etl/adaptadores/backup_r2/backup.py` e ligá-lo na etapa 6 de `etl/src/etl/pipeline/coletar.py` até T077 e T078 passarem
+- [ ] T079 [US5] Implementar `etl/src/etl/adaptadores/backup_r2/backup.py` (o `pg_dump` usa `DATABASE_URL_ESCRITA`, papel `etl_escrita`) e ligá-lo na etapa 6 de `etl/src/etl/pipeline/coletar.py` até T077 e T078 passarem
 - [ ] T080 [P] [US5] Criar `scripts/r2-ciclo-de-vida-backup.json` (`diario/` expira em 7 dias, `semanal/` em 28) e `scripts/r2-ciclo-de-vida-brutos.json` (365 dias), aplicados com `wrangler r2 bucket lifecycle set`
 - [ ] T081 [P] [US5] Escrever `docs/05-runbooks/restauracao-backup.md`: baixar o objeto mais recente, criar banco vazio na mesma major, `pg_restore`, recriar papéis, comparar contagens por tabela, cronometrar
 - [ ] T082 [US5] ⚠️ Aplicar os ciclos de vida de T080 nos buckets de produção e executar o quickstart R8 (restauração ≤ 30 min, contagens idênticas — SC-006); anexar a evidência em `specs/001-fundacao-tecnica/evidencias.md`
