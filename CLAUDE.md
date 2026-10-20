@@ -62,7 +62,7 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 
 - **Fase:** F0 — Discovery (em andamento). **Feature ativa:** nenhuma.
 - **Marco 1:** presença + perfil + metodologia, 57ª legislatura, até 31/01/2027 (contexto §4.1).
-- **Próximo:** fluxo do usuário e estudo de semelhantes; depois F1 (ADR-0001).
+- **Próximo:** estudo de projetos semelhantes; depois F1 (ADR-0001).
 - Histórico completo: `docs/ROADMAP.md` e `CHANGELOG.md` (não duplicar aqui).
 
 ## Índice de documentação (carregar sob demanda)
@@ -70,6 +70,7 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 | Preciso de... | Vá para |
 |---|---|
 | O que o produto é | `docs/00-discovery/contexto-projeto.md` |
+| Telas e navegação do Marco 1 | `docs/00-discovery/fluxo-usuario.md` |
 | Como conduzo o projeto | `docs/PLAYBOOK-CONDUCAO.md` |
 | O que/onde/quando documentar | `docs/GUIA-DOCUMENTACAO.md` |
 | Fases, marcos, pendências | `docs/ROADMAP.md` |

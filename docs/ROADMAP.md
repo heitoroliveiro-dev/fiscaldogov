@@ -5,7 +5,7 @@
 ## Onde estou agora
 
 **Fase atual:** F0 — Discovery (em andamento) · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** fluxo do usuário e estudo de projetos semelhantes (fecham a F0); em seguida ADR-0001 (stack).
+**Próxima ação:** estudo de projetos semelhantes (fecha a F0); em seguida ADR-0001 (stack).
 **Prazo:** M1 até 31/01/2027 · **Ritmo planejado:** 8 h/semana · **Próximo checkpoint:** 02/11 (F0 + F1).
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
@@ -19,7 +19,7 @@ Capacidade: 8 h/semana (~115 h até 31/01/2027). Horas são estimativa de ordem 
 
 | # | Etapa | O que entrega | Horas | Checkpoint | Pronto quando | Status |
 |---|---|---|---|---|---|---|
-| F0 | Discovery | Contexto completo; fluxo do usuário; estudo de projetos semelhantes (R05) | 4–6 | 02/11 | §12 do contexto sem itens de especificação abertos | em andamento |
+| F0 | Discovery | Contexto completo; fluxo do usuário ✓; estudo de projetos semelhantes (R05) | 4–6 | 02/11 | §12 do contexto sem itens de especificação abertos | em andamento |
 | F0.1 | Processo | Gitflow, Spec Kit, kit de contexto, hooks | — | — | Hooks bloqueiam `.env` e commit fora do padrão | ✓ |
 | F0.2 | Constituição | `.specify/memory/constitution.md` | — | — | Ratificada | ✓ v1.0.0 |
 | SP01 | Spike Câmara | Fontes de presença, justificativa e autoria | — | — | Relatório + decisões S1–S4 | ✓ |
@@ -27,9 +27,9 @@ Capacidade: 8 h/semana (~115 h até 31/01/2027). Horas são estimativa de ordem 
 | F2 | Fundação técnica | Scaffold com o design system, projeto do ETL, banco + migrations, CI, deploy de um "esqueleto" em produção | 15–25 | 23/11 | Página vazia no ar via CI; ETL grava um deputado com fonte e data | |
 | F3.1 | ETL base da Câmara | Deputados, mandatos, partidos da 57ª (paginação, DA03) | 12–20 | 07/12 | Banco com os 513 deputados e mandatos da 57ª, conferidos contra a API | |
 | F3.2 | HU01 Presença | Presença e justificativa (DA07), cálculo RN03–RN05 e RN08, ranking, link oficial (RN09) | 20–30 | 04/01 | Taxa de deputados de amostra confere com o cálculo manual documentado | |
-| F3.3 | Perfil + metodologia | RF05 (troca de partido), RF06–RF08 | 12–20 | 18/01 | Toda tela de dado mostra fonte, link e data; metodologia publicada | |
+| F3.3 | Perfil + home + metodologia | RF05 (troca de partido), RF06–RF08, RF09 (home com gráficos, RN10), RF10 (prévia de compartilhamento) | 19–31 | 18/01 | Toda tela de dado mostra fonte, link e data; metodologia publicada; link compartilhado mostra a prévia | |
 | F4 | Operação mínima | CDN, monitor externo, alertas no Telegram (RNF02, RNF07) | 8–12 | 31/01 | Falha simulada do ETL chega no Telegram; site atrás de cache | |
-| ⭐ M1 | **Câmara no ar** | Eleitor consulta a presença dos deputados da 57ª pelo celular, com metodologia e fonte | **82–129** | **31/01/2027** | Pessoa real sem conhecimento técnico responde "meu deputado comparece?" sem ajuda | |
+| ⭐ M1 | **Câmara no ar** | Eleitor consulta a presença dos deputados da 57ª pelo celular, com metodologia e fonte | **89–140** | **31/01/2027** | Pessoa real sem conhecimento técnico responde "meu deputado comparece?" sem ajuda | |
 | F5.1 | HU02 Propostas | Ranking por tipo, autoria, coautoria e apoios | 15–20 | pós-M1 | — | |
 | F5.2 | 56ª legislatura | Carga histórica, lacuna de 2020 (S1), divergência de 2019 (S4) | 6–10 | pós-M1 | RNF10 completo | |
 | F5.3 | HU03 Tramitação | Busca, detalhe, votos nominais | 25–35 | pós-M1 | — | |
@@ -50,7 +50,7 @@ Espelha a §12 do contexto (a fonte é lá).
 | 4 | Requisitos não funcionais | contexto §8.2 | entrevista | ✓ RNF01–RNF10 |
 | 5 | Restrições (prazo, orçamento, horas/semana) | contexto §12 | entrevista | ✓ §8.3 |
 | 12 | Escopo mínimo do Marco 1 | R06 | decisão | ✓ contexto §4.1 |
-| 6 | Diagrama de fluxo do usuário | contexto §12 | F0 | aberto |
+| 6 | Diagrama de fluxo do usuário | contexto §12 | F0 | ✓ `docs/00-discovery/fluxo-usuario.md` |
 | 7 | Modelagem de dados | contexto §12 | F1 | aberto |
 | 8 | Plano de arquitetura + definição da stack | contexto §12 | F1 (ADRs) | aberto |
 | 9 | Executar SP01 | contexto §10 | spike | ✓ Câmara |
