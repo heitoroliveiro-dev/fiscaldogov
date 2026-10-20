@@ -1,0 +1,33 @@
+{
+  "$description": "Modo de alto contraste (equivalente ao controle de 'contrast' do gerador de temas do Linear). Ative com data-contrast=\"high\" no <html>. Faz bordas de campos atingirem 3:1 (WCAG 1.4.11).",
+  "color": {
+    "$type": "color",
+    "muted-foreground": {
+      "$value": "{color.gray.12}"
+    },
+    "subtle-foreground": {
+      "$value": "{color.gray.11}"
+    },
+    "border": {
+      "$value": "{color.gray.8}"
+    },
+    "border-subtle": {
+      "$value": "{color.gray.7}"
+    },
+    "border-strong": {
+      "$value": "{color.gray.10}"
+    },
+    "input": {
+      "$value": "{color.gray.9}"
+    },
+    "ring": {
+      "$value": "{color.brand.11}"
+    },
+    "sidebar-foreground": {
+      "$value": "{color.gray.12}"
+    },
+    "sidebar-border": {
+      "$value": "{color.gray.7}"
+    }
+  }
+}

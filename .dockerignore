@@ -1,0 +1,17 @@
+# Contexto de build na raiz do repositório (imagem do ETL — spec 001, T049)
+.git/
+**/node_modules/
+web/.next/
+web/out/
+web/src/generated/
+web/test-results/
+web/playwright-report/
+etl/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+**/.env
+**/.env.*
+!**/.env.example
+*.log
+coverage/

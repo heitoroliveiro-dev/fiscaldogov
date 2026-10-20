@@ -1,0 +1,84 @@
+/*
+ * Ponto de entrada de estilos.
+ *   tokens.css  → variáveis CSS geradas dos tokens DTCG (cores e elevação por modo)
+ *   theme.css   → @theme do Tailwind gerado dos tokens (utilitários bg-*, text-*, rounded-*…)
+ *   effects.css → glows, grid, border beam (camada de "brilho" do estilo Linear)
+ * Não declare cores aqui: adicione tokens em tokens/ e rode `npm run tokens`.
+ */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./tokens.css";
+@import "./theme.css";
+@import "./effects.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant high-contrast (&:where([data-contrast="high"], [data-contrast="high"] *));
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans text-sm antialiased;
+    /* Inter variável: tamanho óptico automático = corte "Display" em títulos grandes */
+    font-optical-sizing: auto;
+  }
+
+  h1, h2, h3, h4 {
+    @apply text-foreground;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  code, kbd, pre, samp {
+    @apply font-mono;
+    font-feature-settings: normal;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklch, var(--brand) 40%, transparent);
+  }
+
+  /* Foco: anel de 2px com offset (WCAG 2.4.7 e 2.4.13). Nunca remova sem substituir. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Alvo mínimo 24×24 (WCAG 2.5.8) é garantido pelos tamanhos dos componentes. */
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray-6) transparent;
+  }
+}
+
+/* Movimento reduzido (WCAG 2.3.3): animações viram instantâneas. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

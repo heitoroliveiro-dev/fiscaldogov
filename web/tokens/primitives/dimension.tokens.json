@@ -1,0 +1,136 @@
+{
+  "$description": "Dimensões base. Grid de 4px (Tailwind --spacing: 0.25rem).",
+  "space": {
+    "$type": "dimension",
+    "0": {
+      "$value": {
+        "value": 0,
+        "unit": "px"
+      }
+    },
+    "1": {
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      }
+    },
+    "2": {
+      "$value": {
+        "value": 8,
+        "unit": "px"
+      }
+    },
+    "3": {
+      "$value": {
+        "value": 12,
+        "unit": "px"
+      }
+    },
+    "4": {
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      }
+    },
+    "5": {
+      "$value": {
+        "value": 20,
+        "unit": "px"
+      }
+    },
+    "6": {
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      }
+    },
+    "8": {
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      }
+    },
+    "10": {
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      }
+    },
+    "12": {
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      }
+    },
+    "16": {
+      "$value": {
+        "value": 64,
+        "unit": "px"
+      }
+    },
+    "20": {
+      "$value": {
+        "value": 80,
+        "unit": "px"
+      }
+    },
+    "24": {
+      "$value": {
+        "value": 96,
+        "unit": "px"
+      }
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "xs": {
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      },
+      "$description": "Checkbox, kbd, badges compactos."
+    },
+    "sm": {
+      "$value": {
+        "value": 6,
+        "unit": "px"
+      },
+      "$description": "Botões e inputs pequenos."
+    },
+    "md": {
+      "$value": {
+        "value": 8,
+        "unit": "px"
+      },
+      "$description": "Padrão: botões, inputs, itens de menu."
+    },
+    "lg": {
+      "$value": {
+        "value": 12,
+        "unit": "px"
+      },
+      "$description": "Cards, popovers, painéis."
+    },
+    "xl": {
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "Dialogs, painéis de conteúdo."
+    },
+    "2xl": {
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
+      "$description": "Seções de marketing."
+    },
+    "full": {
+      "$value": {
+        "value": 9999,
+        "unit": "px"
+      },
+      "$description": "Pílulas e avatares."
+    }
+  }
+}

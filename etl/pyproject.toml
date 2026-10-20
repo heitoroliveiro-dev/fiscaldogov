@@ -1,0 +1,43 @@
+[project]
+name = "fiscaldogov-etl"
+version = "0.1.0"
+description = "Coleta dos dados oficiais da Câmara e cálculo das estatísticas (ADR-0001, ADR-0003)."
+license = "AGPL-3.0-only"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "sqlalchemy>=2.1,<2.2",
+    "psycopg[binary]>=3.3,<3.4",
+    "httpx>=0.28,<0.29",
+    "boto3>=1.43,<2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1,<10",
+    "ruff>=0.17,<0.18",
+]
+
+[build-system]
+requires = ["uv_build>=0.13,<0.14"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "etl"
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+# E/F: erros básicos · I: imports · B: bugs prováveis · S: segurança (princípio VI) · UP: sintaxe moderna
+select = ["E", "F", "I", "B", "S", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# assert é o idioma do pytest
+"tests/**" = ["S101"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: precisa de Postgres com as migrations do Prisma aplicadas (ver tests/integracao/conftest.py)",
+]

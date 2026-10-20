@@ -1,0 +1,18 @@
+node_modules/
+.next/
+out/
+src/generated/
+tokens/build/
+src/styles/tokens.css
+src/styles/theme.css
+package-lock.json
+test-results/
+playwright-report/
+
+# Cópias do design system (../design-system/linear): mantidas idênticas à origem
+# para que atualizações sejam um diff limpo (docs/08-uso-em-novos-projetos.md do DS).
+tokens/
+scripts/
+src/styles/
+src/components/ui/
+src/lib/utils.ts

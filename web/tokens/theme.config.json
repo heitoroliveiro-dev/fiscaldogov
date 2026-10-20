@@ -1,0 +1,31 @@
+{
+  "$description": "Sementes do tema. Assim como o gerador de temas do Linear (base + accent + contraste), todas as escalas de cor são DERIVADAS daqui. Edite este arquivo e rode `npm run tokens`.",
+  "neutral": {
+    "$description": "Cinza base. Croma baixíssimo e matiz quente (~70) segue o refresh do Linear de 2026: cinza mais quente e menos saturado que o azulado anterior.",
+    "hue": 70,
+    "chroma": 0.004
+  },
+  "brand": {
+    "$description": "Cor de marca (primary, focus, seleção). Troque o hue para dar identidade ao produto (evita a 'comoditização' do visual).",
+    "hue": 277,
+    "chroma": 0.17,
+    "solidLightness": 0.53
+  },
+  "status": {
+    "red": { "hue": 25, "chroma": 0.2, "solidLightness": 0.55 },
+    "green": { "hue": 152, "chroma": 0.15, "solidLightness": 0.56 },
+    "amber": { "hue": 75, "chroma": 0.16, "solidLightness": 0.78 },
+    "blue": { "hue": 245, "chroma": 0.16, "solidLightness": 0.56 }
+  },
+  "lightness": {
+    "$description": "Curva de luminosidade OKLCH dos 12 passos (metodologia Radix Colors). Passos 9 e 10 vêm do solidLightness de cada escala.",
+    "dark": [0.13, 0.16, 0.195, 0.225, 0.255, 0.29, 0.34, 0.43, null, null, 0.77, 0.96],
+    "light": [0.993, 0.979, 0.955, 0.932, 0.909, 0.882, 0.845, 0.78, null, null, 0.5, 0.24]
+  },
+  "chromaCurve": {
+    "$description": "Multiplicador do croma por passo. Fundos quase neutros, pico no passo 9 (cor sólida).",
+    "dark": [0.12, 0.16, 0.26, 0.34, 0.42, 0.5, 0.6, 0.75, 1, 1, 0.75, 0.25],
+    "light": [0.06, 0.12, 0.2, 0.28, 0.36, 0.45, 0.55, 0.7, 1, 1, 0.85, 0.5]
+  },
+  "neutralSolidLightness": { "dark": 0.55, "light": 0.6 }
+}

@@ -1,0 +1,75 @@
+{
+  "$description": "Tokens semânticos compartilhados pelos dois modos. Referenciam primitivos por alias; como os primitivos trocam de valor por modo, o mesmo alias funciona em dark e light. Nomes seguem a convenção do shadcn/ui (par base + -foreground) para manter compatibilidade com o CLI.",
+  "color": {
+    "$type": "color",
+    "background": { "$value": "{color.gray.1}", "$description": "Fundo da aplicação (canvas)." },
+    "foreground": { "$value": "{color.gray.12}", "$description": "Texto primário. Alto contraste." },
+
+    "card": { "$value": "{color.gray.2}", "$description": "Superfície elevada nível 1: painéis, cards, área de conteúdo." },
+    "card-foreground": { "$value": "{color.gray.12}" },
+    "popover": { "$value": "{color.gray.3}", "$description": "Superfície elevada nível 2: menus, popovers, dialogs." },
+    "popover-foreground": { "$value": "{color.gray.12}" },
+
+    "primary": { "$value": "{color.brand.9}", "$description": "Ação principal. Use no máximo uma vez por região da tela." },
+    "primary-foreground": { "$value": "{color.white}" },
+    "primary-hover": { "$value": "{color.brand.10}" },
+
+    "secondary": { "$value": "{color.gray.3}", "$description": "Ação secundária (botão padrão)." },
+    "secondary-foreground": { "$value": "{color.gray.12}" },
+
+    "muted": { "$value": "{color.gray.3}", "$description": "Fundos discretos: skeleton, code inline, trilhas." },
+    "muted-foreground": { "$value": "{color.gray.11}", "$description": "Texto secundário: descrições, labels de apoio." },
+    "subtle-foreground": { "$value": "{color.gray.10}", "$description": "Texto terciário: metadados, timestamps, placeholders. Não use sobre superfícies acima de popover." },
+
+    "accent": { "$value": "{color.gray.4}", "$description": "Convenção shadcn: fundo de hover/seleção de itens neutros (menu, lista). NÃO é a cor de marca — essa é `primary`/`brand`." },
+    "accent-foreground": { "$value": "{color.gray.12}" },
+
+    "destructive": { "$value": "{color.red.9}", "$description": "Ações destrutivas e irreversíveis." },
+    "destructive-foreground": { "$value": "{color.white}" },
+
+    "border": { "$value": "{color.gray.6}", "$description": "Borda padrão de elementos não interativos (cards, separadores)." },
+    "border-subtle": { "$value": "{color.gray.5}", "$description": "Divisores dentro de superfícies. Prefira espaço a divisores." },
+    "border-strong": { "$value": "{color.gray.8}", "$description": "Borda de hover em elementos interativos." },
+    "input": { "$value": "{color.gray.7}", "$description": "Borda de campos de formulário." },
+    "ring": { "$value": "{color.brand.10}", "$description": "Anel de foco. Deve ter ≥ 3:1 contra o fundo (WCAG 2.4.13 / 1.4.11)." },
+
+    "brand": { "$value": "{color.brand.9}" },
+    "brand-subtle": { "$value": "{color.brand.3}", "$description": "Fundo tingido: item selecionado, badge de marca." },
+    "brand-border": { "$value": "{color.brand.7}" },
+    "brand-text": { "$value": "{color.brand.11}", "$description": "Texto/ícone na cor de marca sobre fundos neutros ou brand-subtle." },
+
+    "success": { "$value": "{color.green.9}" },
+    "success-subtle": { "$value": "{color.green.3}" },
+    "success-border": { "$value": "{color.green.7}" },
+    "success-text": { "$value": "{color.green.11}" },
+
+    "warning": { "$value": "{color.amber.9}" },
+    "warning-subtle": { "$value": "{color.amber.3}" },
+    "warning-border": { "$value": "{color.amber.7}" },
+    "warning-text": { "$value": "{color.amber.11}" },
+
+    "danger-subtle": { "$value": "{color.red.3}" },
+    "danger-border": { "$value": "{color.red.7}" },
+    "danger-text": { "$value": "{color.red.11}" },
+
+    "info": { "$value": "{color.blue.9}" },
+    "info-subtle": { "$value": "{color.blue.3}" },
+    "info-border": { "$value": "{color.blue.7}" },
+    "info-text": { "$value": "{color.blue.11}" },
+
+    "chart-1": { "$value": "{color.brand.9}" },
+    "chart-2": { "$value": "{color.green.9}" },
+    "chart-3": { "$value": "{color.amber.9}" },
+    "chart-4": { "$value": "{color.blue.9}" },
+    "chart-5": { "$value": "{color.red.9}" },
+
+    "sidebar": { "$value": "{color.gray.1}", "$description": "Sidebar alguns tons mais apagada que o conteúdo (refresh Linear 2026)." },
+    "sidebar-foreground": { "$value": "{color.gray.11}" },
+    "sidebar-primary": { "$value": "{color.brand.9}" },
+    "sidebar-primary-foreground": { "$value": "{color.white}" },
+    "sidebar-accent": { "$value": "{color.gray.4}", "$description": "Item ativo/hover da navegação." },
+    "sidebar-accent-foreground": { "$value": "{color.gray.12}" },
+    "sidebar-border": { "$value": "{color.gray.5}" },
+    "sidebar-ring": { "$value": "{color.brand.10}" }
+  }
+}
