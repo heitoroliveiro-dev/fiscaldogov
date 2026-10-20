@@ -192,7 +192,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | ID | Item | Impacto | Ação |
 |----|------|---------|------|
-| SP01 | **Spike:** confirmar nas APIs da Câmara e do Senado (a) se cada ausência informa se foi justificada; (b) como foi registrada a presença nas sessões deliberativas remotas e semipresenciais de 2020–2021; (c) qual campo identifica o primeiro signatário de uma proposição. | Sem (a), a RN03 e a RN04 não podem ser implementadas como decididas; (b) afeta a RN05; (c) afeta a RN02. | Investigação com prazo fechado antes da sprint de desenvolvimento. |
+| SP01 | **Spike:** confirmar nas APIs da Câmara e do Senado (a) se cada ausência informa se foi justificada; (b) como foi registrada a presença nas sessões deliberativas remotas e semipresenciais de 2020–2021; (c) qual campo identifica o primeiro signatário de uma proposição. | Sem (a), a RN03 e a RN04 não podem ser implementadas como decididas; (b) afeta a RN05; (c) afeta a RN02. | **Executado para a Câmara em 2026-10-20** — `docs/00-discovery/spikes/sp01-dados-presenca-autoria.md`. (a) justificativa só no webservice legado, por dia, com lacuna de abr/2020 a mar/2021; (b) presença remota registrada; (c) `ordemAssinatura`. Decisões S1–S4 pendentes. Senado: SP01-B antes da sprint do Senado. |
 | R01 | Erro de dado vira acusação injusta contra uma pessoa real. | Alto (reputacional e jurídico). | Metodologia pública, link para a fonte oficial em cada dado, testes automatizados nos cálculos. |
 | R02 | Mudança de formato ou indisponibilidade das APIs oficiais. | Médio. | ETL com tratamento de erro, retry e alerta; banco próprio mantém o site no ar. |
 | R03 | Nova legislatura a partir de fevereiro de 2027. | Médio. | Modelo de dados preparado para múltiplas legislaturas desde o início. |
@@ -227,7 +227,9 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 - [ ] Modelagem de dados
 - [ ] Plano de arquitetura e descritivo das decisões
 - [ ] Definição da stack
-- [ ] Executar o spike SP01
+- [x] Executar o spike SP01 (Câmara)
+- [ ] Decidir S1–S4 do SP01
+- [ ] SP01-B: mesmo spike para o Senado, antes da sprint do Senado
 
 ---
 
@@ -235,6 +237,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | SP01 executado para a Câmara; decisões S1–S4 abertas. |
 | 2026-10-20 | RN04 a RN07 decididas e detalhadas; RN02 define autor principal como primeiro signatário; nova RN08 (mínimo de 25% das sessões para o ranking); critérios das HUs, SP01 e glossário atualizados. |
 | 2026-10-20 | Requisitos não funcionais RNF01 a RNF10, restrições (§8.3), alcance das legislaturas no escopo, riscos R06 e R07. |
 | 2026-10-20 | DA06: web responsivo, mobile-first, sem app nativo no MVP. |

@@ -5,7 +5,7 @@
 ## Onde estou agora
 
 **Fase atual:** F0 — Discovery (em andamento) · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** definir o escopo mínimo do Marco 1 (R06) e executar o SP01, do qual dependem RN02–RN05.
+**Próxima ação:** decidir S1–S4 do SP01 e definir o escopo mínimo do Marco 1 (R06).
 **Prazo:** M1 antes de 01/02/2027 · **Ritmo:** 5–10 h/semana.
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
@@ -22,7 +22,7 @@ Dar ao eleitor comum, pelo celular, uma forma simples, neutra e verificável de 
 | F0 | Discovery | Contexto completo: RNFs, RN04–RN07 confirmadas, critérios das HUs validados, restrições, fluxo do usuário | — | §12 do contexto sem itens de especificação abertos | em andamento |
 | F0.1 | Processo | Repositório com gitflow, Spec Kit, kit de contexto, hooks de segredo/commit | — | Hooks bloqueiam `.env` e commit fora do padrão | ✓ |
 | F0.2 | Constituição | `.specify/memory/constitution.md` v1.0.0 | F0.1 | Ratificada via `/speckit-constitution` | ✓ v1.0.0 |
-| SP01 | Spike: dados que sustentam RN02–RN05 | Respostas: justificativa de ausência, presença em sessão remota (2020–2021), campo de primeiro signatário | — | Relatório com endpoints consultados e exemplos reais | |
+| SP01 | Spike: dados que sustentam RN02–RN05 | Respostas: justificativa de ausência, presença em sessão remota (2020–2021), campo de primeiro signatário | — | Relatório com endpoints consultados e exemplos reais | ✓ Câmara (`docs/00-discovery/spikes/`); Senado → SP01-B |
 | F1 | Arquitetura | ADR-0001 stack; ADR de domínio/adaptadores (DA02, DA03); ADR de hospedagem com cache/CDN (RNF04, R07; limite de 20 mil arquivos do Cloudflare Pages free); ADR de frequência do ETL; modelagem de dados multi-legislatura (R03) | F0 | Todo ADR crítico aceito com alternativas | |
 | F2 | Fundação técnica | Scaffold, design system aplicado, lint, hooks da stack, CI, banco + migrations, esqueleto do ETL e do adaptador da Câmara | F1 | App sobe, CI verde, ETL grava um deputado com fonte e data | |
 | F3.x | Features Câmara | HU01 (presença), HU02 (propostas), HU03 (tramitação), RF05 (perfil), RF06–RF08 (metodologia, fonte, atualização) | F2 (HU01 também SP01) | Cada uma com spec, testes e evidência | |
@@ -46,7 +46,9 @@ Espelha a §12 do contexto (a fonte é lá).
 | 6 | Diagrama de fluxo do usuário | contexto §12 | F0 | aberto |
 | 7 | Modelagem de dados | contexto §12 | F1 | aberto |
 | 8 | Plano de arquitetura + definição da stack | contexto §12 | F1 (ADRs) | aberto |
-| 9 | Executar SP01 | contexto §10 | spike | aberto |
+| 9 | Executar SP01 | contexto §10 | spike | ✓ Câmara |
+| 13 | Decisões S1–S4 do SP01 | relatório SP01 | decisão | aberto |
+| 14 | SP01-B (Senado) | DA05 | spike | antes de F3.y |
 | 10 | Estudar projetos semelhantes e definir diferencial | R05 | F0 | aberto |
 | 11 | Adaptações do design system ao público (densidade, tema, cor) | `docs/06-design/diretrizes-ui.md` | decisão | ✓ D1–D5 decididas em 2026-10-20 |
 
