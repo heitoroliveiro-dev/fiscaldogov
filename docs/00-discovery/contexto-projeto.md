@@ -45,7 +45,7 @@ Consequências para o produto:
 - **Câmara dos Deputados** (primeira entrega).
 - Dados das legislaturas 56ª e 57ª, mais a 58ª a partir de fevereiro de 2027 (RNF10).
 
-**Marco 1 — Câmara no ar (até 31/01/2027):** HU01 (presença), RF05 (perfil), RF06–RF08 (metodologia, fonte e data de atualização), apenas a **57ª legislatura** (a 58ª entra a partir de fev/2027). A RN09 entra no M1 só com o link para a página oficial. Ficam para logo depois do M1, nesta ordem proposta: HU02, 56ª legislatura, HU03, número oficial da RN09.
+**Marco 1 — Câmara no ar (até 31/01/2027):** HU01 (presença), RF05 (perfil), RF06–RF08 (metodologia, fonte e data de atualização), RF09 (home com gráficos), RF10 (compartilhamento), apenas a **57ª legislatura** (a 58ª entra a partir de fev/2027). A RN09 entra no M1 só com o link para a página oficial. Ficam para logo depois do M1, nesta ordem proposta: HU02, 56ª legislatura, HU03, número oficial da RN09.
 - **Senado Federal** (sprint seguinte, reutilizando o mesmo modelo de domínio).
 
 ### 4.2 Fora do escopo do MVP
@@ -138,6 +138,7 @@ Critérios de aceite (rascunho, a validar):
 | RN07 | Estatísticas de voto por parlamentar consideram apenas **votações nominais**. O voto é exibido na **categoria oficial publicada pela casa** (Sim, Não, Abstenção, Obstrução, Art. 17, sem registro), cada uma com explicação curta. | Decidida |
 | RN08 | O ranking de presença inclui apenas quem esteve em exercício em **pelo menos 25% das sessões deliberativas do período filtrado**. Abaixo disso, a taxa aparece só no perfil, com aviso de amostra pequena. | Decidida |
 | RN09 | O perfil exibe, ao lado da taxa do site, a **taxa oficial publicada pela Câmara** (Ato da Mesa nº 191/2017) com link para a página oficial; a metodologia explica por que os números podem diferir. Se a taxa oficial não puder ser lida, aparece só o link. | Decidida (S2) |
+| RN10 | A **taxa de presença de um partido** é a taxa agregada da bancada atual: soma das presenças ÷ soma das sessões consideradas (mesma regra da RN04) de todos os membros atuais (RN01). Partidos com menos de 5 deputados em exercício não entram em comparações entre partidos, com nota explicando o motivo. | Decidida |
 
 > **Decidida:** confirmada pelo responsável. **Proposta:** sugerida durante a entrevista, aguardando confirmação explícita.
 
@@ -155,6 +156,8 @@ Critérios de aceite (rascunho, a validar):
 | RF06 | Exibir página de metodologia com a regra de cálculo de cada estatística. | OE04 |
 | RF07 | Exibir, em cada dado, a fonte oficial e link para o registro original. | OE04 |
 | RF08 | Exibir a data da última atualização dos dados. | OE04 |
+| RF09 | Exibir na página inicial a busca por estado, nome e casa, a composição da Câmara por partido, a taxa de presença por partido (RN10) e os 5 deputados com menor presença. | Fluxo do usuário |
+| RF10 | Permitir compartilhar o perfil do deputado com prévia que mostra nome, taxa, "X de Y sessões", data e fonte. | Fluxo do usuário |
 
 ### 8.2 Requisitos não funcionais
 
@@ -203,7 +206,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 | R03 | Nova legislatura a partir de fevereiro de 2027. | Médio. | Modelo de dados preparado para múltiplas legislaturas desde o início. |
 | R04 | Percepção de parcialidade política. | Alto. | DA04, linguagem neutra, metodologia pública. |
 | R05 | Projetos semelhantes já existem (ex.: Ranking dos Políticos, Operação Serenata de Amor). | Baixo para aprendizado, médio para adoção. | Estudar o que fazem e definir diferencial antes do lançamento. |
-| R06 | Prazo do Marco 1 apertado: ~15 semanas × 5–10 h = 75–150 h para fechar a especificação, arquitetura, fundação técnica e as features da Câmara, com duas legislaturas de dados. | Alto para o prazo. | Marco 1 mínimo definido (§4.1): estimativa de 82–129 h contra ~115 h. Checkpoints com data no ROADMAP; atraso de mais de 1 semana em um checkpoint obriga a reavaliar o escopo. |
+| R06 | Prazo do Marco 1 apertado: ~15 semanas × 5–10 h = 75–150 h para fechar a especificação, arquitetura, fundação técnica e as features da Câmara, com duas legislaturas de dados. | Alto para o prazo. | Marco 1 mínimo definido (§4.1): estimativa de 89–140 h contra ~115 h (inclui RF09 e RF10). Checkpoints com data no ROADMAP; atraso de mais de 1 semana em um checkpoint obriga a reavaliar o escopo. |
 | R07 | Tráfego viral concentrado (o site se espalha). | Alto para custo e disponibilidade se cada acesso chegar ao servidor. | RNF04: páginas públicas servidas por cache/CDN; a busca é o ponto dinâmico a proteger com cache e limite de requisições. |
 
 ## 11. Glossário
@@ -229,7 +232,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 - [x] Requisitos não funcionais
 - [x] Restrições (prazo, orçamento, tempo disponível por semana)
 - [x] Definir o escopo mínimo do Marco 1 (R06)
-- [ ] Diagrama de fluxo do usuário
+- [x] Diagrama de fluxo do usuário (`docs/00-discovery/fluxo-usuario.md`)
 - [ ] Modelagem de dados
 - [ ] Plano de arquitetura e descritivo das decisões
 - [ ] Definição da stack
@@ -243,6 +246,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | Fluxo do usuário do Marco 1; RF09 (home com gráficos), RF10 (compartilhamento) e RN10 (taxa do partido) entram no M1. |
 | 2026-10-20 | Escopo do Marco 1 (§4.1): presença, perfil e metodologia, só 57ª legislatura; RN09 só com link; planejamento a 8 h/semana. |
 | 2026-10-20 | Decisões S1–S4 do SP01: DA07 (fonte da presença), RN02 com coautoria só de proponentes e coluna de apoios, nova RN09 (taxa oficial ao lado), RN03 e RN05 detalhadas. |
 | 2026-10-20 | SP01 executado para a Câmara; decisões S1–S4 abertas. |
