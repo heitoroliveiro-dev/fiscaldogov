@@ -27,7 +27,7 @@ Derivadas do contexto (§3 público, DA04 neutralidade, DA06 web responsivo, OE0
 
 ### Plataforma
 
-- **Web responsivo, mobile-first (DA06).** Site web, sem app nativo no MVP. Toda tela é desenhada primeiro para 360px de largura e funciona sem rolagem horizontal; telas maiores ganham colunas e densidade. Breakpoints do sistema: `sm` 640 · `md` 768 · `lg` 1024.
+- **Web responsivo, computador e celular (DA06).** Site web com domínio próprio, sem app nativo no MVP. Toda tela é desenhada primeiro para 360px e funciona sem rolagem horizontal; no computador (`lg+`) a tela tem layout próprio — mais colunas, gráficos e tabela lado a lado —, não a versão de celular esticada. Breakpoints do sistema: `sm` 640 · `md` 768 · `lg` 1024.
 - **Busca visível.** O campo de busca fica sempre visível; o ⌘K do sistema é só um complemento no desktop.
 
 ### Adaptações ao design system (decididas em 2026-10-20)

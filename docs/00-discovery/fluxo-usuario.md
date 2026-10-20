@@ -56,7 +56,7 @@ Lista de deputados do estado escolhido e/ou que casam com o nome digitado: foto,
 |---|---|---|
 | Identificação | Foto, nome, **partido atual**, UF; aviso de **troca de partido** no período, com o histórico | RN01, RF05 |
 | Mandato | Período(s) em exercício na 57ª legislatura; se é suplente ou titular | DA03 |
-| Presença | **Taxa** em destaque + "X de Y sessões" · contagens separadas: presenças, ausências justificadas (com motivos), faltas · explicação curta de "sessão deliberativa" e "ausência justificada" na própria tela | RN03, RN04, RN05 |
+| Presença | **Taxa** em destaque + "X de Y sessões" + **mediana da Câmara** no período (RN11) · período padrão: legislatura inteira, filtro por ano (RN12) · contagens separadas: presenças, ausências justificadas (com motivos), faltas · explicação curta de "sessão deliberativa" e "ausência justificada" na própria tela | RN03, RN04, RN05 |
 | Amostra pequena | Abaixo do corte da RN08: a taxa aparece com aviso e o deputado não entra no ranking | RN08 |
 | Taxa oficial | Link "ver a frequência na página oficial da Câmara" (no M1, só o link) | RN09 |
 | Fonte | Link para o registro original, data da última atualização, link para a metodologia | RF07, RF08, RF06 |
@@ -65,11 +65,11 @@ Lista de deputados do estado escolhido e/ou que casam com o nome digitado: foto,
 ### Ranking de presença
 
 - Abre **ordenado pela menor presença**; o eleitor pode inverter.
-- Filtros: **partido** (atual) e **estado**.
+- Filtros: **partido** (atual), **estado** e **ano** (padrão: legislatura inteira; período menor que um ano mostra aviso — RN12).
 - Cada linha: posição, foto, nome, partido, UF, taxa e "X de Y sessões".
 - Só entram deputados acima do corte da RN08; uma nota diz quantos ficaram de fora e por quê.
 - Link para a metodologia no topo; data da última atualização no rodapé.
-- Regras: RN01, RN04, RN05, RN08; HU01.
+- Regras: RN01, RN04, RN05, RN08, RN12; HU01.
 
 ### Metodologia
 
@@ -79,7 +79,7 @@ Uma seção por estatística exibida (no M1: presença do deputado e taxa do par
 
 - Fonte e data da última atualização (RF07, RF08).
 - Termos técnicos com explicação curta acessível por toque — Popover ou texto expansível, nunca Tooltip (diretrizes de UI).
-- Funciona de 360 px a 1440 px sem rolagem horizontal (RNF09); alvos de toque ≥ 44 px no celular (D2).
+- Funciona de 360 px a 1440 px sem rolagem horizontal, com layout próprio para computador (RNF09); alvos de toque ≥ 44 px no celular (D2).
 
 ## Fora do Marco 1
 

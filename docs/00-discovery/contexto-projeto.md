@@ -28,6 +28,10 @@ Oferecer ao eleitor comum uma forma simples, neutra e verificável de acompanhar
 | OE03 | Permitir buscar projetos em tramitação e ver o autor e os votos nominais de cada parlamentar. |
 | OE04 | Publicar a metodologia de cada estatística e a fonte de cada dado, com link para o registro oficial. |
 
+### 2.3 Diferencial
+
+**Cada número é verificável e se explica sozinho, no celular e no computador: de onde veio, como foi calculado e como conferir na fonte oficial.** Feature que não reforça verificabilidade ou clareza perde prioridade. Base: `docs/00-discovery/estudo-semelhantes.md`.
+
 ## 3. Público-alvo
 
 **Perfil principal: eleitor comum.** Não tem conhecimento técnico nem de processo legislativo. Acessa majoritariamente pelo celular. Quer respostas rápidas sobre quem o representa.
@@ -85,7 +89,7 @@ Endpoints relevantes identificados no Senado:
 
 **Como** eleitor, **quero** ver quais parlamentares mais faltaram, com filtro por partido, **para** avaliar o compromisso de quem me representa.
 
-Regras aplicáveis: RN01, RN03, RN04, RN05, RN08, RN09.
+Regras aplicáveis: RN01, RN03, RN04, RN05, RN08, RN09, RN11, RN12.
 
 Critérios de aceite (rascunho, a validar):
 
@@ -139,6 +143,8 @@ Critérios de aceite (rascunho, a validar):
 | RN08 | O ranking de presença inclui apenas quem esteve em exercício em **pelo menos 25% das sessões deliberativas do período filtrado**. Abaixo disso, a taxa aparece só no perfil, com aviso de amostra pequena. | Decidida |
 | RN09 | O perfil exibe, ao lado da taxa do site, a **taxa oficial publicada pela Câmara** (Ato da Mesa nº 191/2017) com link para a página oficial; a metodologia explica por que os números podem diferir. Se a taxa oficial não puder ser lida, aparece só o link. | Decidida (S2) |
 | RN10 | A **taxa de presença de um partido** é a taxa agregada da bancada atual: soma das presenças ÷ soma das sessões consideradas (mesma regra da RN04) de todos os membros atuais (RN01). Partidos com menos de 5 deputados em exercício não entram em comparações entre partidos, com nota explicando o motivo. | Decidida |
+| RN11 | Ao lado da taxa de cada deputado aparece a **mediana da Câmara** no mesmo período, calculada sobre os deputados que entram no ranking (RN08). | Decidida |
+| RN12 | O **período padrão** do ranking, do perfil e da home é a **legislatura inteira**. O eleitor pode filtrar por ano; períodos menores que um ano exibem aviso de que poucas sessões distorcem a taxa. | Decidida |
 
 > **Decidida:** confirmada pelo responsável. **Proposta:** sugerida durante a entrevista, aguardando confirmação explícita.
 
@@ -171,7 +177,7 @@ Critérios de aceite (rascunho, a validar):
 | RNF06 | **Privacidade (LGPD):** apenas métricas de uso agregadas, sem cookie, sem IP armazenado e sem identificar o visitante — dispensa banner de consentimento. Sobre parlamentares, só se exibe e armazena o que as casas publicam e se relaciona ao exercício do mandato (ex.: CPF não é armazenado nem exibido). | Revisão da ferramenta de métricas; teste que garante a ausência de CPF no banco e nas páginas. |
 | RNF07 | **Observabilidade e alertas via Telegram.** Falha do ETL (erro ou execução que não terminou) gera alerta em até 1 h; queda do site detectada pelo monitor externo gera alerta. Cada execução do ETL registra início, fim, registros lidos e gravados por entidade e erros. | Falha simulada gera mensagem no Telegram; log de execução consultável. |
 | RNF08 | **Segurança:** site público somente leitura, sem login, apenas HTTPS. Busca e filtros aceitam só parâmetros de uma allowlist e têm limite de requisições por IP (valor definido no ADR de hospedagem). | Teste de parâmetro fora da allowlist → recusado; teste de limite → resposta 429. |
-| RNF09 | **Web responsivo (DA06):** toda tela funciona de 360 px a 1440 px de largura sem rolagem horizontal. | Teste E2E nos dois extremos. |
+| RNF09 | **Web responsivo (DA06):** toda tela funciona de 360 px a 1440 px de largura sem rolagem horizontal, com layout próprio para computador (sem ser só a versão de celular esticada). | Teste E2E nos dois extremos. |
 | RNF10 | **Alcance dos dados:** legislaturas 56ª (2019–2023) e 57ª (2023–2027), e a 58ª a partir de 01/02/2027. Em duas etapas: o Marco 1 carrega a 57ª; a 56ª entra logo após. | Contagem de legislaturas carregadas no banco. |
 
 ### 8.3 Restrições
@@ -191,8 +197,9 @@ Critérios de aceite (rascunho, a validar):
 | DA03 | **Mandato** é entidade de primeira classe no modelo. | Suplentes, afastamentos e mandatos de 8 anos no Senado exigem ligar cada estatística ao período em exercício. |
 | DA04 | Posicionamento político é exibido por **métricas derivadas de votos** (fidelidade partidária, alinhamento com a orientação do governo, similaridade de votos), nunca por rótulos ideológicos. | Neutralidade e credibilidade; o eleitor vê o dado e tira a própria conclusão. |
 | DA05 | Entrega incremental: **Câmara primeiro**, Senado na sprint seguinte. | Validar o desenho dos adaptadores com uma fonte antes de duplicar o esforço. |
-| DA06 | O produto é um **site web responsivo, mobile-first**. Sem app nativo no MVP. | O público consulta majoritariamente pelo celular; web responsivo atende sem custo de publicação em lojas. |
+| DA06 | O produto é um **site web com domínio próprio, responsivo, para computador e celular**. O desenho começa pelo celular (mobile-first), mas a experiência no computador é igualmente completa. Sem app nativo no MVP. | O público consulta majoritariamente pelo celular, e também pelo computador; web responsivo atende os dois sem custo de publicação em lojas. |
 | DA07 | **Fonte da presença na Câmara:** o registro de frequência da Câmara (webservice `SitCamaraWS`, com presença, ausência e justificativa); de abr/2020 a mar/2021, onde ele não tem dados, a página pública de presença de cada deputado, lida uma única vez. A API v2 (`/eventos/{id}/deputados`) serve de conferência: divergência entre as fontes gera alerta no ETL e consta na metodologia. | Só o webservice traz justificativa (RN03); usar uma única base para presença e justificativa mantém os números coerentes (SP01, S1, S4). |
+| DA08 | **Código e metodologia abertos** sob a licença **AGPL-3.0**, em repositório público. Componentes copiados do design system mantêm a licença MIT de origem. | Qualquer pessoa pode auditar como cada número é calculado (R04); a AGPL impede um fork fechado do site com regras alteradas sem aviso; o código aberto permite que outros continuem o projeto (estudo de semelhantes, lição 5). |
 
 Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Partido, Sessão, Presença, Votação, Voto, Proposição, Autoria.
 
@@ -205,7 +212,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 | R02 | Mudança de formato ou indisponibilidade das APIs oficiais. | Médio. | ETL com tratamento de erro, retry e alerta; banco próprio mantém o site no ar. |
 | R03 | Nova legislatura a partir de fevereiro de 2027. | Médio. | Modelo de dados preparado para múltiplas legislaturas desde o início. |
 | R04 | Percepção de parcialidade política. | Alto. | DA04, linguagem neutra, metodologia pública. |
-| R05 | Projetos semelhantes já existem (ex.: Ranking dos Políticos, Operação Serenata de Amor). | Baixo para aprendizado, médio para adoção. | Estudar o que fazem e definir diferencial antes do lançamento. |
+| R05 | Projetos semelhantes já existem (ex.: Ranking dos Políticos, Operação Serenata de Amor). | Baixo para aprendizado, médio para adoção. | Estudo feito em 2026-10-20 (`docs/00-discovery/estudo-semelhantes.md`); diferencial definido (§2.3). O Radar do Congresso é concorrente direto da HU01. |
 | R06 | Prazo do Marco 1 apertado: ~15 semanas × 5–10 h = 75–150 h para fechar a especificação, arquitetura, fundação técnica e as features da Câmara, com duas legislaturas de dados. | Alto para o prazo. | Marco 1 mínimo definido (§4.1): estimativa de 89–140 h contra ~115 h (inclui RF09 e RF10). Checkpoints com data no ROADMAP; atraso de mais de 1 semana em um checkpoint obriga a reavaliar o escopo. |
 | R07 | Tráfego viral concentrado (o site se espalha). | Alto para custo e disponibilidade se cada acesso chegar ao servidor. | RNF04: páginas públicas servidas por cache/CDN; a busca é o ponto dinâmico a proteger com cache e limite de requisições. |
 
@@ -246,6 +253,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | Estudo de projetos semelhantes; diferencial (§2.3); DA06 explicita computador e celular; DA08 (código aberto, AGPL-3.0); RN11 (mediana) e RN12 (período padrão). |
 | 2026-10-20 | Fluxo do usuário do Marco 1; RF09 (home com gráficos), RF10 (compartilhamento) e RN10 (taxa do partido) entram no M1. |
 | 2026-10-20 | Escopo do Marco 1 (§4.1): presença, perfil e metodologia, só 57ª legislatura; RN09 só com link; planejamento a 8 h/semana. |
 | 2026-10-20 | Decisões S1–S4 do SP01: DA07 (fonte da presença), RN02 com coautoria só de proponentes e coluna de apoios, nova RN09 (taxa oficial ao lado), RN03 e RN05 detalhadas. |

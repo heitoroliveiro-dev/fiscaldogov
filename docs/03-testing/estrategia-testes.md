@@ -8,6 +8,7 @@
   1. Taxa de presença (RN03, RN04, RN05, RN08): só sessões deliberativas do plenário (inclusive remotas); denominador = sessões em exercício − ausências justificadas; corte de 25% para o ranking.
   2. Contagem de propostas (RN02, RN06): primeiro signatário × coautoria (proponentes) × apoios; só PL, PLP, PEC e PDL; pela data de apresentação.
   3. Atribuição ao partido atual com sinalização de troca (RN01); taxa agregada do partido e corte de 5 deputados (RN10).
+  6. Mediana da Câmara sobre os deputados do ranking (RN11) e aviso de período curto (RN12).
   4. Votos: só votações nominais entram em estatística (RN07); simbólica é exibida sem voto individual.
   5. Resolução de mandato: suplente, afastamento, retorno do titular, troca de legislatura (DA03, R03).
 - **Adaptadores (contrato):** cada adaptador (Câmara, Senado) é testado contra **respostas reais gravadas** das APIs oficiais (fixtures versionadas com data da coleta). Prova que o formato da fonte vira o modelo de domínio sem perda — e detecta mudança de formato (R02).
