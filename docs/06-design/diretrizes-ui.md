@@ -18,30 +18,30 @@ Atualizações do design system entram no projeto de forma manual e deliberada (
 4. Raio: `rounded-md` controles, `rounded-lg` cards, `rounded-xl` dialogs.
 5. Elevação só com `shadow-raised` / `shadow-overlay` / `shadow-modal`.
 6. Movimento: `duration-(--duration-fast) ease-standard`; overlays ≤ 200 ms.
-7. Efeitos de luz só em destaque/landing, um por tela.
-8. Acessibilidade: `aria-label` em botão só-ícone, `<Label htmlFor>` em todo campo, `aria-invalid` + `aria-describedby` em erro, foco sempre visível, **estado nunca só por cor**.
-9. Tokens se editam em `tokens/` e se geram com `npm run tokens` — nunca editar os arquivos gerados.
+7. Acessibilidade: `aria-label` em botão só-ícone, `<Label htmlFor>` em todo campo, `aria-invalid` + `aria-describedby` em erro, foco sempre visível, **estado nunca só por cor**.
+8. Tokens se editam em `tokens/` e se geram com `npm run tokens` — nunca editar os arquivos gerados.
 
 ## Regras deste produto
 
-Derivadas do contexto (§3 público, DA04 neutralidade, OE04 verificabilidade):
+Derivadas do contexto (§3 público, DA04 neutralidade, DA06 web responsivo, OE04 verificabilidade).
 
-- **Mobile-first de verdade.** Toda tela é desenhada primeiro para ~360px de largura. Os breakpoints do sistema já são mobile-first (`sm` 640 · `md` 768 · `lg` 1024).
-- **Fonte e data em todo dado.** Componente de "fonte oficial" (casa + link para o registro + data da última atualização) presente em toda tela que mostra dado (RF07, RF08).
-- **Termo técnico explicado na tela.** Votação nominal, tramitação, suplente etc. vêm com explicação curta acessível sem sair da página (Tooltip não funciona em toque — usar Popover ou texto expansível).
-- **Neutralidade visual.** Nenhum partido é identificado pela sua cor partidária; cores de status (`danger`, `success`) não qualificam pessoas (ex.: taxa de presença baixa não fica vermelha). Ranking mostra o número e a metodologia; o julgamento é do eleitor.
-- **Busca visível.** O sistema é keyboard-first (⌘K); aqui o público está no celular, então a busca é um campo visível, e o ⌘K é complemento no desktop.
+### Plataforma
 
-## Adaptações do sistema — decisões pendentes (suas)
+- **Web responsivo, mobile-first (DA06).** Site web, sem app nativo no MVP. Toda tela é desenhada primeiro para 360px de largura e funciona sem rolagem horizontal; telas maiores ganham colunas e densidade. Breakpoints do sistema: `sm` 640 · `md` 768 · `lg` 1024.
+- **Busca visível.** O campo de busca fica sempre visível; o ⌘K do sistema é só um complemento no desktop.
 
-O design system foi feito para uma ferramenta de trabalho densa, no desktop, dark-first. O público deste produto é o eleitor leigo no celular. Pontos em que os dois se chocam:
+### Adaptações ao design system (decididas em 2026-10-20)
 
-| # | Ponto | Padrão do sistema | Tensão com o produto | Sugestão (a decidir) |
-|---|---|---|---|---|
-| D1 | Densidade de texto | Corpo `text-sm` = 13px | Pequeno para leitura casual no celular; no iOS, campo com fonte < 16px dá zoom automático ao focar | Corpo 16px no mobile (`text-base`), 13–14px só em metadados; campos sempre ≥ 16px |
-| D2 | Alvo de toque | Controles `h-8` (32px); mínimo 24px (WCAG 2.5.8 AA) | Dedo precisa de mais área que cursor | Alvos de toque ≥ 44px no mobile (WCAG 2.5.5 AAA / Apple HIG); manter densidade no `lg+` |
-| D3 | Tema padrão | Dark-first, light completo | Público geral, uso ao ar livre | Seguir a preferência do sistema operacional (`prefers-color-scheme`), com troca manual |
-| D4 | Cor de marca | `brand.hue` 277 (violeta) | Cores carregam leitura partidária no Brasil | Manter um matiz sem associação forte a partido ou campanha; violeta é candidato razoável |
-| D5 | Efeitos de luz | Glow/BorderBeam em destaque | Sobriedade institucional; custo em celular simples | Restringir à landing, ou não usar |
+| # | Ponto | Padrão do sistema | Regra neste produto |
+|---|---|---|---|
+| D1 | Densidade de texto | Corpo `text-sm` (13px) | Corpo `text-base` (16px) abaixo de `lg`; 13–14px só em metadados. Campos de formulário sempre ≥ 16px (evita zoom automático no iOS). |
+| D2 | Alvo de toque | Controles `h-8` (32px) | Alvos de toque ≥ 44px abaixo de `lg` (WCAG 2.5.5 / Apple HIG); densidade do sistema a partir de `lg`. |
+| D3 | Tema | Dark-first | Segue `prefers-color-scheme` do sistema operacional, com troca manual; dark e light são obrigatórios em toda tela. |
+| D4 | Cor de marca | `brand.hue` 277 (violeta) | Mantido 277: violeta não tem associação forte a partido ou campanha no Brasil. Mudar exige reavaliar esse critério. |
+| D5 | Efeitos de luz | Glow/BorderBeam em destaque | Só na landing, no máximo um por tela; nunca em telas de dado. |
 
-Cada decisão tomada aqui sai desta tabela e vira regra na seção acima (ou ADR, se mexer nos tokens do sistema).
+### Dado e linguagem
+
+- **Fonte e data em todo dado.** Componente de "fonte oficial" (casa + link para o registro + data da última atualização) em toda tela que mostra dado (RF07, RF08).
+- **Termo técnico explicado na tela.** Votação nominal, tramitação, suplente etc. vêm com explicação curta acessível sem sair da página. Tooltip não funciona em toque — usar Popover ou texto expansível.
+- **Neutralidade visual.** Nenhum partido é identificado pela sua cor partidária; cores de status (`danger`, `success`) não qualificam pessoas (ex.: taxa de presença baixa não fica vermelha). O ranking mostra o número e a metodologia; o julgamento é do eleitor.

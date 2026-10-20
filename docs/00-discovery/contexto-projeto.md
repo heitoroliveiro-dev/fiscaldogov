@@ -1,7 +1,7 @@
 # Contexto do Projeto — Transparência do Congresso
 
 > **Nome provisório.** O nome definitivo ainda não foi escolhido.
-> **Status:** especificação em andamento (fase de entrevista)
+> **Status:** especificação em andamento (fase de entrevista — requisitos não funcionais concluídos)
 > **Última atualização:** 2026-10-20
 > **Responsável:** Heitor Oliveiro
 
@@ -43,6 +43,7 @@ Consequências para o produto:
 ### 4.1 Dentro do escopo do MVP
 
 - **Câmara dos Deputados** (primeira entrega).
+- Dados das legislaturas 56ª e 57ª, mais a 58ª a partir de fevereiro de 2027 (RNF10).
 - **Senado Federal** (sprint seguinte, reutilizando o mesmo modelo de domínio).
 
 ### 4.2 Fora do escopo do MVP
@@ -149,7 +150,26 @@ Critérios de aceite (rascunho, a validar):
 
 ### 8.2 Requisitos não funcionais
 
-**Pendente.** Próxima etapa da entrevista. Tópicos a cobrir: desempenho, disponibilidade, frequência de atualização dos dados, acessibilidade, segurança, observabilidade, custo de infraestrutura e LGPD.
+| ID | Requisito | Como verificar |
+|----|-----------|----------------|
+| RNF01 | **Atualização diária.** O ETL roda uma vez por dia, de madrugada (horário de Brasília); dados de um dia aparecem no site até as 08:00 do dia seguinte. | Data da última atualização exibida (RF08) ≤ 08:00 do dia corrente. |
+| RNF02 | **Disponibilidade de 99% ao mês** (até ~7h fora do ar). Falha do ETL não derruba o site: ele continua servindo o último dado, com a data visível. | Monitor externo a cada 5 min; relatório mensal. |
+| RNF03 | **Desempenho:** conteúdo principal carrega em ≤ 2,5 s (LCP, percentil 75) em celular com 4G. | Lighthouse em perfil mobile no CI; dados de campo após o lançamento. |
+| RNF04 | **Custo ≤ US$ 10/mês em uso normal, sem escalar com o acesso.** Um pico de 100× no tráfego não multiplica o custo: ≥ 95% das requisições a páginas públicas são servidas por cache/CDN. Alerta de gasto em US$ 10 e limite rígido em US$ 20 no provedor. | Painel de custo do provedor; taxa de acerto do cache. |
+| RNF05 | **Acessibilidade WCAG 2.2 AA.** | Verificação automatizada (axe) no CI sem violações; contraste já verificado no build do design system. |
+| RNF06 | **Privacidade (LGPD):** apenas métricas de uso agregadas, sem cookie, sem IP armazenado e sem identificar o visitante — dispensa banner de consentimento. Sobre parlamentares, só se exibe e armazena o que as casas publicam e se relaciona ao exercício do mandato (ex.: CPF não é armazenado nem exibido). | Revisão da ferramenta de métricas; teste que garante a ausência de CPF no banco e nas páginas. |
+| RNF07 | **Observabilidade e alertas via Telegram.** Falha do ETL (erro ou execução que não terminou) gera alerta em até 1 h; queda do site detectada pelo monitor externo gera alerta. Cada execução do ETL registra início, fim, registros lidos e gravados por entidade e erros. | Falha simulada gera mensagem no Telegram; log de execução consultável. |
+| RNF08 | **Segurança:** site público somente leitura, sem login, apenas HTTPS. Busca e filtros aceitam só parâmetros de uma allowlist e têm limite de requisições por IP (valor definido no ADR de hospedagem). | Teste de parâmetro fora da allowlist → recusado; teste de limite → resposta 429. |
+| RNF09 | **Web responsivo (DA06):** toda tela funciona de 360 px a 1440 px de largura sem rolagem horizontal. | Teste E2E nos dois extremos. |
+| RNF10 | **Alcance dos dados:** legislaturas 56ª (2019–2023) e 57ª (2023–2027), e a 58ª a partir de 01/02/2027. | Contagem de legislaturas carregadas no banco. |
+
+### 8.3 Restrições
+
+| Restrição | Valor |
+|-----------|-------|
+| Dedicação | 5 a 10 horas por semana. |
+| Prazo | Marco 1 (Câmara no ar) antes de 01/02/2027, início da 58ª legislatura. |
+| Orçamento | RNF04. Infraestrutura atual do responsável: plano Hobby do Railway (US$ 5/mês), com preferência por reutilizá-lo. A escolha final de hospedagem é um ADR. |
 
 ## 9. Decisões de produto e arquitetura (preliminares)
 
@@ -160,6 +180,7 @@ Critérios de aceite (rascunho, a validar):
 | DA03 | **Mandato** é entidade de primeira classe no modelo. | Suplentes, afastamentos e mandatos de 8 anos no Senado exigem ligar cada estatística ao período em exercício. |
 | DA04 | Posicionamento político é exibido por **métricas derivadas de votos** (fidelidade partidária, alinhamento com a orientação do governo, similaridade de votos), nunca por rótulos ideológicos. | Neutralidade e credibilidade; o eleitor vê o dado e tira a própria conclusão. |
 | DA05 | Entrega incremental: **Câmara primeiro**, Senado na sprint seguinte. | Validar o desenho dos adaptadores com uma fonte antes de duplicar o esforço. |
+| DA06 | O produto é um **site web responsivo, mobile-first**. Sem app nativo no MVP. | O público consulta majoritariamente pelo celular; web responsivo atende sem custo de publicação em lojas. |
 
 Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Partido, Sessão, Presença, Votação, Voto, Proposição, Autoria.
 
@@ -173,6 +194,8 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 | R03 | Nova legislatura a partir de fevereiro de 2027. | Médio. | Modelo de dados preparado para múltiplas legislaturas desde o início. |
 | R04 | Percepção de parcialidade política. | Alto. | DA04, linguagem neutra, metodologia pública. |
 | R05 | Projetos semelhantes já existem (ex.: Ranking dos Políticos, Operação Serenata de Amor). | Baixo para aprendizado, médio para adoção. | Estudar o que fazem e definir diferencial antes do lançamento. |
+| R06 | Prazo do Marco 1 apertado: ~15 semanas × 5–10 h = 75–150 h para fechar a especificação, arquitetura, fundação técnica e as features da Câmara, com duas legislaturas de dados. | Alto para o prazo. | Definir um Marco 1 mínimo (quais HUs entram) logo após confirmar as regras; acompanhar o avanço por semana no ROADMAP. |
+| R07 | Tráfego viral concentrado (o site se espalha). | Alto para custo e disponibilidade se cada acesso chegar ao servidor. | RNF04: páginas públicas servidas por cache/CDN; a busca é o ponto dinâmico a proteger com cache e limite de requisições. |
 
 ## 11. Glossário
 
@@ -189,8 +212,9 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 - [ ] Nome definitivo do projeto
 - [ ] Confirmar as regras com status "Proposta" (RN04 a RN07)
 - [ ] Validar critérios de aceite das HU01 a HU03
-- [ ] Requisitos não funcionais
-- [ ] Restrições (prazo, orçamento, tempo disponível por semana)
+- [x] Requisitos não funcionais
+- [x] Restrições (prazo, orçamento, tempo disponível por semana)
+- [ ] Definir o escopo mínimo do Marco 1 (R06)
 - [ ] Diagrama de fluxo do usuário
 - [ ] Modelagem de dados
 - [ ] Plano de arquitetura e descritivo das decisões
@@ -203,4 +227,6 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | Requisitos não funcionais RNF01 a RNF10, restrições (§8.3), alcance das legislaturas no escopo, riscos R06 e R07. |
+| 2026-10-20 | DA06: web responsivo, mobile-first, sem app nativo no MVP. |
 | 2026-10-20 | Criação do documento: problema, objetivos, público, escopo, fontes de dados, HU01 a HU03, regras de negócio RN01 a RN07, requisitos funcionais preliminares, decisões DA01 a DA05, riscos e pendências. |
