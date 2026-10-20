@@ -10,6 +10,7 @@ Fonte de verdade do produto: `docs/00-discovery/contexto-projeto.md`.
 ## Stack (imutável sem ADR)
 
 - **Pendente — ADR-0001.** Já decidido no contexto: ETL em **Python** alimentando **banco próprio** (DA01); site não consulta as APIs oficiais ao vivo.
+- **Plataforma:** site web responsivo, mobile-first; sem app nativo no MVP (DA06).
 - **UI:** design system em `../design-system/linear` (Next.js + Tailwind v4 + Radix + shadcn/ui). Regras em `docs/06-design/diretrizes-ui.md`.
 
 ## Regras imutáveis (hard constraints)
@@ -25,7 +26,7 @@ Fonte de verdade do produto: `docs/00-discovery/contexto-projeto.md`.
 - Uma fonte de dados = um adaptador; o domínio não conhece o formato das APIs (DA02).
 - Nenhuma feature não trivial sem o fluxo SDD (abaixo).
 
-Constituição completa: `.specify/memory/constitution.md` (**ainda não ratificada** — insumo em `docs/01-architecture/constituicao-insumo.md`). Manter coerente com esta lista.
+Constituição completa: `.specify/memory/constitution.md` (v1.0.0, ratificada em 2026-10-20). Manter coerente com esta lista — emenda e esta lista mudam no mesmo commit.
 
 ## Fluxo SDD (GitHub Spec Kit)
 
@@ -60,7 +61,7 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 ## Fase atual
 
 - **Fase:** F0 — Discovery (em andamento). **Feature ativa:** nenhuma.
-- **Próximo:** fechar as pendências da §12 do contexto (RNFs, RN04–RN07, critérios das HUs) e ratificar a constituição.
+- **Próximo:** fechar as pendências da §12 do contexto (RNFs em entrevista, RN04–RN07, critérios das HUs).
 - Histórico completo: `docs/ROADMAP.md` e `CHANGELOG.md` (não duplicar aqui).
 
 ## Índice de documentação (carregar sob demanda)
