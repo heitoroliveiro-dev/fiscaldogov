@@ -5,7 +5,7 @@
 ## Onde estou agora
 
 **Fase atual:** F0 — Discovery (em andamento) · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** confirmar RN04–RN07 e definir o escopo mínimo do Marco 1 (R06).
+**Próxima ação:** definir o escopo mínimo do Marco 1 (R06) e executar o SP01, do qual dependem RN02–RN05.
 **Prazo:** M1 antes de 01/02/2027 · **Ritmo:** 5–10 h/semana.
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
@@ -22,7 +22,7 @@ Dar ao eleitor comum, pelo celular, uma forma simples, neutra e verificável de 
 | F0 | Discovery | Contexto completo: RNFs, RN04–RN07 confirmadas, critérios das HUs validados, restrições, fluxo do usuário | — | §12 do contexto sem itens de especificação abertos | em andamento |
 | F0.1 | Processo | Repositório com gitflow, Spec Kit, kit de contexto, hooks de segredo/commit | — | Hooks bloqueiam `.env` e commit fora do padrão | ✓ |
 | F0.2 | Constituição | `.specify/memory/constitution.md` v1.0.0 | F0.1 | Ratificada via `/speckit-constitution` | ✓ v1.0.0 |
-| SP01 | Spike: ausência justificada | Resposta: as APIs informam justificativa de ausência? | — | Relatório com endpoints consultados e exemplos reais | |
+| SP01 | Spike: dados que sustentam RN02–RN05 | Respostas: justificativa de ausência, presença em sessão remota (2020–2021), campo de primeiro signatário | — | Relatório com endpoints consultados e exemplos reais | |
 | F1 | Arquitetura | ADR-0001 stack; ADR de domínio/adaptadores (DA02, DA03); ADR de hospedagem com cache/CDN (RNF04, R07; limite de 20 mil arquivos do Cloudflare Pages free); ADR de frequência do ETL; modelagem de dados multi-legislatura (R03) | F0 | Todo ADR crítico aceito com alternativas | |
 | F2 | Fundação técnica | Scaffold, design system aplicado, lint, hooks da stack, CI, banco + migrations, esqueleto do ETL e do adaptador da Câmara | F1 | App sobe, CI verde, ETL grava um deputado com fonte e data | |
 | F3.x | Features Câmara | HU01 (presença), HU02 (propostas), HU03 (tramitação), RF05 (perfil), RF06–RF08 (metodologia, fonte, atualização) | F2 (HU01 também SP01) | Cada uma com spec, testes e evidência | |
@@ -38,7 +38,7 @@ Espelha a §12 do contexto (a fonte é lá).
 | # | Item | Origem | Triagem | Status |
 |---|---|---|---|---|
 | 1 | Nome definitivo do projeto | contexto §12 | decisão | aberto |
-| 2 | Confirmar RN04–RN07 | contexto §7 | decisão | aberto |
+| 2 | Confirmar RN04–RN07 | contexto §7 | decisão | ✓ + RN08 |
 | 3 | Validar critérios de aceite HU01–HU03 | contexto §6 | decisão (entra no `/speckit-specify`) | aberto |
 | 4 | Requisitos não funcionais | contexto §8.2 | entrevista | ✓ RNF01–RNF10 |
 | 5 | Restrições (prazo, orçamento, horas/semana) | contexto §12 | entrevista | ✓ §8.3 |
