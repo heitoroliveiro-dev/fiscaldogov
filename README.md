@@ -2,7 +2,7 @@
 
 Site para o eleitor comum acompanhar, pelo celular e com linguagem simples, a atuação de deputados federais e senadores a partir dos dados abertos oficiais da Câmara e do Senado — com fonte e metodologia de cada número.
 
-**Status:** Fase 1 — Arquitetura. Ainda não há código de aplicação; a stack será definida no ADR-0001.
+**Status:** Fase 1 — Arquitetura. Ainda não há código de aplicação. Stack: [ADR-0001](docs/01-architecture/adr/adr-0001-stack.md).
 
 ## Primeiros passos (todo clone)
 

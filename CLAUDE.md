@@ -9,7 +9,12 @@ Fonte de verdade do produto: `docs/00-discovery/contexto-projeto.md`.
 
 ## Stack (imutável sem ADR)
 
-- **Pendente — ADR-0001.** Já decidido no contexto: ETL em **Python** alimentando **banco próprio** (DA01); site não consulta as APIs oficiais ao vivo.
+- **Site:** Next.js 16 + React 19 + TypeScript estrito + Tailwind v4 + Radix (design system). Só lê o banco, via Prisma, com papel só-`SELECT`.
+- **Banco:** PostgreSQL (Railway). Schema e migrations: **Prisma 7** (`schema.prisma` é a fonte única).
+- **ETL, domínio e estatísticas:** Python 3.14 + SQLAlchemy 2 Core (reflection) + psycopg 3. **Toda estatística é calculada só no Python** e gravada pronta.
+- **Cache:** CDN. Sem Redis no M1.
+
+Justificativa: `docs/01-architecture/adr/adr-0001-stack.md`.
 - **Plataforma:** site web com domínio próprio, responsivo para computador e celular (mobile-first); sem app nativo no MVP (DA06).
 - **Licença:** AGPL-3.0, código e metodologia abertos (DA08). Repositório público: segredo vazado é público na hora.
 - **UI:** design system em `../design-system/linear` (Next.js + Tailwind v4 + Radix + shadcn/ui). Regras em `docs/06-design/diretrizes-ui.md`.
@@ -56,14 +61,14 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 
 ```
 # hooks: git config core.hooksPath .githooks   (uma vez por clone)
-# dev / test / lint / build / migrate / etl: pendentes até ADR-0001
+# dev / test / lint / build / migrate / etl: definidos na F2 (stack: ADR-0001)
 ```
 
 ## Fase atual
 
 - **Fase:** F1 — Arquitetura. **Feature ativa:** nenhuma.
 - **Marco 1:** presença + perfil + metodologia, 57ª legislatura, até 31/01/2027 (contexto §4.1).
-- **Próximo:** ADR-0001 (stack).
+- **Próximo:** ADR de hospedagem (renderização do site, CDN, backup, agendamento do ETL).
 - Histórico completo: `docs/ROADMAP.md` e `CHANGELOG.md` (não duplicar aqui).
 
 ## Índice de documentação (carregar sob demanda)
