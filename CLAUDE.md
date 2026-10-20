@@ -61,7 +61,8 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 ## Fase atual
 
 - **Fase:** F0 — Discovery (em andamento). **Feature ativa:** nenhuma.
-- **Próximo:** fechar as pendências da §12 do contexto (RNFs em entrevista, RN04–RN07, critérios das HUs).
+- **Marco 1:** presença + perfil + metodologia, 57ª legislatura, até 31/01/2027 (contexto §4.1).
+- **Próximo:** fluxo do usuário e estudo de semelhantes; depois F1 (ADR-0001).
 - Histórico completo: `docs/ROADMAP.md` e `CHANGELOG.md` (não duplicar aqui).
 
 ## Índice de documentação (carregar sob demanda)

@@ -44,6 +44,8 @@ Consequências para o produto:
 
 - **Câmara dos Deputados** (primeira entrega).
 - Dados das legislaturas 56ª e 57ª, mais a 58ª a partir de fevereiro de 2027 (RNF10).
+
+**Marco 1 — Câmara no ar (até 31/01/2027):** HU01 (presença), RF05 (perfil), RF06–RF08 (metodologia, fonte e data de atualização), apenas a **57ª legislatura** (a 58ª entra a partir de fev/2027). A RN09 entra no M1 só com o link para a página oficial. Ficam para logo depois do M1, nesta ordem proposta: HU02, 56ª legislatura, HU03, número oficial da RN09.
 - **Senado Federal** (sprint seguinte, reutilizando o mesmo modelo de domínio).
 
 ### 4.2 Fora do escopo do MVP
@@ -167,13 +169,13 @@ Critérios de aceite (rascunho, a validar):
 | RNF07 | **Observabilidade e alertas via Telegram.** Falha do ETL (erro ou execução que não terminou) gera alerta em até 1 h; queda do site detectada pelo monitor externo gera alerta. Cada execução do ETL registra início, fim, registros lidos e gravados por entidade e erros. | Falha simulada gera mensagem no Telegram; log de execução consultável. |
 | RNF08 | **Segurança:** site público somente leitura, sem login, apenas HTTPS. Busca e filtros aceitam só parâmetros de uma allowlist e têm limite de requisições por IP (valor definido no ADR de hospedagem). | Teste de parâmetro fora da allowlist → recusado; teste de limite → resposta 429. |
 | RNF09 | **Web responsivo (DA06):** toda tela funciona de 360 px a 1440 px de largura sem rolagem horizontal. | Teste E2E nos dois extremos. |
-| RNF10 | **Alcance dos dados:** legislaturas 56ª (2019–2023) e 57ª (2023–2027), e a 58ª a partir de 01/02/2027. | Contagem de legislaturas carregadas no banco. |
+| RNF10 | **Alcance dos dados:** legislaturas 56ª (2019–2023) e 57ª (2023–2027), e a 58ª a partir de 01/02/2027. Em duas etapas: o Marco 1 carrega a 57ª; a 56ª entra logo após. | Contagem de legislaturas carregadas no banco. |
 
 ### 8.3 Restrições
 
 | Restrição | Valor |
 |-----------|-------|
-| Dedicação | 5 a 10 horas por semana. |
+| Dedicação | 5 a 10 horas por semana; o planejamento usa **8 h/semana** (~115 h até o Marco 1). |
 | Prazo | Marco 1 (Câmara no ar) antes de 01/02/2027, início da 58ª legislatura. |
 | Orçamento | RNF04. Infraestrutura atual do responsável: plano Hobby do Railway (US$ 5/mês), com preferência por reutilizá-lo. A escolha final de hospedagem é um ADR. |
 
@@ -201,7 +203,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 | R03 | Nova legislatura a partir de fevereiro de 2027. | Médio. | Modelo de dados preparado para múltiplas legislaturas desde o início. |
 | R04 | Percepção de parcialidade política. | Alto. | DA04, linguagem neutra, metodologia pública. |
 | R05 | Projetos semelhantes já existem (ex.: Ranking dos Políticos, Operação Serenata de Amor). | Baixo para aprendizado, médio para adoção. | Estudar o que fazem e definir diferencial antes do lançamento. |
-| R06 | Prazo do Marco 1 apertado: ~15 semanas × 5–10 h = 75–150 h para fechar a especificação, arquitetura, fundação técnica e as features da Câmara, com duas legislaturas de dados. | Alto para o prazo. | Definir um Marco 1 mínimo (quais HUs entram) logo após confirmar as regras; acompanhar o avanço por semana no ROADMAP. |
+| R06 | Prazo do Marco 1 apertado: ~15 semanas × 5–10 h = 75–150 h para fechar a especificação, arquitetura, fundação técnica e as features da Câmara, com duas legislaturas de dados. | Alto para o prazo. | Marco 1 mínimo definido (§4.1): estimativa de 82–129 h contra ~115 h. Checkpoints com data no ROADMAP; atraso de mais de 1 semana em um checkpoint obriga a reavaliar o escopo. |
 | R07 | Tráfego viral concentrado (o site se espalha). | Alto para custo e disponibilidade se cada acesso chegar ao servidor. | RNF04: páginas públicas servidas por cache/CDN; a busca é o ponto dinâmico a proteger com cache e limite de requisições. |
 
 ## 11. Glossário
@@ -226,7 +228,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 - [ ] Validar critérios de aceite das HU01 a HU03
 - [x] Requisitos não funcionais
 - [x] Restrições (prazo, orçamento, tempo disponível por semana)
-- [ ] Definir o escopo mínimo do Marco 1 (R06)
+- [x] Definir o escopo mínimo do Marco 1 (R06)
 - [ ] Diagrama de fluxo do usuário
 - [ ] Modelagem de dados
 - [ ] Plano de arquitetura e descritivo das decisões
@@ -241,6 +243,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | Escopo do Marco 1 (§4.1): presença, perfil e metodologia, só 57ª legislatura; RN09 só com link; planejamento a 8 h/semana. |
 | 2026-10-20 | Decisões S1–S4 do SP01: DA07 (fonte da presença), RN02 com coautoria só de proponentes e coluna de apoios, nova RN09 (taxa oficial ao lado), RN03 e RN05 detalhadas. |
 | 2026-10-20 | SP01 executado para a Câmara; decisões S1–S4 abertas. |
 | 2026-10-20 | RN04 a RN07 decididas e detalhadas; RN02 define autor principal como primeiro signatário; nova RN08 (mínimo de 25% das sessões para o ranking); critérios das HUs, SP01 e glossário atualizados. |

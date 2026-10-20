@@ -16,6 +16,7 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 - Constituição v1.0.0 ratificada (`.specify/memory/constitution.md`): 7 princípios, 3 inegociáveis.
 - DA06 no contexto: produto é web responsivo, mobile-first, sem app nativo no MVP.
 - Relatório do spike SP01 (Câmara): fontes de presença, justificativa e autoria.
+- Escopo do Marco 1 e roadmap com estimativas e checkpoints até 31/01/2027.
 - Decisões S1–S4: DA07 (fonte da presença), coautoria só de proponentes com coluna de apoios (RN02), taxa oficial da Câmara ao lado (RN09).
 - Regras de negócio RN04–RN07 decididas, RN02 detalhada e RN08 nova; SP01 ampliado.
 - Requisitos não funcionais RNF01–RNF10 e restrições do projeto no contexto (entrevista de 2026-10-20).
