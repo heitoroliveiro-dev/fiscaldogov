@@ -12,7 +12,7 @@
 ## Passos
 
 1. `npm ci` em `web/`.
-2. `prisma generate`.
+2. `prisma generate` (sem `DATABASE_URL_DONO`: o `prisma.config.ts` só exige a URL de dono nos comandos de migration).
 3. `npm run build`: geração de tokens + `next build` com `output: 'export'`, lendo `DATABASE_URL_LEITURA`.
 4. Conferência do resultado: `out/index.html` existe e contém `noindex` e `versao-publicada`; `out/_headers` e `out/versao.json` existem.
 5. `wrangler deploy` (Workers static assets, `assets.directory = "./out"`, sem script).

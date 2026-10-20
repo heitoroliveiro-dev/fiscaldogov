@@ -111,7 +111,7 @@ Decisões técnicas da feature, com alternativas descartadas. Versões verificad
 ## 8. Design system
 
 - **Decisão:** adoção pela **opção B** do design system (`docs/08-uso-em-novos-projetos.md`).
-  - Copiar `tokens/`, `scripts/` (geração de tokens com verificação WCAG), `src/styles/`, `src/lib/utils.ts`, `components.json` e **só os componentes usados** (Card, Badge, Button e Separator).
+  - Copiar `tokens/`, `scripts/` (geração de tokens com verificação WCAG), `src/styles/`, `src/lib/utils.ts`, `components.json` e **só os componentes usados** (Card, Button e Separator).
   - Troca de tema com `next-themes` (D3: segue o sistema, com troca manual).
 - **Alternativa descartada:** opção A (clonar o template inteiro). Traz páginas de documentação e componentes sem uso que precisariam ser apagados.
 - Aplicar as adaptações D1–D2 (corpo 16 px e alvos de 44 px abaixo de `lg`) já no esqueleto.

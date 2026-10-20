@@ -102,7 +102,7 @@ web/                               # site (Next.js, exportação estática)
 ├── wrangler.jsonc                 # static assets: ./out
 ├── src/
 │   ├── app/layout.tsx · page.tsx
-│   ├── components/ui/             # Card, Badge, Button, Separator (do design system)
+│   ├── components/ui/             # Card, Button, Separator (do design system)
 │   ├── components/                # alternar-tema, fonte-oficial, aviso-testes, aviso-desatualizado (script no navegador)
 │   ├── lib/db.ts                  # PrismaClient com adapter-pg (leitura)
 │   ├── lib/dados.ts               # consulta do deputado exibido e da última execução

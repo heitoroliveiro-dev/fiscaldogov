@@ -12,7 +12,7 @@ Roteiros checáveis: **ação → resultado esperado**. Cada um gera a evidênci
 
 1. Subir um Postgres local (mesma major do Railway) e criar os papéis com o script de preparo de desenvolvimento.
 2. `npm --prefix web run db:migrate:deploy`
-3. **Esperado:** migrations aplicadas sem erro; `\dt` lista as 10 tabelas de `data-model.md`; extensão `btree_gist` presente.
+3. **Esperado:** migrations aplicadas sem erro; `\dt` lista as 10 tabelas de `data-model.md` mais a `_prisma_migrations`, que o Prisma cria; extensão `btree_gist` presente.
 
 ## R2 — Coleta manual ponta a ponta (US1, FR-006 a FR-012)
 
@@ -77,8 +77,8 @@ Roteiros checáveis: **ação → resultado esperado**. Cada um gera a evidênci
 
 ## R9b — Migration que falha (FR-017a)
 
-1. Numa branch de teste, com um serviço de homologação do Railway (ou banco local com o mesmo comando de pré-deploy), aplicar uma migration propositalmente inválida.
-2. **Esperado:** `prisma migrate deploy` falha, a implantação é abortada, a versão anterior do ETL continua sendo a ativa e o banco fica sem a mudança parcial.
+1. Num banco local com as migrations atuais aplicadas, rodar o mesmo comando de pré-deploy do Railway (`prisma migrate deploy`) numa branch de teste com uma migration propositalmente inválida, usando a imagem do ETL de T049.
+2. **Esperado:** `prisma migrate deploy` sai com código ≠ 0 e o banco fica sem a mudança parcial. No Railway, um código ≠ 0 no pré-deploy aborta a implantação e mantém a versão anterior ativa — conferir na primeira implantação real e registrar em `evidencias.md`.
 
 ## R10 — Custo (SC-009, FR-031)
 

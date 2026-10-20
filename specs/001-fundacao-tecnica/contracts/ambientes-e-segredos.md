@@ -34,6 +34,11 @@ Nenhum valor real no repositório (princípio VI). `.env.example` em `etl/` e `w
 
 Sem segredos. Postgres de serviço com senhas de teste definidas no próprio workflow (banco efêmero, descartado ao fim do job).
 
+| Variável | Conteúdo |
+|---|---|
+| `ETL_EXIGIR_INTEGRACAO` | `1` no job `etl-integration`: variável de banco ausente vira erro, nunca pulo |
+| `DATABASE_URL_TESTE`, `DATABASE_URL_ESCRITA_TESTE`, `DATABASE_URL_LEITURA_TESTE` | Postgres de serviço com os papéis de `scripts/dev-banco-papeis.sql` |
+
 ## Validade das credenciais
 
 `docs/05-runbooks/operacao-coleta.md` mantém uma tabela com cada credencial que expira (token do GitHub, token da Cloudflare, token do R2) e a data de expiração (FR-020a).

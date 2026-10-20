@@ -32,7 +32,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [ ] T001 ⚠️ Criar o serviço Postgres no Railway, anotar a versão major e confirmar que `CREATE EXTENSION btree_gist` é permitida; registrar o resultado em `specs/001-fundacao-tecnica/research.md` §11 (bloqueia só T006 e o job de banco do CI)
 - [ ] T002 Criar `web/package.json` (`"type": "module"`, Node 24, scripts `dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e`, `tokens`, `db:generate`, `db:migrate:dev`, `db:migrate:deploy`), `web/tsconfig.json` (TypeScript 6 estrito, `module: ESNext`, `moduleResolution: bundler`) e `web/next.config.ts` com `output: 'export'`, conforme research §1–2
 - [ ] T003 [P] Configurar ESLint 10 (`web/eslint.config.mjs`, base do design system) e Prettier (`web/.prettierrc.json`) em `web/`
-- [ ] T004 [P] Copiar do design system (`../design-system/linear`, opção B, research §8) para `web/`: `tokens/`, `scripts/`, `src/styles/`, `src/lib/utils.ts`, `components.json` e os componentes `card`, `badge`, `button` e `separator` em `web/src/components/ui/`; `npm --prefix web run tokens` precisa passar (verificação WCAG)
+- [ ] T004 [P] Copiar do design system (`../design-system/linear`, opção B, research §8) para `web/`: `tokens/`, `scripts/`, `src/styles/`, `src/lib/utils.ts`, `components.json` e os componentes `card`, `button` e `separator` em `web/src/components/ui/` (só os usados na página); `npm --prefix web run tokens` precisa passar (verificação WCAG)
 - [ ] T005 [P] Criar `etl/pyproject.toml`:
   - Python 3.14;
   - dependências `sqlalchemy>=2.1,<2.2`, `psycopg[binary]>=3.3,<3.4`, `httpx>=0.28,<0.29`, `boto3>=1.43,<2`;
@@ -69,7 +69,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 ### Implementação
 
-- [ ] T013 Criar `web/prisma.config.ts` (schema em `prisma/schema.prisma`, migrations em `prisma/migrations`, URL de `DATABASE_URL_DONO` via `dotenv`) e `web/prisma/schema.prisma` com generator `prisma-client` (`output = "../src/generated/prisma"`) e as 10 tabelas de `data-model.md` via `@@map`:
+- [ ] T013 Criar `web/prisma.config.ts` (schema em `prisma/schema.prisma`, migrations em `prisma/migrations`, `.env` via `dotenv`; a URL de `DATABASE_URL_DONO` é **opcional ao carregar** — exigida só pelos comandos de migration —, porque o `prisma generate` do `publicar.yml` roda sem ela; confirmar o comportamento do `env()` do Prisma 7 e, se ele exigir a variável, ler de `process.env` sem falhar) e `web/prisma/schema.prisma` com generator `prisma-client` (`output = "../src/generated/prisma"`) e as 10 tabelas de `data-model.md` via `@@map`:
   - `casa_legislativa`, `legislatura`, `partido`;
   - `parlamentar` (`nome_ordenacao`; **"Sem CPF e sem nome civil"**);
   - `identificador_externo` (enum `sistema`: `camara_v2`, `camara_v2_partido`);
@@ -187,7 +187,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [ ] T049 [US1] Criar `etl/Dockerfile`, construído com **contexto na raiz do repositório** (o serviço do Railway usa a raiz como diretório de build e `dockerfilePath = etl/Dockerfile`, porque a imagem precisa de `web/prisma/`), e `.dockerignore` na raiz excluindo `web/node_modules`, `web/.next`, `web/out`, `etl/.venv`, `.git`:
   - base Python 3.14 slim;
   - `postgresql-client` na major de T001;
-  - Node 24 só com o CLI do Prisma e `web/prisma/`;
+  - Node 24 com `web/prisma/`, `web/prisma.config.ts` e os pacotes `prisma` e `dotenv` nas versões fixadas em `web/package-lock.json` (o CLI do Prisma 7 lê o `prisma.config.ts`);
   - instalação com `uv sync --frozen`;
   - `CMD ["python", "-m", "etl", "coletar"]` provisório (o agendamento entra na US2).
 - [ ] T050 [P] [US1] Escrever `docs/05-runbooks/banco-papeis.md`: criar `etl_escrita` e `site_leitura` em produção (senha gerada e guardada só nos cofres), conferir as permissões, trocar senha com `ALTER ROLE ... PASSWORD`
@@ -230,7 +230,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   | `etl-integration` | Postgres de serviço + papéis + migrations + `pytest -m integration` |
 
   Regras do workflow:
-  - todos os jobs de `web/` rodam `npm run db:generate` antes de lint, typecheck, teste ou build (o cliente do Prisma não é versionado — T007);
+  - todos os jobs de `web/` rodam `npm run db:generate` antes de lint, typecheck, teste ou build (o cliente do Prisma não é versionado — T007); no `web-lint`, o `db:generate` roda **sem** `DATABASE_URL_DONO` definida, provando que a publicação consegue gerar o cliente (T013);
   - `etl-integration` define `ETL_EXIGIR_INTEGRACAO=1` e falha se nenhum teste com o marcador `integration` for coletado;
   - o Postgres de serviço usa a major de T001, e o workflow não tem segredos.
 - [ ] T057 [US3] ⚠️ Configurar a proteção de `main` e `develop` no GitHub: PR obrigatório, os 7 jobs de T056 como checks obrigatórios, sem force push; registrar a captura da regra em `specs/001-fundacao-tecnica/evidencias.md`
@@ -308,7 +308,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - o que fazer quando o limite rígido de gasto for atingido;
   - migration que falhou no pré-deploy: como confirmar que o deploy foi abortado e a versão anterior segue agendada, e como reverter (migration corretiva ou restauração — FR-017a).
 - [ ] T075 [US2] ⚠️ Criar o bot do Telegram (BotFather), obter o `chat_id`, cadastrar `ALERTA_TELEGRAM_*` no Railway e no ambiente `producao` do GitHub; enviar mensagem de teste e registrar a captura em `specs/001-fundacao-tecnica/evidencias.md`
-- [ ] T076 [US2] Executar os quickstart R5, R6, R9.4 e R9b e iniciar a observação de 5 dias do R9.3 (SC-002); anexar a evidência e as mensagens de alerta recebidas em `specs/001-fundacao-tecnica/evidencias.md`
+- [ ] T076 [US2] Executar os quickstart R5, R6, R9.4 e R9b e iniciar a observação de 5 dias do R9.3 (SC-002), anotando o horário de início de cada execução agendada (janela 03:00–03:15, FR-013) e a chegada de cada alerta (SC-010); anexar a evidência e as mensagens de alerta recebidas em `specs/001-fundacao-tecnica/evidencias.md`
 
 **Checkpoint**: a coleta roda sozinha, se recupera de quedas e avisa o responsável quando falha.
 
@@ -342,9 +342,9 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [ ] T083 ⚠️ Configurar no Railway o alerta de gasto em US$ 10 e o limite rígido em US$ 20 (FR-031) e registrar a captura em `specs/001-fundacao-tecnica/evidencias.md`
 - [ ] T084 [P] Atualizar `CLAUDE.md` (seção Comandos com os comandos reais de `web/` e `etl/`), `README.md` (como rodar localmente), `CONTRIBUTING.md` (pre-commit novo) e `docs/03-testing/estrategia-testes.md` (cobertura mínima definida para a F2)
 - [ ] T085 [P] Conferir `docs/01-architecture/modelagem-dados.md` contra o `schema.prisma` final e corrigir divergências no mesmo PR
-- [ ] T086 Executar o Lighthouse em perfil mobile no endereço publicado (SC-001, LCP ≤ 2,5 s) e o `prisma migrate diff` contra produção (SC-008); anexar em `specs/001-fundacao-tecnica/evidencias.md`
+- [ ] T086 Executar o Lighthouse em perfil mobile no endereço publicado (SC-001, LCP ≤ 2,5 s; medição manual na F2 — automatizar no CI fica registrado no ROADMAP para a F3.3) e o `prisma migrate diff` contra produção (SC-008); anexar em `specs/001-fundacao-tecnica/evidencias.md`
 - [ ] T087 Review por subagente com contexto limpo contra `plan.md`, `spec.md` e `tasks.md` (prompt de `../sdd-method/05-ciclo-da-feature.md` §8); corrigir os achados e reexecutar as suítes
-- [ ] T088 Concluir a observação de 5 dias (R9.3, SC-002) e de custo (R10, SC-009); atualizar `CHANGELOG.md`, `docs/ROADMAP.md` (F2 ✓) e a fase em `CLAUDE.md`; abrir o PR `feature/001-fundacao-tecnica` → `develop` com a evidência
+- [ ] T088 Concluir a observação de 5 dias (R9.3, SC-002, horários de início dentro da janela de FR-013) e de custo (R10, SC-009); atualizar `CHANGELOG.md`, `docs/ROADMAP.md` (F2 ✓) e a fase em `CLAUDE.md`; abrir o PR `feature/001-fundacao-tecnica` → `develop` com a evidência
 
 ---
 

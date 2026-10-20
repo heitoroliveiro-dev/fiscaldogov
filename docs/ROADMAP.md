@@ -63,7 +63,7 @@ Espelha a §12 do contexto (a fonte é lá).
 
 | Prioridade | Achado | Risco | Status / PR |
 |---|---|---|---|
-| — | — | — | — |
+| P3 | Lighthouse (LCP, RNF03) no CI em vez de medição manual | Regressão de desempenho passar despercebida | Planejar na F3.3 (origem: `/speckit-analyze` da 001, L6) |
 
 ## Pendências fora do código (⚠️)
 

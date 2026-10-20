@@ -192,7 +192,7 @@ A cada coleta bem-sucedida (normalmente uma por dia) uma cópia de segurança do
 **Operação e alertas**
 
 - **FR-028**: Cada versão publicada DEVE identificar, de forma legível por máquina, a execução da coleta e a versão do código que a geraram.
-- **FR-029**: Falha da coleta, execução "com pendências", execução interrompida e falha da publicação DEVEM gerar alerta no canal de mensagens do responsável definido no RNF07 em até 1 hora, com o tipo da falha e o identificador da execução. Falha ao enviar o alerta NÃO DEVE alterar o resultado da execução.
+- **FR-029**: Falha da coleta, execução "com pendências", execução interrompida e falha da publicação DEVEM gerar alerta no canal de mensagens do responsável definido no RNF07 em até 1 hora, com o tipo da falha e o identificador da execução. Falha ao enviar o alerta NÃO DEVE alterar o resultado da execução. Uma configuração inválida que impeça o próprio envio (ex.: canal de alertas não configurado) aparece como execução com falha no painel do provedor principal.
 - **FR-030**: Coleta e publicação DEVEM produzir registros de operação (início, etapas, tentativas, erros) retidos pelo período padrão de cada provedor; registros NÃO DEVEM conter credenciais, tokens nem endereços de conexão com senha (princípio VI).
 - **FR-031**: O alerta de gasto em US$ 10 e o limite rígido de US$ 20 do provedor principal (RNF04) DEVEM estar configurados ao fim desta feature.
 
