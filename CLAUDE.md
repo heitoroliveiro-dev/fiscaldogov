@@ -68,9 +68,9 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 
 ## Fase atual
 
-- **Fase:** F2 — Fundação técnica. **Feature ativa:** nenhuma.
+- **Fase:** F2 — Fundação técnica. **Feature ativa:** `specs/001-fundacao-tecnica` (plano pronto).
 - **Marco 1:** presença + perfil + metodologia, 57ª legislatura, até 31/01/2027 (contexto §4.1).
-- **Próximo:** F2 pelo fluxo SDD (`/speckit-specify` da fundação técnica).
+- **Próximo:** `/speckit-checklist` → `/speckit-tasks` → `/speckit-analyze` da 001.
 - Histórico completo: `docs/ROADMAP.md` e `CHANGELOG.md` (não duplicar aqui).
 
 ## Índice de documentação (carregar sob demanda)
