@@ -1,0 +1,39 @@
+# Ambiente e segredos
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Claude Code — estado local (skills e settings.json do projeto são versionados)
+.claude/settings.local.json
+
+# Python (ETL)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node (frontend)
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Dados brutos baixados das APIs (fixtures de teste vão em pasta própria e são versionadas)
+data/raw/
+
+# SO / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
