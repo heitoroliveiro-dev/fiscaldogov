@@ -4,9 +4,9 @@
 
 ## Onde estou agora
 
-**Fase atual:** F1 — Arquitetura · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** ADR de domínio e adaptadores (DA02, DA03, DA07) + modelagem de dados.
-**Prazo:** M1 até 31/01/2027 · **Ritmo planejado:** 8 h/semana · **Próximo checkpoint:** 02/11 (F0 + F1).
+**Fase atual:** F2 — Fundação técnica · **Próximo marco:** M1 — Câmara no ar (proposto)
+**Próxima ação:** especificar a F2 pelo fluxo SDD (`/speckit-specify`).
+**Prazo:** M1 até 31/01/2027 · **Ritmo planejado:** 8 h/semana · **Próximo checkpoint:** 23/11 (F2).
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
 ## O Norte
@@ -23,7 +23,7 @@ Capacidade: 8 h/semana (~115 h até 31/01/2027). Horas são estimativa de ordem 
 | F0.1 | Processo | Gitflow, Spec Kit, kit de contexto, hooks | — | — | Hooks bloqueiam `.env` e commit fora do padrão | ✓ |
 | F0.2 | Constituição | `.specify/memory/constitution.md` | — | — | Ratificada | ✓ v1.0.0 |
 | SP01 | Spike Câmara | Fontes de presença, justificativa e autoria | — | — | Relatório + decisões S1–S4 | ✓ |
-| F1 | Arquitetura | ADR-0001 stack ✓; ADR-0002 hospedagem, publicação, agendamento e backup ✓; ADR de domínio e adaptadores (DA02, DA03, DA07); modelagem de dados multi-legislatura | 10–15 | 02/11 | Todo ADR crítico aceito com alternativas | |
+| F1 | Arquitetura | ADR-0001 stack; ADR-0002 hospedagem; ADR-0003 domínio e adaptadores; modelagem de dados | 10–15 | 02/11 | Todo ADR crítico aceito com alternativas | ✓ 2026-10-20 |
 | F2 | Fundação técnica | Scaffold com o design system, projeto do ETL, banco + migrations, CI, deploy de um "esqueleto" em produção | 15–25 | 23/11 | Página vazia no ar via CI; ETL grava um deputado com fonte e data | |
 | F3.1 | ETL base da Câmara | Deputados, mandatos, partidos da 57ª (paginação, DA03) | 12–20 | 07/12 | Banco com os 513 deputados e mandatos da 57ª, conferidos contra a API | |
 | F3.2 | HU01 Presença | Presença e justificativa (DA07), cálculo RN03–RN05 e RN08, ranking, link oficial (RN09) | 20–30 | 04/01 | Taxa de deputados de amostra confere com o cálculo manual documentado | |
@@ -51,8 +51,8 @@ Espelha a §12 do contexto (a fonte é lá).
 | 5 | Restrições (prazo, orçamento, horas/semana) | contexto §12 | entrevista | ✓ §8.3 |
 | 12 | Escopo mínimo do Marco 1 | R06 | decisão | ✓ contexto §4.1 |
 | 6 | Diagrama de fluxo do usuário | contexto §12 | F0 | ✓ `docs/00-discovery/fluxo-usuario.md` |
-| 7 | Modelagem de dados | contexto §12 | F1 | aberto |
-| 8 | Plano de arquitetura + definição da stack | contexto §12 | F1 (ADRs) | aberto |
+| 7 | Modelagem de dados | contexto §12 | F1 | ✓ |
+| 8 | Plano de arquitetura + definição da stack | contexto §12 | F1 (ADRs) | ✓ ADR-0001 a 0003 |
 | 9 | Executar SP01 | contexto §10 | spike | ✓ Câmara |
 | 13 | Decisões S1–S4 do SP01 | relatório SP01 | decisão | ✓ DA07, RN02, RN09 |
 | 14 | SP01-B (Senado) | DA05 | spike | antes de F3.y |

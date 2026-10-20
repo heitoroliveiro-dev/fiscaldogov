@@ -30,7 +30,8 @@ Justificativa: `docs/01-architecture/adr/adr-0001-stack.md` e `adr-0002-hospedag
 - **Neutralidade:** nenhum rótulo ideológico; posicionamento só por métricas derivadas de votos (DA04). Linguagem neutra.
 - Toda estatística tem **regra pública** na página de metodologia e **teste automatizado** cobrindo os casos de borda (suplente, troca de partido, licença) — erro de dado vira acusação injusta (R01).
 - Estatística por parlamentar é calculada sobre o **período em exercício do mandato** (DA03).
-- Uma fonte de dados = um adaptador; o domínio não conhece o formato das APIs (DA02).
+- Uma fonte de dados = um adaptador; o domínio não conhece o formato das APIs (DA02, ADR-0003). Nomes do domínio em português.
+- Registro não reconciliado não entra no cálculo: falha fechada, nunca número parcial publicado (ADR-0003).
 - Nenhuma feature não trivial sem o fluxo SDD (abaixo).
 
 Constituição completa: `.specify/memory/constitution.md` (v1.0.0, ratificada em 2026-10-20). Manter coerente com esta lista — emenda e esta lista mudam no mesmo commit.
@@ -67,9 +68,9 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 
 ## Fase atual
 
-- **Fase:** F1 — Arquitetura. **Feature ativa:** nenhuma.
+- **Fase:** F2 — Fundação técnica. **Feature ativa:** nenhuma.
 - **Marco 1:** presença + perfil + metodologia, 57ª legislatura, até 31/01/2027 (contexto §4.1).
-- **Próximo:** ADR de domínio e adaptadores + modelagem de dados (fecham a F1).
+- **Próximo:** F2 pelo fluxo SDD (`/speckit-specify` da fundação técnica).
 - Histórico completo: `docs/ROADMAP.md` e `CHANGELOG.md` (não duplicar aqui).
 
 ## Índice de documentação (carregar sob demanda)
@@ -84,7 +85,7 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 | Fases, marcos, pendências | `docs/ROADMAP.md` |
 | Branches, commits, releases (gitflow) | `CONTRIBUTING.md` |
 | Decisões de arquitetura | `docs/01-architecture/adr/` |
-| Modelagem de dados | `docs/01-architecture/modelagem-dados.md` (a criar na F1) |
+| Modelagem de dados | `docs/01-architecture/modelagem-dados.md` |
 | Testes | `docs/03-testing/estrategia-testes.md` |
 | UI/UX e design system | `docs/06-design/diretrizes-ui.md` |
 | Metodologia SDD (base) | `../sdd-method/` |
