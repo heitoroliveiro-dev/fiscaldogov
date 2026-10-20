@@ -5,7 +5,7 @@
 ## Onde estou agora
 
 **Fase atual:** F1 — Arquitetura · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** ADR de hospedagem (renderização, CDN, backup, agendamento do ETL).
+**Próxima ação:** ADR de domínio e adaptadores (DA02, DA03, DA07) + modelagem de dados.
 **Prazo:** M1 até 31/01/2027 · **Ritmo planejado:** 8 h/semana · **Próximo checkpoint:** 02/11 (F0 + F1).
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
