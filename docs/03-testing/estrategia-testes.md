@@ -5,8 +5,8 @@
 ## Pirâmide
 
 - **Unitários (maioria):** regras de cálculo como funções puras, sem banco nem rede. Prioridade:
-  1. Taxa de presença (RN03, RN04, RN05): só sessões deliberativas do plenário; denominador = sessões em exercício; ausência justificada não conta como falta.
-  2. Contagem de propostas (RN02, RN06): autoria principal × coautoria, sempre por tipo.
+  1. Taxa de presença (RN03, RN04, RN05, RN08): só sessões deliberativas do plenário (inclusive remotas); denominador = sessões em exercício − ausências justificadas; corte de 25% para o ranking.
+  2. Contagem de propostas (RN02, RN06): primeiro signatário × coautoria (proponentes) × apoios; só PL, PLP, PEC e PDL; pela data de apresentação.
   3. Atribuição ao partido atual com sinalização de troca (RN01).
   4. Votos: só votações nominais entram em estatística (RN07); simbólica é exibida sem voto individual.
   5. Resolução de mandato: suplente, afastamento, retorno do titular, troca de legislatura (DA03, R03).
@@ -43,6 +43,6 @@
 ## Fixtures
 
 - Factories para cada entidade do domínio (Parlamentar, Mandato, Partido, Sessão, Presença, Votação, Voto, Proposição, Autoria).
-- Cenários prontos: titular + suplente no mesmo período; troca de partido no meio da legislatura; licença; sessão não deliberativa; votação simbólica.
-- Respostas gravadas das APIs oficiais, com data da coleta, para os testes de adaptador.
+- Cenários prontos: titular + suplente no mesmo período; troca de partido no meio da legislatura; licença; sessão não deliberativa; sessão deliberativa remota; suplente abaixo do corte de 25%; PEC com 1 autor, 3 coproponentes e 167 apoiadores; sessão cancelada com lista de presença; dia com duas sessões e justificativa no dia; divergência entre webservice legado e API v2; votação simbólica; voto em obstrução e Art. 17.
+- Respostas gravadas das APIs oficiais, com data da coleta, para os testes de adaptador — incluindo XML do webservice legado e HTML da página pública de presença (DA07, RN09).
 - Banco de teste: container efêmero por execução; nunca banco compartilhado.

@@ -44,6 +44,8 @@ Consequências para o produto:
 
 - **Câmara dos Deputados** (primeira entrega).
 - Dados das legislaturas 56ª e 57ª, mais a 58ª a partir de fevereiro de 2027 (RNF10).
+
+**Marco 1 — Câmara no ar (até 31/01/2027):** HU01 (presença), RF05 (perfil), RF06–RF08 (metodologia, fonte e data de atualização), apenas a **57ª legislatura** (a 58ª entra a partir de fev/2027). A RN09 entra no M1 só com o link para a página oficial. Ficam para logo depois do M1, nesta ordem proposta: HU02, 56ª legislatura, HU03, número oficial da RN09.
 - **Senado Federal** (sprint seguinte, reutilizando o mesmo modelo de domínio).
 
 ### 4.2 Fora do escopo do MVP
@@ -83,15 +85,18 @@ Endpoints relevantes identificados no Senado:
 
 **Como** eleitor, **quero** ver quais parlamentares mais faltaram, com filtro por partido, **para** avaliar o compromisso de quem me representa.
 
-Regras aplicáveis: RN01, RN03, RN04, RN05.
+Regras aplicáveis: RN01, RN03, RN04, RN05, RN08, RN09.
 
 Critérios de aceite (rascunho, a validar):
 
 - [ ] O ranking exibe a taxa de presença em percentual, não o número absoluto de faltas.
 - [ ] Apenas sessões deliberativas do plenário entram no cálculo.
-- [ ] Apenas sessões em que o parlamentar estava em exercício entram no denominador.
+- [ ] Apenas sessões em que o parlamentar estava em exercício entram no denominador; ausências justificadas saem do denominador.
+- [ ] A taxa aparece com "X de Y sessões".
+- [ ] Só entra no ranking quem esteve em exercício em ≥ 25% das sessões do período.
 - [ ] É possível filtrar por partido (partido atual).
 - [ ] Cada parlamentar tem link para a metodologia do cálculo.
+- [ ] O perfil mostra a taxa oficial da Câmara ao lado, com link.
 
 ### HU02 — Ranking de propostas
 
@@ -101,9 +106,10 @@ Regras aplicáveis: RN01, RN02, RN06.
 
 Critérios de aceite (rascunho, a validar):
 
-- [ ] A contagem é separada por tipo de proposição (PL, PEC, PLP e outros).
-- [ ] Autoria principal e coautoria aparecem em colunas separadas.
+- [ ] A contagem é separada por tipo de proposição (PL, PLP, PEC e PDL), pela data de apresentação.
+- [ ] Autoria principal, coautoria e apoios aparecem em colunas separadas; apoios não se somam à coautoria.
 - [ ] É possível filtrar por partido e por tipo de proposição.
+- [ ] O ranking abre ordenado por PL (autor principal) e permite trocar o tipo e a forma de autoria.
 
 ### HU03 — Projetos em tramitação
 
@@ -115,7 +121,7 @@ Critérios de aceite (rascunho, a validar):
 
 - [ ] É possível buscar projetos por tema, autor, situação e casa legislativa.
 - [ ] O detalhe do projeto mostra autor principal e coautores.
-- [ ] O detalhe mostra o voto de cada parlamentar nas votações nominais.
+- [ ] O detalhe mostra o voto de cada parlamentar nas votações nominais, na categoria oficial e com explicação de cada categoria.
 - [ ] Votações simbólicas são exibidas com a explicação de que não há registro individual de voto.
 - [ ] Cada casa é tratada separadamente no MVP.
 
@@ -124,12 +130,14 @@ Critérios de aceite (rascunho, a validar):
 | ID | Regra | Status |
 |----|-------|--------|
 | RN01 | As estatísticas usam o **partido atual** do parlamentar. O perfil deve indicar se houve troca de partido no período, pois dados de quando ele estava em outra legenda aparecem sob a sigla atual. | Decidida |
-| RN02 | Propostas são contadas em duas colunas, **autor principal** e **coautoria**, sempre separadas por tipo de proposição. | Decidida |
-| RN03 | Apenas **ausências sem justificativa** contam como falta. Licença e missão oficial não contam. | Decidida, depende do spike SP01 |
-| RN04 | A presença é expressa como **taxa percentual**, calculada sobre as sessões em que o parlamentar estava em exercício. | Proposta |
-| RN05 | Apenas **sessões deliberativas do plenário** entram no cálculo de presença. | Proposta |
-| RN06 | O ranking de propostas não exibe um número único consolidado; a quebra por tipo é obrigatória. | Proposta |
-| RN07 | Estatísticas de voto por parlamentar consideram apenas **votações nominais**. | Proposta |
+| RN02 | Propostas são contadas em colunas separadas — **autor principal**, **coautoria** e **apoios** —, sempre por tipo de proposição. **Autor principal é o primeiro signatário** (`ordemAssinatura = 1`); **coautores são os demais proponentes**; quem só apoiou (não proponente) aparece numa coluna de **apoios**, nunca somada à coautoria. Exemplo: PEC 2/2023 → 1 autoria principal, 3 coautorias e 167 apoios. | Decidida (SP01, S3) |
+| RN03 | Apenas **ausências sem justificativa** contam como falta. Licença e missão oficial não contam. A justificativa registrada para o dia vale para todas as sessões desse dia. | Decidida (SP01) |
+| RN04 | A presença é expressa como **taxa percentual**: presenças ÷ (sessões deliberativas em exercício − ausências justificadas). A ausência justificada não ajuda nem prejudica. A taxa sempre aparece com "X de Y sessões", e o perfil mostra separadamente presenças, ausências justificadas e faltas. Exemplo: 40 sessões em exercício, 30 presenças, 4 justificadas e 6 faltas → 30 ÷ 36 = 83,3%. | Decidida (SP01) |
+| RN05 | Apenas **sessões deliberativas do plenário** entram no cálculo de presença, **incluindo as sessões deliberativas remotas e semipresenciais** (usadas de 2020 até pelo menos 2023), com nota na página de metodologia. Sessões canceladas não entram. | Decidida (SP01) |
+| RN06 | O ranking de propostas considera **PL, PLP, PEC e PDL**, contados pela **data de apresentação** dentro do período filtrado. Requerimentos, indicações e demais tipos ficam de fora. Não há número único consolidado: o ranking é ordenado pelo tipo e pela forma de autoria que o eleitor escolher, com padrão **PL, autor principal**. | Decidida |
+| RN07 | Estatísticas de voto por parlamentar consideram apenas **votações nominais**. O voto é exibido na **categoria oficial publicada pela casa** (Sim, Não, Abstenção, Obstrução, Art. 17, sem registro), cada uma com explicação curta. | Decidida |
+| RN08 | O ranking de presença inclui apenas quem esteve em exercício em **pelo menos 25% das sessões deliberativas do período filtrado**. Abaixo disso, a taxa aparece só no perfil, com aviso de amostra pequena. | Decidida |
+| RN09 | O perfil exibe, ao lado da taxa do site, a **taxa oficial publicada pela Câmara** (Ato da Mesa nº 191/2017) com link para a página oficial; a metodologia explica por que os números podem diferir. Se a taxa oficial não puder ser lida, aparece só o link. | Decidida (S2) |
 
 > **Decidida:** confirmada pelo responsável. **Proposta:** sugerida durante a entrevista, aguardando confirmação explícita.
 
@@ -161,13 +169,13 @@ Critérios de aceite (rascunho, a validar):
 | RNF07 | **Observabilidade e alertas via Telegram.** Falha do ETL (erro ou execução que não terminou) gera alerta em até 1 h; queda do site detectada pelo monitor externo gera alerta. Cada execução do ETL registra início, fim, registros lidos e gravados por entidade e erros. | Falha simulada gera mensagem no Telegram; log de execução consultável. |
 | RNF08 | **Segurança:** site público somente leitura, sem login, apenas HTTPS. Busca e filtros aceitam só parâmetros de uma allowlist e têm limite de requisições por IP (valor definido no ADR de hospedagem). | Teste de parâmetro fora da allowlist → recusado; teste de limite → resposta 429. |
 | RNF09 | **Web responsivo (DA06):** toda tela funciona de 360 px a 1440 px de largura sem rolagem horizontal. | Teste E2E nos dois extremos. |
-| RNF10 | **Alcance dos dados:** legislaturas 56ª (2019–2023) e 57ª (2023–2027), e a 58ª a partir de 01/02/2027. | Contagem de legislaturas carregadas no banco. |
+| RNF10 | **Alcance dos dados:** legislaturas 56ª (2019–2023) e 57ª (2023–2027), e a 58ª a partir de 01/02/2027. Em duas etapas: o Marco 1 carrega a 57ª; a 56ª entra logo após. | Contagem de legislaturas carregadas no banco. |
 
 ### 8.3 Restrições
 
 | Restrição | Valor |
 |-----------|-------|
-| Dedicação | 5 a 10 horas por semana. |
+| Dedicação | 5 a 10 horas por semana; o planejamento usa **8 h/semana** (~115 h até o Marco 1). |
 | Prazo | Marco 1 (Câmara no ar) antes de 01/02/2027, início da 58ª legislatura. |
 | Orçamento | RNF04. Infraestrutura atual do responsável: plano Hobby do Railway (US$ 5/mês), com preferência por reutilizá-lo. A escolha final de hospedagem é um ADR. |
 
@@ -181,6 +189,7 @@ Critérios de aceite (rascunho, a validar):
 | DA04 | Posicionamento político é exibido por **métricas derivadas de votos** (fidelidade partidária, alinhamento com a orientação do governo, similaridade de votos), nunca por rótulos ideológicos. | Neutralidade e credibilidade; o eleitor vê o dado e tira a própria conclusão. |
 | DA05 | Entrega incremental: **Câmara primeiro**, Senado na sprint seguinte. | Validar o desenho dos adaptadores com uma fonte antes de duplicar o esforço. |
 | DA06 | O produto é um **site web responsivo, mobile-first**. Sem app nativo no MVP. | O público consulta majoritariamente pelo celular; web responsivo atende sem custo de publicação em lojas. |
+| DA07 | **Fonte da presença na Câmara:** o registro de frequência da Câmara (webservice `SitCamaraWS`, com presença, ausência e justificativa); de abr/2020 a mar/2021, onde ele não tem dados, a página pública de presença de cada deputado, lida uma única vez. A API v2 (`/eventos/{id}/deputados`) serve de conferência: divergência entre as fontes gera alerta no ETL e consta na metodologia. | Só o webservice traz justificativa (RN03); usar uma única base para presença e justificativa mantém os números coerentes (SP01, S1, S4). |
 
 Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Partido, Sessão, Presença, Votação, Voto, Proposição, Autoria.
 
@@ -188,13 +197,13 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | ID | Item | Impacto | Ação |
 |----|------|---------|------|
-| SP01 | **Spike:** confirmar se as APIs da Câmara e do Senado informam se cada ausência foi justificada. | Se o dado não existir, a RN03 não pode ser implementada. | Investigação com prazo fechado antes da sprint de desenvolvimento. |
+| SP01 | **Spike:** confirmar nas APIs da Câmara e do Senado (a) se cada ausência informa se foi justificada; (b) como foi registrada a presença nas sessões deliberativas remotas e semipresenciais de 2020–2021; (c) qual campo identifica o primeiro signatário de uma proposição. | Sem (a), a RN03 e a RN04 não podem ser implementadas como decididas; (b) afeta a RN05; (c) afeta a RN02. | **Executado para a Câmara em 2026-10-20** — `docs/00-discovery/spikes/sp01-dados-presenca-autoria.md`. (a) justificativa só no webservice legado, por dia, com lacuna de abr/2020 a mar/2021; (b) presença remota registrada; (c) `ordemAssinatura`. Decisões S1–S4 tomadas (DA07, RN02, RN09). Senado: SP01-B antes da sprint do Senado. |
 | R01 | Erro de dado vira acusação injusta contra uma pessoa real. | Alto (reputacional e jurídico). | Metodologia pública, link para a fonte oficial em cada dado, testes automatizados nos cálculos. |
 | R02 | Mudança de formato ou indisponibilidade das APIs oficiais. | Médio. | ETL com tratamento de erro, retry e alerta; banco próprio mantém o site no ar. |
 | R03 | Nova legislatura a partir de fevereiro de 2027. | Médio. | Modelo de dados preparado para múltiplas legislaturas desde o início. |
 | R04 | Percepção de parcialidade política. | Alto. | DA04, linguagem neutra, metodologia pública. |
 | R05 | Projetos semelhantes já existem (ex.: Ranking dos Políticos, Operação Serenata de Amor). | Baixo para aprendizado, médio para adoção. | Estudar o que fazem e definir diferencial antes do lançamento. |
-| R06 | Prazo do Marco 1 apertado: ~15 semanas × 5–10 h = 75–150 h para fechar a especificação, arquitetura, fundação técnica e as features da Câmara, com duas legislaturas de dados. | Alto para o prazo. | Definir um Marco 1 mínimo (quais HUs entram) logo após confirmar as regras; acompanhar o avanço por semana no ROADMAP. |
+| R06 | Prazo do Marco 1 apertado: ~15 semanas × 5–10 h = 75–150 h para fechar a especificação, arquitetura, fundação técnica e as features da Câmara, com duas legislaturas de dados. | Alto para o prazo. | Marco 1 mínimo definido (§4.1): estimativa de 82–129 h contra ~115 h. Checkpoints com data no ROADMAP; atraso de mais de 1 semana em um checkpoint obriga a reavaliar o escopo. |
 | R07 | Tráfego viral concentrado (o site se espalha). | Alto para custo e disponibilidade se cada acesso chegar ao servidor. | RNF04: páginas públicas servidas por cache/CDN; a busca é o ponto dinâmico a proteger com cache e limite de requisições. |
 
 ## 11. Glossário
@@ -206,20 +215,27 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 - **Suplente:** quem assume o mandato quando o titular se afasta.
 - **Legislatura:** período de quatro anos de trabalho do Congresso.
 - **Orientação de bancada:** indicação de voto que o líder do partido (ou do governo) dá aos membros.
+- **Primeiro signatário:** quem assina primeiro uma proposição; neste projeto, o autor principal (RN02).
+- **Proponente e apoiador:** pelo regimento, todos que assinam são autores; a Câmara distingue quem propôs (proponente) de quem assinou em apoio (apoiador), por exemplo para alcançar as 171 assinaturas de uma PEC.
+- **Obstrução:** recurso regimental em que o parlamentar, presente, deixa de votar para tentar impedir que a votação atinja o quórum. É um ato político, não uma ausência.
+- **Art. 17:** registro do presidente da Câmara, que pelo regimento não vota em votações comuns.
+- **PL, PLP, PEC, PDL:** projeto de lei, projeto de lei complementar, proposta de emenda à Constituição e projeto de decreto legislativo.
 
 ## 12. Pendências da especificação
 
 - [ ] Nome definitivo do projeto
-- [ ] Confirmar as regras com status "Proposta" (RN04 a RN07)
+- [x] Confirmar as regras com status "Proposta" (RN04 a RN07)
 - [ ] Validar critérios de aceite das HU01 a HU03
 - [x] Requisitos não funcionais
 - [x] Restrições (prazo, orçamento, tempo disponível por semana)
-- [ ] Definir o escopo mínimo do Marco 1 (R06)
+- [x] Definir o escopo mínimo do Marco 1 (R06)
 - [ ] Diagrama de fluxo do usuário
 - [ ] Modelagem de dados
 - [ ] Plano de arquitetura e descritivo das decisões
 - [ ] Definição da stack
-- [ ] Executar o spike SP01
+- [x] Executar o spike SP01 (Câmara)
+- [x] Decidir S1–S4 do SP01
+- [ ] SP01-B: mesmo spike para o Senado, antes da sprint do Senado
 
 ---
 
@@ -227,6 +243,10 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | Escopo do Marco 1 (§4.1): presença, perfil e metodologia, só 57ª legislatura; RN09 só com link; planejamento a 8 h/semana. |
+| 2026-10-20 | Decisões S1–S4 do SP01: DA07 (fonte da presença), RN02 com coautoria só de proponentes e coluna de apoios, nova RN09 (taxa oficial ao lado), RN03 e RN05 detalhadas. |
+| 2026-10-20 | SP01 executado para a Câmara; decisões S1–S4 abertas. |
+| 2026-10-20 | RN04 a RN07 decididas e detalhadas; RN02 define autor principal como primeiro signatário; nova RN08 (mínimo de 25% das sessões para o ranking); critérios das HUs, SP01 e glossário atualizados. |
 | 2026-10-20 | Requisitos não funcionais RNF01 a RNF10, restrições (§8.3), alcance das legislaturas no escopo, riscos R06 e R07. |
 | 2026-10-20 | DA06: web responsivo, mobile-first, sem app nativo no MVP. |
 | 2026-10-20 | Criação do documento: problema, objetivos, público, escopo, fontes de dados, HU01 a HU03, regras de negócio RN01 a RN07, requisitos funcionais preliminares, decisões DA01 a DA05, riscos e pendências. |
