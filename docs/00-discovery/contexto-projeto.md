@@ -240,8 +240,8 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 - [x] Restrições (prazo, orçamento, tempo disponível por semana)
 - [x] Definir o escopo mínimo do Marco 1 (R06)
 - [x] Diagrama de fluxo do usuário (`docs/00-discovery/fluxo-usuario.md`)
-- [ ] Modelagem de dados
-- [ ] Plano de arquitetura e descritivo das decisões
+- [x] Modelagem de dados (`docs/01-architecture/modelagem-dados.md`)
+- [x] Plano de arquitetura e descritivo das decisões (ADR-0001 a ADR-0003)
 - [x] Definição da stack (ADR-0001)
 - [x] Executar o spike SP01 (Câmara)
 - [x] Decidir S1–S4 do SP01
@@ -253,6 +253,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | ADR-0003 (domínio, adaptadores, pipeline) e modelagem de dados do M1; F1 concluída. |
 | 2026-10-20 | Hospedagem, publicação diária, agendamento e backup definidos no ADR-0002. |
 | 2026-10-20 | Stack definida no ADR-0001. |
 | 2026-10-20 | Estudo de projetos semelhantes; diferencial (§2.3); DA06 explicita computador e celular; DA08 (código aberto, AGPL-3.0); RN11 (mediana) e RN12 (período padrão). |

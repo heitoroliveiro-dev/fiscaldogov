@@ -41,6 +41,12 @@
 6. Critério de sucesso checável: "deputado com 35 presenças em 40 sessões em exercício → 87,5%", não "cálculo correto".
 7. Teste de cálculo usa **casos nomeados** que espelham a metodologia publicada — a página de metodologia e os testes contam a mesma história.
 
+## Testes de estrutura
+
+- Teste de arquitetura: `dominio/` não importa `adaptadores/` (ADR-0003).
+- Uma prova por invariante do banco listada em `docs/01-architecture/modelagem-dados.md`, contra Postgres efêmero com as migrations aplicadas.
+- Falha fechada: registro não reconciliado não altera a estatística publicada e marca a execução como `com_pendencias`.
+
 ## Fixtures
 
 - Factories para cada entidade do domínio (Parlamentar, Mandato, Partido, Sessão, Presença, Votação, Voto, Proposição, Autoria).

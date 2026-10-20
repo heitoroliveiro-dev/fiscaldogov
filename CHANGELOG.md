@@ -16,6 +16,7 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 - Constituição v1.0.0 ratificada (`.specify/memory/constitution.md`): 7 princípios, 3 inegociáveis.
 - DA06 no contexto: produto é web responsivo, mobile-first, sem app nativo no MVP.
 - Relatório do spike SP01 (Câmara): fontes de presença, justificativa e autoria.
+- ADR-0003: arquitetura hexagonal do ETL, identidade própria com reconciliação e falha fechada, auditoria de correções e de números publicados; modelagem de dados do Marco 1.
 - ADR-0002: site estático na Cloudflare gerado após o ETL, ETL no cron do Railway, backup diário no R2.
 - ADR-0001: stack (Next.js + Tailwind + Radix; Postgres + Prisma Migrate; ETL e estatísticas em Python).
 - Estudo de projetos semelhantes e diferencial do projeto; licença AGPL-3.0 (DA08); RN11 (mediana da Câmara) e RN12 (período padrão).
