@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Gitflow + segredos. Lint/format/testes entram aqui na F2, quando a stack estiver decidida.
+set -euo pipefail
+
+branch="$(git symbolic-ref --short -q HEAD || true)"
+git_dir="$(git rev-parse --git-dir)"
+
+# Merge em andamento (ex.: release/hotfix sendo integrada) é permitido; commit avulso não.
+if [ ! -f "$git_dir/MERGE_HEAD" ]; then
+  case "$branch" in
+    main|develop)
+      echo "BLOQUEADO: commit direto em '$branch'. Crie uma branch (feature/, bugfix/, chore/, release/, hotfix/) — ver CONTRIBUTING.md."
+      exit 1
+      ;;
+    feature/*|bugfix/*|chore/*|release/*|hotfix/*|"")
+      ;;
+    *)
+      echo "BLOQUEADO: branch '$branch' fora do padrão gitflow (feature/, bugfix/, chore/, release/, hotfix/) — ver CONTRIBUTING.md."
+      exit 1
+      ;;
+  esac
+fi
+
+"$(git rev-parse --show-toplevel)/scripts/check-no-secrets.sh"

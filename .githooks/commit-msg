@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Conventional Commits. Aceita também mensagens geradas pelo git (Merge, Revert, fixup!/squash!).
+set -euo pipefail
+
+first_line="$(head -n1 "$1")"
+pattern='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9._/-]+\))?!?: [^ ].*[^.]$'
+
+if [[ "$first_line" =~ $pattern ]] || [[ "$first_line" =~ ^(Merge |Revert \"|fixup! |squash! ) ]]; then
+  exit 0
+fi
+
+echo "BLOQUEADO: mensagem fora do Conventional Commits:"
+echo "  $first_line"
+echo "Formato: <tipo>(escopo opcional): <descrição no imperativo, sem ponto final>"
+echo "Tipos: build chore ci docs feat fix perf refactor revert style test"
+exit 1
