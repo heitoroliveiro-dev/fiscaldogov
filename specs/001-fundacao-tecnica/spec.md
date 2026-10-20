@@ -15,6 +15,8 @@
 ### Session 2026-10-20
 
 - Q: Em qual endereço o esqueleto é publicado, já que o nome e o domínio definitivos ainda não existem? → A: Num subdomínio gratuito e provisório do provedor de publicação até o nome definitivo; o domínio próprio entra antes do Marco 1. (FR-027)
+- Q: Se a coleta das 03:00 falhar porque a fonte oficial está fora do ar, o sistema deve tentar de novo antes do prazo das 08:00? → A: Até 3 tentativas dentro da execução, com espera crescente; se ainda falhar, nova execução automática às 05:00. (FR-013, US2)
+- Q: Por quanto tempo uma execução da coleta pode rodar antes de ser interrompida e registrada como falha? → A: 60 minutos. (FR-013a, US2)
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -45,9 +47,11 @@ Todos os dias de madrugada a coleta roda sozinha e, se terminar com sucesso, o s
 **Acceptance Scenarios**:
 
 1. **Given** o agendamento ativo, **When** chega 03:00 no horário de Brasília, **Then** a coleta roda, a execução é registrada com início, fim, status e contagens, e a página publicada mostra a nova data até as 08:00.
-2. **Given** a fonte oficial fora do ar, **When** a coleta roda, **Then** a execução é registrada como falha com o erro, nenhum dado é alterado, nenhuma publicação é disparada, e o site continua exibindo a versão e a data anteriores.
-3. **Given** uma coleta bem-sucedida, **When** a publicação falha, **Then** o site continua no ar com a versão anterior e a falha da publicação fica registrada.
-4. **Given** uma execução ainda em andamento, **When** chega o horário da próxima, **Then** a nova não roda em paralelo.
+2. **Given** a fonte oficial fora do ar, **When** a coleta roda, **Then** ela tenta até 3 vezes com espera crescente; se todas falharem, a execução é registrada como falha com o erro, nenhum dado é alterado, nenhuma publicação é disparada, e o site continua exibindo a versão e a data anteriores.
+3. **Given** a execução das 03:00 registrada como falha, **When** chega 05:00 no horário de Brasília, **Then** uma nova execução roda automaticamente; se ela tiver sucesso, a página mostra a nova data até as 08:00.
+4. **Given** uma coleta bem-sucedida, **When** a publicação falha, **Then** o site continua no ar com a versão anterior e a falha da publicação fica registrada.
+5. **Given** uma execução ainda em andamento, **When** chega o horário da próxima, **Then** a nova não roda em paralelo.
+6. **Given** uma execução travada, **When** ela completa 60 minutos, **Then** é interrompida, registrada como falha por tempo esgotado, e a execução seguinte roda normalmente.
 
 ---
 
@@ -101,6 +105,8 @@ Todo dia uma cópia de segurança do armazenamento é guardada fora do provedor 
 
 ### Edge Cases
 
+- A fonte oficial fica fora do ar só por alguns minutos: as tentativas dentro da execução absorvem a queda; uma queda longa é coberta pela execução das 05:00.
+- A coleta trava (ex.: a fonte para de responder no meio da transferência): ao completar 60 minutos é interrompida e registrada como falha, liberando a execução seguinte.
 - A fonte oficial responde em formato diferente do esperado: a coleta falha com erro registrado, sem gravar dado parcial (falha fechada, ADR-0003).
 - O deputado selecionado deixa de estar em exercício: na coleta seguinte, a regra de seleção escolhe outro deputado, e a página muda de acordo.
 - A fonte devolve campos sensíveis (ex.: CPF): eles são descartados e não chegam ao armazenamento nem à página (RNF06).
@@ -129,7 +135,8 @@ Todo dia uma cópia de segurança do armazenamento é guardada fora do provedor 
 - **FR-010**: Cada execução DEVE ser registrada com início, fim, status (sucesso, com pendências, falha), contagens de registros lidos e gravados por entidade, erros e a versão do código.
 - **FR-011**: A coleta DEVE guardar a resposta bruta de cada fonte consultada quando o conteúdo mudou desde a última versão guardada, com retenção de 12 meses (ADR-0003).
 - **FR-012**: Se qualquer etapa da coleta falhar, nenhum dado da execução DEVE ser gravado parcialmente; a execução é registrada como falha.
-- **FR-013**: A coleta DEVE rodar automaticamente todos os dias às 03:00 no horário de Brasília, sem execuções simultâneas, e DEVE poder ser acionada manualmente pelo responsável.
+- **FR-013**: A coleta DEVE rodar automaticamente todos os dias às 03:00 no horário de Brasília, sem execuções simultâneas, e DEVE poder ser acionada manualmente pelo responsável. Diante de falha de acesso à fonte, DEVE tentar até 3 vezes na mesma execução, com espera crescente entre as tentativas; se a execução das 03:00 terminar em falha, uma nova execução automática DEVE rodar às 05:00 (e só nesse caso).
+- **FR-013a**: Uma execução que ultrapassar 60 minutos DEVE ser interrompida e registrada como falha por tempo esgotado, sem gravar dados parciais, de modo que nunca impeça a execução seguinte.
 
 **Publicação**
 
