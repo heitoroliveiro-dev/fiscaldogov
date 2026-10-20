@@ -10,59 +10,61 @@
 
 ## Requirement Completeness
 
-- [ ] CHK001 A spec define como o responsável fica sabendo de uma falha da coleta ou da publicação antes da F4, além de "notificações padrão dos provedores"? [Gap, Assumption, Spec §Assumptions]
-- [ ] CHK002 Está especificado quando e como o site volta a ser atualizado depois que a coleta teve sucesso mas o disparo da publicação falhou? [Gap, Recovery, Spec §FR-014, §FR-016]
-- [ ] CHK003 Há requisito para a página sinalizar dado envelhecido (ex.: última atualização há mais de 48 h), ou é intencional mostrar só a data? [Gap, Spec §FR-002, RNF01]
-- [ ] CHK004 Existem requisitos de reversão para uma migration que falhe ou precise ser desfeita em produção? [Gap, Recovery, Spec §FR-017]
-- [ ] CHK005 A spec exige que coletas repetidas no mesmo dia (manual + agendada) produzam o mesmo estado, sem duplicar registros? [Gap, Spec §FR-013]
-- [ ] CHK006 Está definido o que fazer com uma execução que ficou "em andamento" porque o processo foi morto (sem chegar ao tempo limite)? [Coverage, Spec §FR-013a]
-- [ ] CHK007 A falha ao guardar a resposta bruta tem comportamento definido na spec (como a falha do backup tem em FR-026)? [Gap, Consistency, Spec §FR-011]
-- [ ] CHK008 Há requisito de verificar a integridade da cópia de segurança (que ela é restaurável), além de guardá-la? [Gap, Spec §FR-024]
-- [ ] CHK009 A perda máxima de dados aceitável (RPO) está declarada, além do tempo de restauração de 30 min (SC-006)? [Gap, Spec §SC-006]
-- [ ] CHK010 Está especificado como saber qual versão está publicada (qual execução e qual commit geraram o site no ar)? [Gap, Traceability, Spec §FR-010]
-- [ ] CHK011 Há requisitos para expiração e renovação das credenciais com validade (ex.: token do repositório usado para disparar a publicação)? [Gap, Dependency, Spec §FR-020]
-- [ ] CHK012 A spec exige que o alerta de gasto e o limite rígido do provedor (RNF04: alerta em US$ 10, limite em US$ 20) sejam configurados nesta feature? [Gap, Consistency, Spec §SC-009]
-- [ ] CHK013 Estão definidos requisitos de registro (o que é registrado, onde, por quanto tempo) e a proibição de segredos nos registros (princípio VI)? [Gap, Observability]
-- [ ] CHK014 A spec pede os roteiros operacionais além da restauração (acionar coleta manual, ler o status de uma execução, trocar uma credencial)? [Gap, Spec §FR-025]
+- [x] CHK001 A spec define como o responsável fica sabendo de uma falha da coleta ou da publicação antes da F4, além de "notificações padrão dos provedores"? [Gap, Assumption, Spec §Assumptions]
+- [x] CHK002 Está especificado quando e como o site volta a ser atualizado depois que a coleta teve sucesso mas o disparo da publicação falhou? [Gap, Recovery, Spec §FR-014, §FR-016]
+- [x] CHK003 Há requisito para a página sinalizar dado envelhecido (ex.: última atualização há mais de 48 h), ou é intencional mostrar só a data? [Gap, Spec §FR-002, RNF01]
+- [x] CHK004 Existem requisitos de reversão para uma migration que falhe ou precise ser desfeita em produção? [Gap, Recovery, Spec §FR-017]
+- [x] CHK005 A spec exige que coletas repetidas no mesmo dia (manual + agendada) produzam o mesmo estado, sem duplicar registros? [Gap, Spec §FR-013]
+- [x] CHK006 Está definido o que fazer com uma execução que ficou "em andamento" porque o processo foi morto (sem chegar ao tempo limite)? [Coverage, Spec §FR-013a]
+- [x] CHK007 A falha ao guardar a resposta bruta tem comportamento definido na spec (como a falha do backup tem em FR-026)? [Gap, Consistency, Spec §FR-011]
+- [x] CHK008 Há requisito de verificar a integridade da cópia de segurança (que ela é restaurável), além de guardá-la? [Gap, Spec §FR-024]
+- [x] CHK009 A perda máxima de dados aceitável (RPO) está declarada, além do tempo de restauração de 30 min (SC-006)? [Gap, Spec §SC-006]
+- [x] CHK010 Está especificado como saber qual versão está publicada (qual execução e qual commit geraram o site no ar)? [Gap, Traceability, Spec §FR-010]
+- [x] CHK011 Há requisitos para expiração e renovação das credenciais com validade (ex.: token do repositório usado para disparar a publicação)? [Gap, Dependency, Spec §FR-020]
+- [x] CHK012 A spec exige que o alerta de gasto e o limite rígido do provedor (RNF04: alerta em US$ 10, limite em US$ 20) sejam configurados nesta feature? [Gap, Consistency, Spec §SC-009]
+- [x] CHK013 Estão definidos requisitos de registro (o que é registrado, onde, por quanto tempo) e a proibição de segredos nos registros (princípio VI)? [Gap, Observability]
+- [x] CHK014 A spec pede os roteiros operacionais além da restauração (acionar coleta manual, ler o status de uma execução, trocar uma credencial)? [Gap, Spec §FR-025]
 
 ## Requirement Clarity
 
-- [ ] CHK015 "Falha de acesso à fonte" (FR-013) distingue falhas passageiras (rede, sobrecarga) de permanentes (pedido inválido, formato inesperado), para saber quando tentar de novo? [Clarity, Spec §FR-013]
-- [ ] CHK016 "Sem execuções simultâneas" cobre explicitamente uma execução manual disparada durante a agendada? [Clarity, Spec §FR-013]
-- [ ] CHK017 A tolerância de horário da execução agendada está definida ("03:00" pode variar alguns minutos no provedor)? [Clarity, Spec §FR-013]
-- [ ] CHK018 O significado de "última atualização" para o eleitor está claro — data da última conferência na fonte, mesmo sem mudança de dado, ou data da última mudança? [Clarity, Spec §FR-002, Edge Cases]
-- [ ] CHK019 "Nenhum dado gravado parcialmente" (FR-012) deixa claro se a resposta bruta guardada antes de uma falha é permitida? [Ambiguity, Spec §FR-011, §FR-012]
-- [ ] CHK020 O status "com pendências" tem definição única (quais falhas o produzem) e aparece de forma consistente na spec e nos contratos? [Clarity, Spec §FR-010, §FR-026]
+- [x] CHK015 "Falha de acesso à fonte" (FR-013) distingue falhas passageiras (rede, sobrecarga) de permanentes (pedido inválido, formato inesperado), para saber quando tentar de novo? [Clarity, Spec §FR-013]
+- [x] CHK016 "Sem execuções simultâneas" cobre explicitamente uma execução manual disparada durante a agendada? [Clarity, Spec §FR-013]
+- [x] CHK017 A tolerância de horário da execução agendada está definida ("03:00" pode variar alguns minutos no provedor)? [Clarity, Spec §FR-013]
+- [x] CHK018 O significado de "última atualização" para o eleitor está claro — data da última conferência na fonte, mesmo sem mudança de dado, ou data da última mudança? [Clarity, Spec §FR-002, Edge Cases]
+- [x] CHK019 "Nenhum dado gravado parcialmente" (FR-012) deixa claro se a resposta bruta guardada antes de uma falha é permitida? [Ambiguity, Spec §FR-011, §FR-012]
+- [x] CHK020 O status "com pendências" tem definição única (quais falhas o produzem) e aparece de forma consistente na spec e nos contratos? [Clarity, Spec §FR-010, §FR-026]
 
 ## Requirement Consistency
 
-- [ ] CHK021 A história 5 ("todo dia uma cópia") é consistente com FR-024 ("ao fim de cada coleta bem-sucedida"), que não gera cópia em dia de falha? [Conflict, Spec §US5, §FR-024]
-- [ ] CHK022 A regra de que o site não é publicado sem dado (build falha se não houver deputado em exercício) está na spec ou só no contrato da página? [Traceability, Consistency, contracts/pagina-publica.md]
-- [ ] CHK023 FR-015 (publicar a cada integração em `main`) é consistente com o risco aceito no plano de o build rodar antes da migration? O risco está registrado como premissa na spec? [Assumption, Spec §FR-015]
+- [x] CHK021 A história 5 ("todo dia uma cópia") é consistente com FR-024 ("ao fim de cada coleta bem-sucedida"), que não gera cópia em dia de falha? [Conflict, Spec §US5, §FR-024]
+- [x] CHK022 A regra de que o site não é publicado sem dado (build falha se não houver deputado em exercício) está na spec ou só no contrato da página? [Traceability, Consistency, contracts/pagina-publica.md]
+- [x] CHK023 FR-015 (publicar a cada integração em `main`) é consistente com o risco aceito no plano de o build rodar antes da migration? O risco está registrado como premissa na spec? [Assumption, Spec §FR-015]
 
 ## Acceptance Criteria Quality
 
-- [ ] CHK024 SC-002 (5 dias seguidos até 08:00) define o que acontece se um dos 5 dias tiver falha real da fonte coberta pela reserva — o critério é atendido ou reinicia? [Measurability, Spec §SC-002]
-- [ ] CHK025 SC-003 especifica como as falhas são provocadas (coleta e publicação) para que o critério seja reproduzível? [Measurability, Spec §SC-003]
-- [ ] CHK026 SC-006 define o ambiente e o tamanho de dado em que os 30 min são medidos? [Measurability, Spec §SC-006]
+- [x] CHK024 SC-002 (5 dias seguidos até 08:00) define o que acontece se um dos 5 dias tiver falha real da fonte coberta pela reserva — o critério é atendido ou reinicia? [Measurability, Spec §SC-002]
+- [x] CHK025 SC-003 especifica como as falhas são provocadas (coleta e publicação) para que o critério seja reproduzível? [Measurability, Spec §SC-003]
+- [x] CHK026 SC-006 define o ambiente e o tamanho de dado em que os 30 min são medidos? [Measurability, Spec §SC-006]
 
 ## Scenario Coverage
 
-- [ ] CHK027 Os modos de falha de cada dependência externa estão cobertos por requisito: fonte da Câmara, armazenamento de brutos e cópias, disparo da publicação, provedor de publicação? [Coverage, Exception Flow, Spec §FR-016, §FR-026]
-- [ ] CHK028 Está definido o comportamento quando o provedor principal atinge o limite rígido de gasto e desliga banco e coleta (o site estático continua no ar)? [Gap, Exception Flow, RNF04]
-- [ ] CHK029 A recuperação depois de vários dias sem coleta (ex.: fonte fora por 3 dias) está especificada — basta a próxima execução ou há recuperação de dias perdidos? [Coverage, Recovery]
+- [x] CHK027 Os modos de falha de cada dependência externa estão cobertos por requisito: fonte da Câmara, armazenamento de brutos e cópias, disparo da publicação, provedor de publicação? [Coverage, Exception Flow, Spec §FR-016, §FR-026]
+- [x] CHK028 Está definido o comportamento quando o provedor principal atinge o limite rígido de gasto e desliga banco e coleta (o site estático continua no ar)? [Gap, Exception Flow, RNF04]
+- [x] CHK029 A recuperação depois de vários dias sem coleta (ex.: fonte fora por 3 dias) está especificada — basta a próxima execução ou há recuperação de dias perdidos? [Coverage, Recovery]
 
 ## Edge Case Coverage
 
-- [ ] CHK030 Estão cobertos os casos de borda da fonte: lista vazia, menos deputados que o esperado, deputado sem histórico, histórico com eventos fora de ordem? [Edge Case, Spec §Edge Cases]
-- [ ] CHK031 A spec trata a mudança de horário oficial (se o Brasil voltar a ter horário de verão), já que o agendamento é em UTC? [Assumption, Spec §Assumptions]
+- [x] CHK030 Estão cobertos os casos de borda da fonte: lista vazia, menos deputados que o esperado, deputado sem histórico, histórico com eventos fora de ordem? [Edge Case, Spec §Edge Cases]
+- [x] CHK031 A spec trata a mudança de horário oficial (se o Brasil voltar a ter horário de verão), já que o agendamento é em UTC? [Assumption, Spec §Assumptions]
 
 ## Dependencies & Assumptions
 
-- [ ] CHK032 Os limites gratuitos dos provedores de que a feature depende (arquivos publicados, minutos de build, espaço de armazenamento) estão documentados como premissas, com o que acontece ao estourar? [Dependency, Assumption, RNF04]
-- [ ] CHK033 As dependências humanas (⚠️) têm critério de "pronto" e indicam o que cada uma desbloqueia? [Dependency, Spec §Assumptions]
+- [x] CHK032 Os limites gratuitos dos provedores de que a feature depende (arquivos publicados, minutos de build, espaço de armazenamento) estão documentados como premissas, com o que acontece ao estourar? [Dependency, Assumption, RNF04]
+- [x] CHK033 As dependências humanas (⚠️) têm critério de "pronto" e indicam o que cada uma desbloqueia? [Dependency, Spec §Assumptions]
 
 ## Notes
+
+**Revisão (2026-10-20):** os 33 itens foram avaliados pelo revisor (responsável pelo projeto), com apoio do agente, contra a spec após a rodada de correção. Marcação autorizada pelo revisor. Ajuste feito durante a revisão: retenção das cópias de segurança reescrita por idade (FR-024, US5 cenário 2), alinhando a spec ao ciclo de vida do armazenamento. Nota do CHK013: logs ficam pelo período padrão do provedor; o histórico permanente de cada execução está em `execucao_etl` (FR-010).
 
 **Rodada de correção (2026-10-20) — onde cada item foi tratado na spec, para o revisor avaliar:**
 

@@ -99,7 +99,7 @@ Existem dois perfis de acesso ao armazenamento: um que escreve, usado só pela c
 
 ### User Story 5 - Cópia de segurança e restauração comprovada (Priority: P3)
 
-A cada coleta bem-sucedida (normalmente uma por dia) uma cópia de segurança do armazenamento é guardada fora do provedor principal e conferida como restaurável, com retenção de 7 cópias diárias e 4 semanais, e existe um roteiro de restauração que foi executado ao menos uma vez com sucesso.
+A cada coleta bem-sucedida (normalmente uma por dia) uma cópia de segurança do armazenamento é guardada fora do provedor principal e conferida como restaurável, com retenção das cópias dos últimos 7 dias e de uma por semana das últimas 4 semanas, e existe um roteiro de restauração que foi executado ao menos uma vez com sucesso.
 
 **Why this priority**: o dado ainda é pouco nesta fase, mas o mecanismo precisa existir antes que haja dados difíceis de recriar (lacuna de 2020, histórico de números publicados).
 
@@ -108,7 +108,7 @@ A cada coleta bem-sucedida (normalmente uma por dia) uma cópia de segurança do
 **Acceptance Scenarios**:
 
 1. **Given** uma coleta bem-sucedida, **When** ela termina, **Then** uma cópia de segurança com data é guardada no armazenamento externo.
-2. **Given** mais de 7 cópias diárias, **When** uma nova é guardada, **Then** as diárias excedentes são removidas, preservando uma por semana nas últimas 4 semanas.
+2. **Given** cópias guardadas ao longo de várias semanas, **When** a retenção é aplicada, **Then** permanecem as cópias dos últimos 7 dias e uma por semana das últimas 4 semanas; as mais antigas são removidas automaticamente.
 3. **Given** o roteiro de restauração, **When** seguido num ambiente vazio, **Then** o ambiente restaurado tem as mesmas contagens de registros da origem.
 4. **Given** uma falha ao guardar a cópia, **When** a coleta termina, **Then** a execução é registrada como "com pendências", sem impedir a publicação.
 5. **Given** uma cópia recém-guardada, **When** sua leitura falha na conferência de integridade, **Then** a execução é registrada como "com pendências" e o responsável é alertado.
@@ -181,7 +181,7 @@ A cada coleta bem-sucedida (normalmente uma por dia) uma cópia de segurança do
 
 **Cópia de segurança**
 
-- **FR-024**: Ao fim de cada coleta bem-sucedida, DEVE ser guardada uma cópia de segurança completa fora do provedor principal, com retenção de 7 diárias e 4 semanais, e DEVE ser conferida como legível logo após ser guardada. Perda máxima aceitável de dados (RPO): os dados desde a última coleta bem-sucedida — até cerca de 1 dia, e todos recriáveis a partir da fonte nesta feature.
+- **FR-024**: Ao fim de cada coleta bem-sucedida, DEVE ser guardada uma cópia de segurança completa fora do provedor principal, com retenção por idade — as cópias dos últimos 7 dias e uma por semana das últimas 4 semanas —, e DEVE ser conferida como legível logo após ser guardada. Perda máxima aceitável de dados (RPO): os dados desde a última coleta bem-sucedida — até cerca de 1 dia, e todos recriáveis a partir da fonte nesta feature.
 - **FR-025**: DEVEM existir roteiros escritos para: restauração da cópia de segurança (executado ao menos uma vez nesta feature, com evidência), acionamento manual da coleta e leitura do status de uma execução, e troca de credenciais (incluindo os perfis de acesso ao armazenamento).
 - **FR-026**: Falha ao guardar ou conferir a cópia DEVE marcar a execução como "com pendências", sem impedir a publicação.
 
