@@ -15,4 +15,5 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 - Diretrizes de UI baseadas no design system `../design-system/linear`, com as adaptações ao público em aberto.
 - Constituição v1.0.0 ratificada (`.specify/memory/constitution.md`): 7 princípios, 3 inegociáveis.
 - DA06 no contexto: produto é web responsivo, mobile-first, sem app nativo no MVP.
+- Requisitos não funcionais RNF01–RNF10 e restrições do projeto no contexto (entrevista de 2026-10-20).
 - Adaptações do design system ao público decididas (D1–D5: texto 16px e alvos de 44px no mobile, tema do sistema operacional, marca violeta, efeitos só na landing).
