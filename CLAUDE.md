@@ -10,7 +10,8 @@ Fonte de verdade do produto: `docs/00-discovery/contexto-projeto.md`.
 ## Stack (imutável sem ADR)
 
 - **Pendente — ADR-0001.** Já decidido no contexto: ETL em **Python** alimentando **banco próprio** (DA01); site não consulta as APIs oficiais ao vivo.
-- **Plataforma:** site web responsivo, mobile-first; sem app nativo no MVP (DA06).
+- **Plataforma:** site web com domínio próprio, responsivo para computador e celular (mobile-first); sem app nativo no MVP (DA06).
+- **Licença:** AGPL-3.0, código e metodologia abertos (DA08). Repositório público: segredo vazado é público na hora.
 - **UI:** design system em `../design-system/linear` (Next.js + Tailwind v4 + Radix + shadcn/ui). Regras em `docs/06-design/diretrizes-ui.md`.
 
 ## Regras imutáveis (hard constraints)
@@ -60,9 +61,9 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 
 ## Fase atual
 
-- **Fase:** F0 — Discovery (em andamento). **Feature ativa:** nenhuma.
+- **Fase:** F1 — Arquitetura. **Feature ativa:** nenhuma.
 - **Marco 1:** presença + perfil + metodologia, 57ª legislatura, até 31/01/2027 (contexto §4.1).
-- **Próximo:** estudo de projetos semelhantes; depois F1 (ADR-0001).
+- **Próximo:** ADR-0001 (stack).
 - Histórico completo: `docs/ROADMAP.md` e `CHANGELOG.md` (não duplicar aqui).
 
 ## Índice de documentação (carregar sob demanda)
@@ -71,6 +72,7 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 |---|---|
 | O que o produto é | `docs/00-discovery/contexto-projeto.md` |
 | Telas e navegação do Marco 1 | `docs/00-discovery/fluxo-usuario.md` |
+| Concorrentes e diferencial | `docs/00-discovery/estudo-semelhantes.md` |
 | Como conduzo o projeto | `docs/PLAYBOOK-CONDUCAO.md` |
 | O que/onde/quando documentar | `docs/GUIA-DOCUMENTACAO.md` |
 | Fases, marcos, pendências | `docs/ROADMAP.md` |

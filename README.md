@@ -2,7 +2,7 @@
 
 Site para o eleitor comum acompanhar, pelo celular e com linguagem simples, a atuação de deputados federais e senadores a partir dos dados abertos oficiais da Câmara e do Senado — com fonte e metodologia de cada número.
 
-**Status:** Fase 0 — Discovery. Ainda não há código de aplicação; a stack será definida no ADR-0001.
+**Status:** Fase 1 — Arquitetura. Ainda não há código de aplicação; a stack será definida no ADR-0001.
 
 ## Primeiros passos (todo clone)
 
@@ -31,3 +31,7 @@ git config core.hooksPath .githooks   # ativa os hooks de gitflow, segredos e Co
 
 - Câmara dos Deputados — <https://dadosabertos.camara.leg.br/api/v2>
 - Senado Federal — <https://legis.senado.leg.br/dadosabertos>
+
+## Licença
+
+[AGPL-3.0](LICENSE). Código e metodologia são abertos para que qualquer pessoa possa conferir como cada número é calculado.

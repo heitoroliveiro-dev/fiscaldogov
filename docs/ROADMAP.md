@@ -4,8 +4,8 @@
 
 ## Onde estou agora
 
-**Fase atual:** F0 — Discovery (em andamento) · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** estudo de projetos semelhantes (fecha a F0); em seguida ADR-0001 (stack).
+**Fase atual:** F1 — Arquitetura · **Próximo marco:** M1 — Câmara no ar (proposto)
+**Próxima ação:** ADR-0001 (stack).
 **Prazo:** M1 até 31/01/2027 · **Ritmo planejado:** 8 h/semana · **Próximo checkpoint:** 02/11 (F0 + F1).
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
@@ -19,7 +19,7 @@ Capacidade: 8 h/semana (~115 h até 31/01/2027). Horas são estimativa de ordem 
 
 | # | Etapa | O que entrega | Horas | Checkpoint | Pronto quando | Status |
 |---|---|---|---|---|---|---|
-| F0 | Discovery | Contexto completo; fluxo do usuário ✓; estudo de projetos semelhantes (R05) | 4–6 | 02/11 | §12 do contexto sem itens de especificação abertos | em andamento |
+| F0 | Discovery | Contexto completo; fluxo do usuário; estudo de projetos semelhantes (R05) | 4–6 | 02/11 | §12 do contexto sem itens de especificação abertos | ✓ (nome definitivo segue aberto, não bloqueia) |
 | F0.1 | Processo | Gitflow, Spec Kit, kit de contexto, hooks | — | — | Hooks bloqueiam `.env` e commit fora do padrão | ✓ |
 | F0.2 | Constituição | `.specify/memory/constitution.md` | — | — | Ratificada | ✓ v1.0.0 |
 | SP01 | Spike Câmara | Fontes de presença, justificativa e autoria | — | — | Relatório + decisões S1–S4 | ✓ |
@@ -56,7 +56,7 @@ Espelha a §12 do contexto (a fonte é lá).
 | 9 | Executar SP01 | contexto §10 | spike | ✓ Câmara |
 | 13 | Decisões S1–S4 do SP01 | relatório SP01 | decisão | ✓ DA07, RN02, RN09 |
 | 14 | SP01-B (Senado) | DA05 | spike | antes de F3.y |
-| 10 | Estudar projetos semelhantes e definir diferencial | R05 | F0 | aberto |
+| 10 | Estudar projetos semelhantes e definir diferencial | R05 | F0 | ✓ `docs/00-discovery/estudo-semelhantes.md` |
 | 11 | Adaptações do design system ao público (densidade, tema, cor) | `docs/06-design/diretrizes-ui.md` | decisão | ✓ D1–D5 decididas em 2026-10-20 |
 
 ## Pendências técnicas (achados de revisão)
