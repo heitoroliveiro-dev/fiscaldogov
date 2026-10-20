@@ -10,6 +10,7 @@ Construir o caminho completo **fonte oficial → coleta → banco → página es
 
 - **Coleta:** um ETL em Python (arquitetura hexagonal, ADR-0003) roda no cron do Railway às 03:00, com reserva às 05:00. Ele coleta a lista de deputados em exercício e o histórico do selecionado na API v2 da Câmara, sem tocar no endpoint que traz CPF. Grava tudo numa única transação com o papel `etl_escrita`, guarda as respostas brutas sanitizadas e um `pg_dump` no R2, e dispara a publicação.
 - **Publicação:** o GitHub Actions gera o site Next.js em exportação estática, lendo com o papel `site_leitura`, e o publica na Cloudflare (`*.workers.dev`).
+- **Operação:** o alerta de falha no canal do RNF07 foi antecipado da F4. A página avisa quando a última conferência passa de 48 h, calculando no navegador, e identifica a versão publicada.
 - **Travas:** o pre-commit passa a rodar lint, formatação e testes das duas partes. O CI tem 7 jobs obrigatórios, incluindo integração contra Postgres efêmero com as migrations do Prisma e E2E com axe.
 
 Decisões e alternativas: [research.md](research.md).
@@ -102,7 +103,7 @@ web/                               # site (Next.js, exportação estática)
 ├── src/
 │   ├── app/layout.tsx · page.tsx
 │   ├── components/ui/             # Card, Badge, Button, Separator (do design system)
-│   ├── components/                # alternar-tema, fonte-oficial, aviso-testes
+│   ├── components/                # alternar-tema, fonte-oficial, aviso-testes, aviso-desatualizado (script no navegador)
 │   ├── lib/db.ts                  # PrismaClient com adapter-pg (leitura)
 │   ├── lib/dados.ts               # consulta do deputado exibido e da última execução
 │   ├── lib/formatar-data.ts       # America/Sao_Paulo
@@ -122,7 +123,8 @@ etl/                               # coleta (Python)
 │   │   ├── persistencia/          # SQLAlchemy Core com reflection
 │   │   ├── brutos_r2/
 │   │   ├── backup_r2/             # pg_dump → R2
-│   │   └── publicacao/            # workflow_dispatch
+│   │   ├── publicacao/            # workflow_dispatch
+│   │   └── alertas/               # mensagem no canal do RNF07 (FR-029)
 │   ├── pipeline/                  # execução, transação, vigia de 60 min, nova tentativa
 │   └── config.py
 └── tests/

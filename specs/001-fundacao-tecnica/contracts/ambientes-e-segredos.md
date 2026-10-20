@@ -14,6 +14,7 @@ Nenhum valor real no repositório (princípio VI). `.env.example` em `etl/` e `w
 | `GITHUB_REPOSITORIO` | `heitoroliveiro-dev/fiscaldogov` | não |
 | `CAMARA_API_URL` | Padrão: URL oficial | não |
 | `ETL_TEMPO_LIMITE_S` | Padrão: 3600 | não |
+| `ALERTA_TELEGRAM_TOKEN`, `ALERTA_TELEGRAM_CHAT_ID` | Bot e conversa do canal de alertas (RNF07) | sim |
 
 ## Railway — Postgres
 
@@ -27,10 +28,15 @@ Nenhum valor real no repositório (princípio VI). `.env.example` em `etl/` e `w
 | `DATABASE_URL_LEITURA` | Proxy público, papel `site_leitura`, `sslmode=require` |
 | `CLOUDFLARE_API_TOKEN` | Token restrito a "Workers Scripts: Edit" na conta do projeto |
 | `CLOUDFLARE_ACCOUNT_ID` | ID da conta |
+| `ALERTA_TELEGRAM_TOKEN`, `ALERTA_TELEGRAM_CHAT_ID` | Mesmo canal de alertas |
 
 ## GitHub Actions — CI (`ci.yml`)
 
 Sem segredos. Postgres de serviço com senhas de teste definidas no próprio workflow (banco efêmero, descartado ao fim do job).
+
+## Validade das credenciais
+
+`docs/05-runbooks/operacao-coleta.md` mantém uma tabela com cada credencial que expira (token do GitHub, token da Cloudflare, token do R2) e a data de expiração (FR-020a).
 
 ## Rotação
 

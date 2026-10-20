@@ -28,7 +28,7 @@ Capacidade: 8 h/semana (~115 h até 31/01/2027). Horas são estimativa de ordem 
 | F3.1 | ETL base da Câmara | Deputados, mandatos, partidos da 57ª (paginação, DA03) | 12–20 | 07/12 | Banco com os 513 deputados e mandatos da 57ª, conferidos contra a API | |
 | F3.2 | HU01 Presença | Presença e justificativa (DA07), cálculo RN03–RN05 e RN08, ranking, link oficial (RN09) | 20–30 | 04/01 | Taxa de deputados de amostra confere com o cálculo manual documentado | |
 | F3.3 | Perfil + home + metodologia | RF05 (troca de partido), RF06–RF08, RF09 (home com gráficos, RN10), RF10 (prévia de compartilhamento) | 19–31 | 18/01 | Toda tela de dado mostra fonte, link e data; metodologia publicada; link compartilhado mostra a prévia | |
-| F4 | Operação mínima | CDN, monitor externo, alertas no Telegram (RNF02, RNF07) | 8–12 | 31/01 | Falha simulada do ETL chega no Telegram; site atrás de cache | |
+| F4 | Operação mínima | Monitor externo de disponibilidade e sinal periódico de vida da coleta (RNF02, RNF07); o alerta de falha no Telegram foi antecipado para a F2 | 6–10 | 31/01 | Site fora do ar ou coleta sem sinal em 26 h geram alerta | |
 | ⭐ M1 | **Câmara no ar** | Eleitor consulta a presença dos deputados da 57ª pelo celular, com metodologia e fonte | **89–140** | **31/01/2027** | Pessoa real sem conhecimento técnico responde "meu deputado comparece?" sem ajuda | |
 | F5.1 | HU02 Propostas | Ranking por tipo, autoria, coautoria e apoios | 15–20 | pós-M1 | — | |
 | F5.2 | 56ª legislatura | Carga histórica, lacuna de 2020 (S1), divergência de 2019 (S4) | 6–10 | pós-M1 | RNF10 completo | |

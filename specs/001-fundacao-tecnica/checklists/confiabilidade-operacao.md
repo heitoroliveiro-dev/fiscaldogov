@@ -64,6 +64,28 @@
 
 ## Notes
 
+**Rodada de correção (2026-10-20) — onde cada item foi tratado na spec, para o revisor avaliar:**
+
+| Item | Tratado em | Item | Tratado em |
+|---|---|---|---|
+| CHK001 | FR-029, Clarifications | CHK018 | FR-002, Clarifications |
+| CHK002 | FR-016, US2 cenário 4 | CHK019 | FR-012 |
+| CHK003 | FR-002a, US1 cenário 4, SC-011 | CHK020 | FR-010 |
+| CHK004 | FR-017a, Edge Cases | CHK021 | US5 (texto) |
+| CHK005 | FR-007a | CHK022 | FR-016a |
+| CHK006 | FR-013a, US2 cenário 7 | CHK023 | Assumptions |
+| CHK007 | FR-011 | CHK024 | SC-002 |
+| CHK008 | FR-024, US5 cenário 5 | CHK025 | SC-003 |
+| CHK009 | FR-024 (RPO) | CHK026 | SC-006 |
+| CHK010 | FR-028 | CHK027 | FR-011, FR-016, FR-026, FR-029, Edge Cases |
+| CHK011 | FR-020a, Edge Cases | CHK028 | Edge Cases |
+| CHK012 | FR-031 | CHK029 | Edge Cases |
+| CHK013 | FR-030 | CHK030 | FR-007b, Edge Cases |
+| CHK014 | FR-025 | CHK031 | Assumptions |
+| CHK015 | FR-013 | CHK032 | Assumptions |
+| CHK016 | FR-013, US2 cenário 8 | CHK033 | Assumptions (tabela de dependências) |
+| CHK017 | FR-013 | | |
+
 - Mark items `[x]` only after review confirms the requirement-quality criterion is satisfied
 - Leave items unchecked when they still require clarification, correction, or reviewer evaluation
 - `/speckit-implement` reads checklist checkbox state as a gate and must not modify markers

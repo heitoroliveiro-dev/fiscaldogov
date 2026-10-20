@@ -137,7 +137,15 @@ Decisões técnicas da feature, com alternativas descartadas. Versões verificad
 - **Alternativa descartada:** Testcontainers no CI. O container de serviço é nativo do GitHub Actions; o Testcontainers fica para testes locais, se fizer falta.
 - **Proteção de branches:** os 7 jobs como checks obrigatórios em `main` e `develop` (⚠️ configuração do responsável).
 
-## 10. Pendências de verificação (⚠️, na implementação)
+## 10. Alertas, dado envelhecido e versão publicada (revisão do checklist)
+
+- **Alertas (FR-029):** mensagem pela API de bots do Telegram (`sendMessage`), enviada pelo ETL (status `falha`/`com_pendencias`, execução interrompida) e pelo `publicar.yml` (passo `if: failure()`). Função pequena com nova tentativa única; falha no envio só vai para o log. **Alternativa descartada:** e-mail dos provedores até a F4 — o disparo da publicação que falha não gera e-mail de ninguém.
+- **Dado envelhecido (FR-002a):** script mínimo no navegador lê o `datetime` do `<time>` e mostra o aviso se passaram mais de 48 h. **Por quê no navegador:** se a coleta ou o build pararem, nenhuma página nova é gerada — só o relógio do visitante sabe que o tempo passou. **Alternativa descartada:** calcular no build (não funciona exatamente no caso que importa).
+- **Versão publicada (FR-028):** `meta versao-publicada` + `/versao.json` com `execucao_id` e commit; usado também pelo monitor externo da F4.
+- **Conferência do backup (FR-024):** baixar o objeto recém-enviado e rodar `pg_restore --list`; falha → `com_pendencias` + alerta.
+- **Limite de sanidade (FR-007b):** menos de 500 deputados em exercício indica fonte incompleta (a Câmara tem 513 cadeiras).
+
+## 11. Pendências de verificação (⚠️, na implementação)
 
 - Major do Postgres oferecida pelo Railway na criação do serviço; CI e `postgresql-client` acompanham.
 - Extensão `btree_gist` disponível no Railway (necessária à restrição de não sobreposição dos períodos).

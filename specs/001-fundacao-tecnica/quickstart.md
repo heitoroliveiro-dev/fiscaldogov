@@ -26,6 +26,12 @@ Roteiros checáveis: **ação → resultado esperado**. Cada um gera a evidênci
 2. **Esperado:** a página mostra aviso de testes, nome, partido · UF, "Fonte: Câmara dos Deputados", link para `https://www.camara.leg.br/deputados/{id}` e "Atualizado em … (horário de Brasília)" igual a `terminada_em` da execução do R2; HTML com `noindex`; `out/_headers` com `X-Robots-Tag: noindex`.
 3. `npm --prefix web run test:e2e` **Esperado:** testes verdes em 360 px e 1440 px × claro e escuro; zero violações do axe; nenhuma rolagem horizontal (SC-007).
 
+## R3b — Aviso de dado envelhecido e versão publicada (FR-002a, FR-028, SC-011)
+
+1. Gerar o site com uma execução cuja `terminada_em` seja 49 h atrás e abrir a página. **Esperado:** aviso "Atenção: os dados podem estar desatualizados." visível.
+2. Repetir com 47 h. **Esperado:** sem aviso.
+3. Abrir `/versao.json`. **Esperado:** `execucao_id` e commit da geração.
+
 ## R4 — Acesso só leitura (US4, SC-005)
 
 1. Com `site_leitura`, tentar `INSERT`, `UPDATE`, `DELETE` numa tabela e `CREATE TABLE`.
@@ -37,6 +43,9 @@ Roteiros checáveis: **ação → resultado esperado**. Cada um gera a evidênci
 2. **Esperado:** três tentativas registradas em `execucao_etl.tentativas` (esperas de 5 s, 20 s e 60 s; reduzidas por variável apenas em teste), status `falha`, código de saída 1, nenhum registro de dado alterado, nenhuma publicação disparada.
 3. `python -m etl reserva` logo depois, com a fonte normal. **Esperado:** executa a coleta (não houve sucesso no dia) e termina com `sucesso`.
 4. `python -m etl reserva` de novo. **Esperado:** `dispensada`.
+5. Conferir o canal de alertas. **Esperado:** uma mensagem para a falha do passo 2, com o `execucao_id` (SC-010).
+6. Disparar `coletar` duas vezes ao mesmo tempo. **Esperado:** a segunda termina com código 3 ("já há uma coleta em andamento").
+7. Marcar manualmente uma execução como `em_andamento` iniciada há 2 h e rodar `coletar`. **Esperado:** ela é fechada como `falha` ("interrompida") e um alerta é enviado.
 
 ## R6 — Tempo esgotado (FR-013a)
 
@@ -62,10 +71,10 @@ Roteiros checáveis: **ação → resultado esperado**. Cada um gera a evidênci
 1. Merge em `main` → deploy do ETL no Railway (pré-deploy aplica migrations) e publicação do site.
 2. Acionar `coletar --gatilho manual` no Railway. **Esperado:** em poucos minutos o `*.workers.dev` mostra o deputado e a nova data.
 3. Por 5 dias seguidos, registrar a data exibida às 08:00. **Esperado:** sempre a do dia (SC-002).
-4. Revogar temporariamente a credencial de leitura do build e acionar a publicação. **Esperado:** publicação falha, o site continua no ar com a data anterior (SC-003). Restaurar a credencial.
+4. Revogar temporariamente a credencial de leitura do build e acionar a publicação. **Esperado:** publicação falha, o site continua no ar com a data anterior e chega o alerta de "falha de autenticação" (SC-003, SC-010). Restaurar a credencial.
 5. Lighthouse em perfil mobile no endereço publicado. **Esperado:** LCP ≤ 2,5 s (SC-001).
 6. `prisma migrate diff` entre as migrations do repositório e o banco de produção (lendo com `site_leitura`). **Esperado:** sem diferenças (SC-008).
 
-## R10 — Custo (SC-009)
+## R10 — Custo (SC-009, FR-031)
 
-Após 7 dias em produção, conferir o painel de uso do Railway e da Cloudflare. **Esperado:** projeção mensal ≤ US$ 10.
+Conferir no painel do Railway o alerta de gasto em US$ 10 e o limite rígido em US$ 20. Após 7 dias em produção, conferir o uso do Railway e da Cloudflare. **Esperado:** limites configurados; projeção mensal ≤ US$ 10.

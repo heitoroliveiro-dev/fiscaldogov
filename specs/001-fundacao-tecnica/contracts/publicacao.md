@@ -14,11 +14,11 @@
 1. `npm ci` em `web/`.
 2. `prisma generate`.
 3. `npm run build`: geração de tokens + `next build` com `output: 'export'`, lendo `DATABASE_URL_LEITURA`.
-4. Conferência do resultado: `out/index.html` existe e contém `noindex`; `out/_headers` existe.
+4. Conferência do resultado: `out/index.html` existe e contém `noindex` e `versao-publicada`; `out/_headers` e `out/versao.json` existem.
 5. `wrangler deploy` (Workers static assets, `assets.directory = "./out"`, sem script).
 
 ## Garantias
 
-- Qualquer passo falhando → nada é publicado; a versão anterior segue no ar (FR-016). Falha notificada pelo e-mail padrão do GitHub (alertas ativos: F4).
+- Qualquer passo falhando → nada é publicado; a versão anterior segue no ar (FR-016). Um passo final `if: failure()` envia o alerta (FR-029) com o tipo da falha e o link da execução do workflow; credencial inválida aparece como "falha de autenticação" (FR-020a).
 - O workflow nunca escreve no banco (só tem a credencial de leitura).
 - Endereço da F2: subdomínio `*.workers.dev` da conta (FR-027).
