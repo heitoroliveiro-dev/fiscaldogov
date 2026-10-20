@@ -71,9 +71,18 @@ De 2021 a 2023, as duas fontes batem exatamente. **Em 2019, o legado registra 4%
 | # | Decisão | Por quê |
 |---|---|---|
 | S1 | **Lacuna de abr/2020 a mar/2021:** raspar a página pública do deputado, mostrar a taxa sem distinguir justificativa nesse período (com aviso), ou excluir o período do ranking? | RN04 tira as justificadas do denominador; sem o dado, a taxa desse período usa outra regra |
-| S2 | **Alinhar à regra oficial da Câmara (Ato da Mesa 191/2017)?** A Câmara publica a própria taxa considerando só "sessões deliberativas com Ordem do Dia iniciada". Se nossa regra for diferente, o eleitor verá dois números diferentes para o mesmo deputado | R01 (verificabilidade). Exige confirmar se a API indica que a Ordem do Dia foi iniciada |
+| S2 | **Alinhar à regra oficial da Câmara (Ato da Mesa 191/2017)?** (Contagem rápida pela API v2 em 2020: 119 sessões deliberativas encerradas contra 133 na página oficial — **subcontagem conhecida**: a consulta omitiu os dias 31; a diferença real não foi medida.) A Câmara publica a própria taxa considerando só "sessões deliberativas com Ordem do Dia iniciada". Se nossa regra for diferente, o eleitor verá dois números diferentes para o mesmo deputado | R01 (verificabilidade). Exige confirmar se a API indica que a Ordem do Dia foi iniciada |
 | S3 | **Coautoria (RN02):** todo signatário (PEC: 170 coautorias) ou só os coproponentes, com os apoiadores à parte (PEC: 3 coautorias + 167 apoios)? | O campo `proponente` permite separar quem propôs de quem só apoiou |
 | S4 | **Fonte oficial de presença** quando legado e API v2 divergem (2019): qual prevalece? | Os números de 2019 dependem disso; a escolha precisa constar na metodologia |
+
+## Decisões tomadas (2026-10-20)
+
+| # | Decisão | Onde ficou |
+|---|---|---|
+| S1 | Ler a página pública de presença de cada deputado **uma única vez**, só para abr/2020–mar/2021, e gravar o resultado com a fonte. | DA07 |
+| S2 | Manter a regra do site (RN04/RN05) e exibir **ao lado** a taxa oficial da Câmara, com link e explicação da diferença. Exige ler a página oficial do deputado diariamente; se falhar, mostra só o link. | RN09 |
+| S3 | Coautoria = demais **proponentes**; apoiadores numa coluna de apoios, não somada. | RN02 |
+| S4 | Presença vem do webservice legado; a API v2 é conferência, e divergência gera alerta. | DA07 |
 
 ## Consequências para o adaptador da Câmara (insumo do ADR de domínio)
 
@@ -81,4 +90,5 @@ De 2021 a 2023, as duas fontes batem exatamente. **Em 2019, o legado registra 4%
 - Presença e justificativa vêm de duas fontes, cruzadas por deputado (nome + UF ou carteira) e por ordem da sessão no dia.
 - O webservice legado é uma dependência frágil (tecnologia antiga, sem garantia de continuidade): o ETL precisa alertar se ele parar de responder (RNF07), e o site deve indicar quando a justificativa estiver indisponível.
 - Paginação obrigatória em toda listagem da API v2.
-- Ajuste de texto na RN05: "sessões remotas e semipresenciais" sem restringir a 2020–2021.
+- Ajuste de texto na RN05: "sessões remotas e semipresenciais" sem restringir a 2020–2021 (feito).
+- Duas leituras de HTML oficial: a carga única do período sem justificativa (S1) e a taxa oficial diária (S2). Ambas precisam de teste contra páginas gravadas e de alerta quando o layout mudar.

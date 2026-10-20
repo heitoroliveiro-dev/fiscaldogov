@@ -5,7 +5,7 @@
 ## Onde estou agora
 
 **Fase atual:** F0 — Discovery (em andamento) · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** decidir S1–S4 do SP01 e definir o escopo mínimo do Marco 1 (R06).
+**Próxima ação:** definir o escopo mínimo do Marco 1 (R06).
 **Prazo:** M1 antes de 01/02/2027 · **Ritmo:** 5–10 h/semana.
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
@@ -47,7 +47,7 @@ Espelha a §12 do contexto (a fonte é lá).
 | 7 | Modelagem de dados | contexto §12 | F1 | aberto |
 | 8 | Plano de arquitetura + definição da stack | contexto §12 | F1 (ADRs) | aberto |
 | 9 | Executar SP01 | contexto §10 | spike | ✓ Câmara |
-| 13 | Decisões S1–S4 do SP01 | relatório SP01 | decisão | aberto |
+| 13 | Decisões S1–S4 do SP01 | relatório SP01 | decisão | ✓ DA07, RN02, RN09 |
 | 14 | SP01-B (Senado) | DA05 | spike | antes de F3.y |
 | 10 | Estudar projetos semelhantes e definir diferencial | R05 | F0 | aberto |
 | 11 | Adaptações do design system ao público (densidade, tema, cor) | `docs/06-design/diretrizes-ui.md` | decisão | ✓ D1–D5 decididas em 2026-10-20 |

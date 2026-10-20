@@ -83,7 +83,7 @@ Endpoints relevantes identificados no Senado:
 
 **Como** eleitor, **quero** ver quais parlamentares mais faltaram, com filtro por partido, **para** avaliar o compromisso de quem me representa.
 
-Regras aplicáveis: RN01, RN03, RN04, RN05, RN08.
+Regras aplicáveis: RN01, RN03, RN04, RN05, RN08, RN09.
 
 Critérios de aceite (rascunho, a validar):
 
@@ -94,6 +94,7 @@ Critérios de aceite (rascunho, a validar):
 - [ ] Só entra no ranking quem esteve em exercício em ≥ 25% das sessões do período.
 - [ ] É possível filtrar por partido (partido atual).
 - [ ] Cada parlamentar tem link para a metodologia do cálculo.
+- [ ] O perfil mostra a taxa oficial da Câmara ao lado, com link.
 
 ### HU02 — Ranking de propostas
 
@@ -104,7 +105,7 @@ Regras aplicáveis: RN01, RN02, RN06.
 Critérios de aceite (rascunho, a validar):
 
 - [ ] A contagem é separada por tipo de proposição (PL, PLP, PEC e PDL), pela data de apresentação.
-- [ ] Autoria principal e coautoria aparecem em colunas separadas.
+- [ ] Autoria principal, coautoria e apoios aparecem em colunas separadas; apoios não se somam à coautoria.
 - [ ] É possível filtrar por partido e por tipo de proposição.
 - [ ] O ranking abre ordenado por PL (autor principal) e permite trocar o tipo e a forma de autoria.
 
@@ -127,12 +128,13 @@ Critérios de aceite (rascunho, a validar):
 | ID | Regra | Status |
 |----|-------|--------|
 | RN01 | As estatísticas usam o **partido atual** do parlamentar. O perfil deve indicar se houve troca de partido no período, pois dados de quando ele estava em outra legenda aparecem sob a sigla atual. | Decidida |
-| RN02 | Propostas são contadas em duas colunas, **autor principal** e **coautoria**, sempre separadas por tipo de proposição. **Autor principal é o primeiro signatário**; os demais são coautores (uma PEC com 171 assinaturas gera 1 autoria principal e 170 coautorias). | Decidida, depende do spike SP01 (campo de ordem de assinatura) |
-| RN03 | Apenas **ausências sem justificativa** contam como falta. Licença e missão oficial não contam. | Decidida, depende do spike SP01 |
-| RN04 | A presença é expressa como **taxa percentual**: presenças ÷ (sessões deliberativas em exercício − ausências justificadas). A ausência justificada não ajuda nem prejudica. A taxa sempre aparece com "X de Y sessões", e o perfil mostra separadamente presenças, ausências justificadas e faltas. Exemplo: 40 sessões em exercício, 30 presenças, 4 justificadas e 6 faltas → 30 ÷ 36 = 83,3%. | Decidida, depende do spike SP01 |
-| RN05 | Apenas **sessões deliberativas do plenário** entram no cálculo de presença, **incluindo as sessões deliberativas remotas e semipresenciais** de 2020–2021, com nota na página de metodologia. | Decidida, depende do spike SP01 (registro de presença nas sessões remotas) |
+| RN02 | Propostas são contadas em duas colunas, **autor principal** e **coautoria**, sempre separadas por tipo de proposição. **Autor principal é o primeiro signatário** (`ordemAssinatura = 1`); **coautores são os demais proponentes**; quem só apoiou (não proponente) aparece numa coluna de **apoios**, nunca somada à coautoria. Exemplo: PEC 2/2023 → 1 autoria principal, 3 coautorias e 167 apoios. | Decidida (SP01, S3) |
+| RN03 | Apenas **ausências sem justificativa** contam como falta. Licença e missão oficial não contam. A justificativa registrada para o dia vale para todas as sessões desse dia. | Decidida (SP01) |
+| RN04 | A presença é expressa como **taxa percentual**: presenças ÷ (sessões deliberativas em exercício − ausências justificadas). A ausência justificada não ajuda nem prejudica. A taxa sempre aparece com "X de Y sessões", e o perfil mostra separadamente presenças, ausências justificadas e faltas. Exemplo: 40 sessões em exercício, 30 presenças, 4 justificadas e 6 faltas → 30 ÷ 36 = 83,3%. | Decidida (SP01) |
+| RN05 | Apenas **sessões deliberativas do plenário** entram no cálculo de presença, **incluindo as sessões deliberativas remotas e semipresenciais** (usadas de 2020 até pelo menos 2023), com nota na página de metodologia. Sessões canceladas não entram. | Decidida (SP01) |
 | RN06 | O ranking de propostas considera **PL, PLP, PEC e PDL**, contados pela **data de apresentação** dentro do período filtrado. Requerimentos, indicações e demais tipos ficam de fora. Não há número único consolidado: o ranking é ordenado pelo tipo e pela forma de autoria que o eleitor escolher, com padrão **PL, autor principal**. | Decidida |
 | RN07 | Estatísticas de voto por parlamentar consideram apenas **votações nominais**. O voto é exibido na **categoria oficial publicada pela casa** (Sim, Não, Abstenção, Obstrução, Art. 17, sem registro), cada uma com explicação curta. | Decidida |
+| RN09 | O perfil exibe, ao lado da taxa do site, a **taxa oficial publicada pela Câmara** (Ato da Mesa nº 191/2017) com link para a página oficial; a metodologia explica por que os números podem diferir. Se a taxa oficial não puder ser lida, aparece só o link. | Decidida (S2) |
 | RN08 | O ranking de presença inclui apenas quem esteve em exercício em **pelo menos 25% das sessões deliberativas do período filtrado**. Abaixo disso, a taxa aparece só no perfil, com aviso de amostra pequena. | Decidida |
 
 > **Decidida:** confirmada pelo responsável. **Proposta:** sugerida durante a entrevista, aguardando confirmação explícita.
@@ -184,6 +186,7 @@ Critérios de aceite (rascunho, a validar):
 | DA03 | **Mandato** é entidade de primeira classe no modelo. | Suplentes, afastamentos e mandatos de 8 anos no Senado exigem ligar cada estatística ao período em exercício. |
 | DA04 | Posicionamento político é exibido por **métricas derivadas de votos** (fidelidade partidária, alinhamento com a orientação do governo, similaridade de votos), nunca por rótulos ideológicos. | Neutralidade e credibilidade; o eleitor vê o dado e tira a própria conclusão. |
 | DA05 | Entrega incremental: **Câmara primeiro**, Senado na sprint seguinte. | Validar o desenho dos adaptadores com uma fonte antes de duplicar o esforço. |
+| DA07 | **Fonte da presença na Câmara:** o registro de frequência da Câmara (webservice `SitCamaraWS`, com presença, ausência e justificativa); de abr/2020 a mar/2021, onde ele não tem dados, a página pública de presença de cada deputado, lida uma única vez. A API v2 (`/eventos/{id}/deputados`) serve de conferência: divergência entre as fontes gera alerta no ETL e consta na metodologia. | Só o webservice traz justificativa (RN03); usar uma única base para presença e justificativa mantém os números coerentes (SP01, S1, S4). |
 | DA06 | O produto é um **site web responsivo, mobile-first**. Sem app nativo no MVP. | O público consulta majoritariamente pelo celular; web responsivo atende sem custo de publicação em lojas. |
 
 Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Partido, Sessão, Presença, Votação, Voto, Proposição, Autoria.
@@ -192,7 +195,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | ID | Item | Impacto | Ação |
 |----|------|---------|------|
-| SP01 | **Spike:** confirmar nas APIs da Câmara e do Senado (a) se cada ausência informa se foi justificada; (b) como foi registrada a presença nas sessões deliberativas remotas e semipresenciais de 2020–2021; (c) qual campo identifica o primeiro signatário de uma proposição. | Sem (a), a RN03 e a RN04 não podem ser implementadas como decididas; (b) afeta a RN05; (c) afeta a RN02. | **Executado para a Câmara em 2026-10-20** — `docs/00-discovery/spikes/sp01-dados-presenca-autoria.md`. (a) justificativa só no webservice legado, por dia, com lacuna de abr/2020 a mar/2021; (b) presença remota registrada; (c) `ordemAssinatura`. Decisões S1–S4 pendentes. Senado: SP01-B antes da sprint do Senado. |
+| SP01 | **Spike:** confirmar nas APIs da Câmara e do Senado (a) se cada ausência informa se foi justificada; (b) como foi registrada a presença nas sessões deliberativas remotas e semipresenciais de 2020–2021; (c) qual campo identifica o primeiro signatário de uma proposição. | Sem (a), a RN03 e a RN04 não podem ser implementadas como decididas; (b) afeta a RN05; (c) afeta a RN02. | **Executado para a Câmara em 2026-10-20** — `docs/00-discovery/spikes/sp01-dados-presenca-autoria.md`. (a) justificativa só no webservice legado, por dia, com lacuna de abr/2020 a mar/2021; (b) presença remota registrada; (c) `ordemAssinatura`. Decisões S1–S4 tomadas (DA07, RN02, RN09). Senado: SP01-B antes da sprint do Senado. |
 | R01 | Erro de dado vira acusação injusta contra uma pessoa real. | Alto (reputacional e jurídico). | Metodologia pública, link para a fonte oficial em cada dado, testes automatizados nos cálculos. |
 | R02 | Mudança de formato ou indisponibilidade das APIs oficiais. | Médio. | ETL com tratamento de erro, retry e alerta; banco próprio mantém o site no ar. |
 | R03 | Nova legislatura a partir de fevereiro de 2027. | Médio. | Modelo de dados preparado para múltiplas legislaturas desde o início. |
@@ -211,6 +214,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 - **Legislatura:** período de quatro anos de trabalho do Congresso.
 - **Orientação de bancada:** indicação de voto que o líder do partido (ou do governo) dá aos membros.
 - **Primeiro signatário:** quem assina primeiro uma proposição; neste projeto, o autor principal (RN02).
+- **Proponente e apoiador:** pelo regimento, todos que assinam são autores; a Câmara distingue quem propôs (proponente) de quem assinou em apoio (apoiador), por exemplo para alcançar as 171 assinaturas de uma PEC.
 - **Obstrução:** recurso regimental em que o parlamentar, presente, deixa de votar para tentar impedir que a votação atinja o quórum. É um ato político, não uma ausência.
 - **Art. 17:** registro do presidente da Câmara, que pelo regimento não vota em votações comuns.
 - **PL, PLP, PEC, PDL:** projeto de lei, projeto de lei complementar, proposta de emenda à Constituição e projeto de decreto legislativo.
@@ -228,7 +232,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 - [ ] Plano de arquitetura e descritivo das decisões
 - [ ] Definição da stack
 - [x] Executar o spike SP01 (Câmara)
-- [ ] Decidir S1–S4 do SP01
+- [x] Decidir S1–S4 do SP01
 - [ ] SP01-B: mesmo spike para o Senado, antes da sprint do Senado
 
 ---
@@ -237,6 +241,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | Decisões S1–S4 do SP01: DA07 (fonte da presença), RN02 com coautoria só de proponentes e coluna de apoios, nova RN09 (taxa oficial ao lado), RN03 e RN05 detalhadas. |
 | 2026-10-20 | SP01 executado para a Câmara; decisões S1–S4 abertas. |
 | 2026-10-20 | RN04 a RN07 decididas e detalhadas; RN02 define autor principal como primeiro signatário; nova RN08 (mínimo de 25% das sessões para o ranking); critérios das HUs, SP01 e glossário atualizados. |
 | 2026-10-20 | Requisitos não funcionais RNF01 a RNF10, restrições (§8.3), alcance das legislaturas no escopo, riscos R06 e R07. |
