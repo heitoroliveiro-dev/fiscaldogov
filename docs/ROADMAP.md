@@ -19,8 +19,8 @@ Dar ao eleitor comum, pelo celular, uma forma simples, neutra e verificável de 
 | # | Etapa | O que entrega | Depende de | Pronto quando | Status |
 |---|---|---|---|---|---|
 | F0 | Discovery | Contexto completo: RNFs, RN04–RN07 confirmadas, critérios das HUs validados, restrições, fluxo do usuário | — | §12 do contexto sem itens de especificação abertos | em andamento |
-| F0.1 | Processo | Repositório com gitflow, Spec Kit, kit de contexto, hooks de segredo/commit | — | Hooks bloqueiam `.env` e commit fora do padrão | ✓ (branch `feature/setup-sdd`) |
-| F0.2 | Constituição | `.specify/memory/constitution.md` v1.0.0 | F0.1 | Ratificada via `/speckit-constitution` a partir de `docs/01-architecture/constituicao-insumo.md` | |
+| F0.1 | Processo | Repositório com gitflow, Spec Kit, kit de contexto, hooks de segredo/commit | — | Hooks bloqueiam `.env` e commit fora do padrão | ✓ |
+| F0.2 | Constituição | `.specify/memory/constitution.md` v1.0.0 | F0.1 | Ratificada via `/speckit-constitution` | ✓ v1.0.0 |
 | SP01 | Spike: ausência justificada | Resposta: as APIs informam justificativa de ausência? | — | Relatório com endpoints consultados e exemplos reais | |
 | F1 | Arquitetura | ADR-0001 stack; ADR de domínio/adaptadores (DA02, DA03); ADR de hospedagem; ADR de frequência do ETL; modelagem de dados multi-legislatura (R03) | F0 | Todo ADR crítico aceito com alternativas | |
 | F2 | Fundação técnica | Scaffold, design system aplicado, lint, hooks da stack, CI, banco + migrations, esqueleto do ETL e do adaptador da Câmara | F1 | App sobe, CI verde, ETL grava um deputado com fonte e data | |
@@ -46,7 +46,7 @@ Espelha a §12 do contexto (a fonte é lá).
 | 8 | Plano de arquitetura + definição da stack | contexto §12 | F1 (ADRs) | aberto |
 | 9 | Executar SP01 | contexto §10 | spike | aberto |
 | 10 | Estudar projetos semelhantes e definir diferencial | R05 | F0 | aberto |
-| 11 | Adaptações do design system ao público (densidade, tema, cor) | `docs/06-design/diretrizes-ui.md` | decisão | aberto |
+| 11 | Adaptações do design system ao público (densidade, tema, cor) | `docs/06-design/diretrizes-ui.md` | decisão | ✓ D1–D5 decididas em 2026-10-20 |
 
 ## Pendências técnicas (achados de revisão)
 
@@ -58,7 +58,7 @@ Espelha a §12 do contexto (a fonte é lá).
 
 | Item | Bloqueado por | O que desbloqueia | Impede o quê |
 |---|---|---|---|
-| Repositório remoto (GitHub) + branch protection em `main`/`develop` | ⚠️ criação do repo e `gh` não instalados nesta máquina | PRs, CI obrigatório, proteção real das branches | Merge por PR; hoje a proteção é só o hook local |
+| Branch protection em `main`/`develop` no GitHub | ⚠️ configuração manual em Settings → Branches (sem `gh` nesta máquina) | Proteção real das branches no remoto | Hoje a proteção é só o hook local |
 | Domínio do site | ⚠️ nome definitivo | Registro do domínio | M2 |
 
 ## Backlog futuro (fora do escopo atual)

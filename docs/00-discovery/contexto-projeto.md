@@ -160,6 +160,7 @@ Critérios de aceite (rascunho, a validar):
 | DA03 | **Mandato** é entidade de primeira classe no modelo. | Suplentes, afastamentos e mandatos de 8 anos no Senado exigem ligar cada estatística ao período em exercício. |
 | DA04 | Posicionamento político é exibido por **métricas derivadas de votos** (fidelidade partidária, alinhamento com a orientação do governo, similaridade de votos), nunca por rótulos ideológicos. | Neutralidade e credibilidade; o eleitor vê o dado e tira a própria conclusão. |
 | DA05 | Entrega incremental: **Câmara primeiro**, Senado na sprint seguinte. | Validar o desenho dos adaptadores com uma fonte antes de duplicar o esforço. |
+| DA06 | O produto é um **site web responsivo, mobile-first**. Sem app nativo no MVP. | O público consulta majoritariamente pelo celular; web responsivo atende sem custo de publicação em lojas. |
 
 Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Partido, Sessão, Presença, Votação, Voto, Proposição, Autoria.
 
@@ -203,4 +204,5 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | DA06: web responsivo, mobile-first, sem app nativo no MVP. |
 | 2026-10-20 | Criação do documento: problema, objetivos, público, escopo, fontes de dados, HU01 a HU03, regras de negócio RN01 a RN07, requisitos funcionais preliminares, decisões DA01 a DA05, riscos e pendências. |

@@ -13,4 +13,6 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 - Gitflow: branches `main` e `develop`; hooks em `.githooks/` bloqueiam commit direto em `main`/`develop`, branch fora do padrão, `.env`/segredo staged e mensagem fora do Conventional Commits.
 - Hook `UserPromptSubmit` do Claude Code com lembrete das regras do projeto.
 - Diretrizes de UI baseadas no design system `../design-system/linear`, com as adaptações ao público em aberto.
-- Insumo (proposta) para a constituição do projeto.
+- Constituição v1.0.0 ratificada (`.specify/memory/constitution.md`): 7 princípios, 3 inegociáveis.
+- DA06 no contexto: produto é web responsivo, mobile-first, sem app nativo no MVP.
+- Adaptações do design system ao público decididas (D1–D5: texto 16px e alvos de 44px no mobile, tema do sistema operacional, marca violeta, efeitos só na landing).
