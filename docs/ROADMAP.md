@@ -5,7 +5,7 @@
 ## Onde estou agora
 
 **Fase atual:** F1 — Arquitetura · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** ADR de hospedagem (renderização, CDN, backup, agendamento do ETL).
+**Próxima ação:** ADR de domínio e adaptadores (DA02, DA03, DA07) + modelagem de dados.
 **Prazo:** M1 até 31/01/2027 · **Ritmo planejado:** 8 h/semana · **Próximo checkpoint:** 02/11 (F0 + F1).
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
@@ -23,7 +23,7 @@ Capacidade: 8 h/semana (~115 h até 31/01/2027). Horas são estimativa de ordem 
 | F0.1 | Processo | Gitflow, Spec Kit, kit de contexto, hooks | — | — | Hooks bloqueiam `.env` e commit fora do padrão | ✓ |
 | F0.2 | Constituição | `.specify/memory/constitution.md` | — | — | Ratificada | ✓ v1.0.0 |
 | SP01 | Spike Câmara | Fontes de presença, justificativa e autoria | — | — | Relatório + decisões S1–S4 | ✓ |
-| F1 | Arquitetura | ADR-0001 stack; ADR de hospedagem com cache/CDN (RNF04, R07); ADR de domínio e adaptadores (DA02, DA03, DA07); ADR do ETL; modelagem de dados multi-legislatura | 10–15 | 02/11 | Todo ADR crítico aceito com alternativas | |
+| F1 | Arquitetura | ADR-0001 stack ✓; ADR-0002 hospedagem, publicação, agendamento e backup ✓; ADR de domínio e adaptadores (DA02, DA03, DA07); modelagem de dados multi-legislatura | 10–15 | 02/11 | Todo ADR crítico aceito com alternativas | |
 | F2 | Fundação técnica | Scaffold com o design system, projeto do ETL, banco + migrations, CI, deploy de um "esqueleto" em produção | 15–25 | 23/11 | Página vazia no ar via CI; ETL grava um deputado com fonte e data | |
 | F3.1 | ETL base da Câmara | Deputados, mandatos, partidos da 57ª (paginação, DA03) | 12–20 | 07/12 | Banco com os 513 deputados e mandatos da 57ª, conferidos contra a API | |
 | F3.2 | HU01 Presença | Presença e justificativa (DA07), cálculo RN03–RN05 e RN08, ranking, link oficial (RN09) | 20–30 | 04/01 | Taxa de deputados de amostra confere com o cálculo manual documentado | |
@@ -72,6 +72,7 @@ Espelha a §12 do contexto (a fonte é lá).
 | Branch protection em `main`/`develop` no GitHub | ⚠️ configuração manual em Settings → Branches (sem `gh` nesta máquina) | Proteção real das branches no remoto | Hoje a proteção é só o hook local |
 | Domínio do site | ⚠️ nome definitivo | Registro do domínio | M2 |
 | Bot do Telegram para alertas | ⚠️ criação pelo responsável (BotFather) | Token + chat id como variáveis de ambiente | Alertas do RNF07 (F4) |
+| Contas Cloudflare (Workers, R2, DNS) e token do GitHub para o ETL | ⚠️ criação pelo responsável | Publicação do site e backup (ADR-0002) | F2 (publicar o esqueleto) |
 
 ## Backlog futuro (fora do escopo atual)
 

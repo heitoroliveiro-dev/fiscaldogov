@@ -13,8 +13,9 @@ Fonte de verdade do produto: `docs/00-discovery/contexto-projeto.md`.
 - **Banco:** PostgreSQL (Railway). Schema e migrations: **Prisma 7** (`schema.prisma` é a fonte única).
 - **ETL, domínio e estatísticas:** Python 3.14 + SQLAlchemy 2 Core (reflection) + psycopg 3. **Toda estatística é calculada só no Python** e gravada pronta.
 - **Cache:** CDN. Sem Redis no M1.
+- **Hospedagem:** site **estático** (`output: 'export'`) gerado após cada ETL e servido pela **Cloudflare**; build no GitHub Actions; ETL no **cron do Railway** (03:00 BRT); backup `pg_dump` → R2. Nada dinâmico no site.
 
-Justificativa: `docs/01-architecture/adr/adr-0001-stack.md`.
+Justificativa: `docs/01-architecture/adr/adr-0001-stack.md` e `adr-0002-hospedagem.md`.
 - **Plataforma:** site web com domínio próprio, responsivo para computador e celular (mobile-first); sem app nativo no MVP (DA06).
 - **Licença:** AGPL-3.0, código e metodologia abertos (DA08). Repositório público: segredo vazado é público na hora.
 - **UI:** design system em `../design-system/linear` (Next.js + Tailwind v4 + Radix + shadcn/ui). Regras em `docs/06-design/diretrizes-ui.md`.
@@ -68,7 +69,7 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 
 - **Fase:** F1 — Arquitetura. **Feature ativa:** nenhuma.
 - **Marco 1:** presença + perfil + metodologia, 57ª legislatura, até 31/01/2027 (contexto §4.1).
-- **Próximo:** ADR de hospedagem (renderização do site, CDN, backup, agendamento do ETL).
+- **Próximo:** ADR de domínio e adaptadores + modelagem de dados (fecham a F1).
 - Histórico completo: `docs/ROADMAP.md` e `CHANGELOG.md` (não duplicar aqui).
 
 ## Índice de documentação (carregar sob demanda)

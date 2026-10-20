@@ -253,6 +253,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-20 | Hospedagem, publicação diária, agendamento e backup definidos no ADR-0002. |
 | 2026-10-20 | Stack definida no ADR-0001. |
 | 2026-10-20 | Estudo de projetos semelhantes; diferencial (§2.3); DA06 explicita computador e celular; DA08 (código aberto, AGPL-3.0); RN11 (mediana) e RN12 (período padrão). |
 | 2026-10-20 | Fluxo do usuário do Marco 1; RF09 (home com gráficos), RF10 (compartilhamento) e RN10 (taxa do partido) entram no M1. |
