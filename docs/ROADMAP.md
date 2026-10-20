@@ -70,7 +70,7 @@ Espelha a §12 do contexto (a fonte é lá).
 | Item | Bloqueado por | O que desbloqueia | Impede o quê |
 |---|---|---|---|
 | Branch protection em `main`/`develop` no GitHub | ⚠️ configuração manual em Settings → Branches (sem `gh` nesta máquina) | Proteção real das branches no remoto | Hoje a proteção é só o hook local |
-| Domínio do site | ⚠️ nome definitivo | Registro do domínio | M2 |
+| Domínio do site | ⚠️ nome definitivo | Registro do domínio; até lá, subdomínio provisório do provedor (spec 001, FR-027) | M1 (o site público precisa do domínio próprio) |
 | Bot do Telegram para alertas | ⚠️ criação pelo responsável (BotFather) | Token + chat id como variáveis de ambiente | Alertas do RNF07 (F4) |
 | Contas Cloudflare (Workers, R2, DNS) e token do GitHub para o ETL | ⚠️ criação pelo responsável | Publicação do site e backup (ADR-0002) | F2 (publicar o esqueleto) |
 
