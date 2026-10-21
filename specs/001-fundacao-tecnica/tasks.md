@@ -65,7 +65,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   5. As cargas fixas existem: (`CD`, Câmara dos Deputados) e a legislatura 57 de 2023-02-01 a 2027-01-31.
 - [X] T010 [P] Escrever `etl/tests/arquitetura/test_dependencias.py`: nenhum módulo em `etl/src/etl/dominio/` importa `etl.adaptadores` nem bibliotecas de I/O (`httpx`, `sqlalchemy`, `boto3`, `psycopg`) — FR-023, ADR-0003
 - [X] T011 [P] Escrever `etl/tests/unidade/test_registro.py`: o logger de operação mascara valores de variáveis que contêm `TOKEN`, `SECRET`, `PASSWORD` ou `DATABASE_URL`, e senhas dentro de URLs de conexão (FR-030)
-- [ ] T012 [P] Escrever `etl/tests/unidade/test_config.py`: variável obrigatória ausente → `ConfiguracaoInvalida` com o nome da variável; o comando sai com código 2 (contracts/etl-cli.md)
+- [X] T012 [P] Escrever `etl/tests/unidade/test_config.py`: variável obrigatória ausente → `ConfiguracaoInvalida` com o nome da variável; o comando sai com código 2 (contracts/etl-cli.md)
 
 ### Implementação
 
@@ -90,7 +90,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - `GRANT USAGE, SELECT ON ALL SEQUENCES` e privilégios padrão equivalentes para `etl_escrita` (o `pg_dump` da US5 roda com esse papel e precisa ler sequences e `_prisma_migrations`).
 
   Rodar T009 até ficar verde.
-- [ ] T015 [P] Implementar `etl/src/etl/config.py` (leitura e validação das variáveis de `contracts/ambientes-e-segredos.md`; `ConfiguracaoInvalida`) até T012 passar
+- [ ] T015 [P] Implementar `etl/src/etl/config.py` (leitura e validação das variáveis de `contracts/ambientes-e-segredos.md`; `ConfiguracaoInvalida`) e um `etl/src/etl/__main__.py` mínimo, que carrega a configuração antes de qualquer comando e sai com código 2 se ela for inválida (o teste de código de saída da T012 depende dele; a T040 acrescenta os comandos), até T012 passar
 - [ ] T016 [P] Implementar `etl/src/etl/registro.py` (logger estruturado em stdout com mascaramento de segredos) até T011 passar
 - [ ] T017 Implementar `etl/src/etl/adaptadores/persistencia/banco.py`: engine SQLAlchemy 2 Core com psycopg 3, `MetaData.reflect()` das tabelas do Prisma, unidade de trabalho com uma única transação, `statement_timeout` de sessão
 - [ ] T018 Implementar `etl/src/etl/adaptadores/persistencia/execucoes.py`: `iniciar(gatilho, versao_codigo)` (transação própria, status `em_andamento`), `finalizar(id, status, contagens, tentativas, erros, pendencias)` e `ultima_bem_sucedida()`; teste em `etl/tests/integracao/test_execucoes.py`
@@ -165,7 +165,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - substituição dos períodos e filiações do parlamentar dentro da transação;
   - `parlamentares_armazenados()`.
 - [ ] T039 [US1] Implementar `etl/src/etl/adaptadores/publicacao/github.py`: `POST /repos/{GITHUB_REPOSITORIO}/actions/workflows/publicar.yml/dispatches` com `ref=main` e `inputs.execucao_id`; erro 401/403 → `CredencialInvalida`. Teste em `etl/tests/unidade/test_publicacao.py` com transporte falso.
-- [ ] T040 [US1] Implementar `etl/src/etl/pipeline/coletar.py` (etapas 1–5, 7 e 8 de `contracts/etl-cli.md`, com falha do bruto ou do disparo → `com_pendencias`) e os comandos `coletar` e `verificar-config` em `etl/src/etl/__main__.py`, com os códigos de saída 0, 1 e 2, até T027 passar
+- [ ] T040 [US1] Implementar `etl/src/etl/pipeline/coletar.py` (etapas 1–5, 7 e 8 de `contracts/etl-cli.md`, com falha do bruto ou do disparo → `com_pendencias`) e os comandos `coletar` e `verificar-config` no `etl/src/etl/__main__.py` criado na T015, com os códigos de saída 0, 1 e 2, até T027 passar
 - [ ] T041 [P] [US1] Implementar `web/src/lib/formatar-data.ts` até T028 passar
 - [ ] T042 [P] [US1] Implementar `web/src/lib/dados.ts` (deputado exibido + última execução `sucesso`/`com_pendencias`, via Prisma) até T030 passar
 - [ ] T043 [P] [US1] Criar os componentes `web/src/components/aviso-testes.tsx` (`role=status`), `web/src/components/fonte-oficial.tsx` (fonte, link com nome acessível "Ver registro na Câmara dos Deputados", `<time>` com `data-testid=conferido-em`) e `web/src/components/alternar-tema.tsx` (next-themes, padrão do sistema, nome acessível "Alternar tema")

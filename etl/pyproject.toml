@@ -32,6 +32,10 @@ target-version = "py314"
 # E/F: erros básicos · I: imports · B: bugs prováveis · S: segurança (princípio VI) · UP: sintaxe moderna
 select = ["E", "F", "I", "B", "S", "UP"]
 
+[tool.ruff.lint.isort]
+# fixo: sem isto, um módulo do etl ainda inexistente (teste antes da implementação) vira "terceiro"
+known-first-party = ["etl"]
+
 [tool.ruff.lint.per-file-ignores]
 # assert é o idioma do pytest
 "tests/**" = ["S101"]
