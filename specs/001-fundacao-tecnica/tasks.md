@@ -57,7 +57,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 ### Testes primeiro (devem falhar)
 
 - [X] T008 [P] Escrever `etl/tests/integracao/conftest.py`: conexão com `DATABASE_URL_TESTE` (papel dono), `DATABASE_URL_ESCRITA_TESTE` e `DATABASE_URL_LEITURA_TESTE`, com fixture que abre a transação e faz rollback ao fim de cada teste. Localmente, sem as variáveis, os testes de integração são pulados com mensagem clara; com `ETL_EXIGIR_INTEGRACAO=1` (definida no CI), variável ausente é **erro**, nunca pulo (princípio III: nenhum teste mascarado)
-- [ ] T009 [P] Escrever `etl/tests/integracao/test_invariantes.py`, um teste por invariante de `data-model.md`:
+- [X] T009 [P] Escrever `etl/tests/integracao/test_invariantes.py`, um teste por invariante de `data-model.md`:
   1. `periodo_exercicio.fim > inicio` quando `fim` não é nulo.
   2. Períodos do mesmo mandato não se sobrepõem.
   3. "No máximo uma filiação aberta por parlamentar".
