@@ -1,0 +1,197 @@
+// Fonte única do schema (ADR-0001). Tabelas e colunas em snake_case no banco.
+// Invariantes que o Prisma não expressa (CHECK, EXCLUDE, índice parcial,
+// NULLS NOT DISTINCT) e permissões dos papéis estão no SQL da migration
+// 0001_fundacao — ver specs/001-fundacao-tecnica/data-model.md.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model CasaLegislativa {
+  id    Int    @id @default(autoincrement()) @db.SmallInt
+  sigla String @unique
+  nome  String
+
+  mandatos Mandato[]
+
+  @@map("casa_legislativa")
+}
+
+model Legislatura {
+  numero Int      @id @db.SmallInt
+  inicio DateTime @db.Date
+  fim    DateTime @db.Date
+
+  mandatos        Mandato[]
+  identificadores IdentificadorExterno[]
+
+  @@map("legislatura")
+}
+
+model Partido {
+  id    Int     @id @default(autoincrement())
+  sigla String
+  nome  String?
+
+  filiacoes       Filiacao[]
+  identificadores IdentificadorExterno[]
+
+  @@map("partido")
+}
+
+/// Sem CPF e sem nome civil (FR-009).
+model Parlamentar {
+  id              Int      @id @default(autoincrement())
+  nomeParlamentar String   @map("nome_parlamentar")
+  /// Nome parlamentar em minúsculas e sem acento, gravado pelo ETL (FR-006).
+  nomeOrdenacao   String   @map("nome_ordenacao")
+  urlFoto         String?  @map("url_foto")
+  fonteUrl        String   @map("fonte_url")
+  coletadoEm      DateTime @map("coletado_em") @db.Timestamptz(6)
+
+  mandatos        Mandato[]
+  filiacoes       Filiacao[]
+  identificadores IdentificadorExterno[]
+
+  @@map("parlamentar")
+}
+
+enum SistemaIdentificador {
+  camara_v2
+  camara_v2_partido
+
+  @@map("sistema_identificador")
+}
+
+/// Exatamente um entre parlamentar e partido (CHECK na migration).
+model IdentificadorExterno {
+  id                Int                  @id @default(autoincrement())
+  parlamentarId     Int?                 @map("parlamentar_id")
+  partidoId         Int?                 @map("partido_id")
+  sistema           SistemaIdentificador
+  valor             String
+  legislaturaNumero Int?                 @map("legislatura_numero") @db.SmallInt
+
+  parlamentar Parlamentar? @relation(fields: [parlamentarId], references: [id], onDelete: Restrict)
+  partido     Partido?     @relation(fields: [partidoId], references: [id], onDelete: Restrict)
+  legislatura Legislatura? @relation(fields: [legislaturaNumero], references: [numero], onDelete: Restrict)
+
+  // NULLS NOT DISTINCT acrescentado na migration: sem legislatura, o mesmo id não se repete
+  @@unique([sistema, valor, legislaturaNumero])
+  @@map("identificador_externo")
+}
+
+model Mandato {
+  id                Int    @id @default(autoincrement())
+  parlamentarId     Int    @map("parlamentar_id")
+  casaId            Int    @map("casa_id") @db.SmallInt
+  legislaturaNumero Int    @map("legislatura_numero") @db.SmallInt
+  uf                String @db.Char(2)
+
+  parlamentar Parlamentar        @relation(fields: [parlamentarId], references: [id])
+  casa        CasaLegislativa    @relation(fields: [casaId], references: [id])
+  legislatura Legislatura        @relation(fields: [legislaturaNumero], references: [numero])
+  periodos    PeriodoExercicio[]
+
+  @@unique([parlamentarId, casaId, legislaturaNumero])
+  @@map("mandato")
+}
+
+enum CondicaoExercicio {
+  titular
+  suplente
+
+  @@map("condicao_exercicio")
+}
+
+/// `fim` nulo = em exercício. fim > inicio e sem sobreposição no mandato (migration).
+model PeriodoExercicio {
+  id           Int               @id @default(autoincrement())
+  mandatoId    Int               @map("mandato_id")
+  inicio       DateTime          @db.Timestamptz(6)
+  fim          DateTime?         @db.Timestamptz(6)
+  condicao     CondicaoExercicio
+  motivoInicio String            @map("motivo_inicio")
+  motivoFim    String?           @map("motivo_fim")
+  fonteUrl     String            @map("fonte_url")
+  coletadoEm   DateTime          @map("coletado_em") @db.Timestamptz(6)
+
+  mandato Mandato @relation(fields: [mandatoId], references: [id])
+
+  @@map("periodo_exercicio")
+}
+
+/// No máximo uma filiação aberta por parlamentar (índice parcial na migration).
+model Filiacao {
+  id            Int       @id @default(autoincrement())
+  parlamentarId Int       @map("parlamentar_id")
+  partidoId     Int       @map("partido_id")
+  inicio        DateTime  @db.Timestamptz(6)
+  fim           DateTime? @db.Timestamptz(6)
+  fonteUrl      String    @map("fonte_url")
+  coletadoEm    DateTime  @map("coletado_em") @db.Timestamptz(6)
+
+  parlamentar Parlamentar @relation(fields: [parlamentarId], references: [id])
+  partido     Partido     @relation(fields: [partidoId], references: [id])
+
+  @@map("filiacao")
+}
+
+enum StatusExecucao {
+  em_andamento
+  sucesso
+  com_pendencias
+  falha
+  dispensada
+
+  @@map("status_execucao")
+}
+
+enum GatilhoExecucao {
+  agendada
+  reserva
+  manual
+
+  @@map("gatilho_execucao")
+}
+
+/// Uma linha por execução da coleta (FR-010).
+model ExecucaoEtl {
+  id           Int             @id @default(autoincrement())
+  iniciadaEm   DateTime        @default(now()) @map("iniciada_em") @db.Timestamptz(6)
+  terminadaEm  DateTime?       @map("terminada_em") @db.Timestamptz(6)
+  status       StatusExecucao  @default(em_andamento)
+  gatilho      GatilhoExecucao
+  tentativas   Json            @default("[]")
+  contagens    Json            @default("{}")
+  erros        Json            @default("[]")
+  pendencias   Json            @default("[]")
+  versaoCodigo String          @map("versao_codigo")
+
+  coletas ColetaBruta[]
+
+  @@map("execucao_etl")
+}
+
+/// Resposta bruta guardada no R2; só entra quando o sha256 muda para a mesma url (FR-011).
+model ColetaBruta {
+  id         Int      @id @default(autoincrement())
+  execucaoId Int      @map("execucao_id")
+  fonte      String
+  url        String
+  chaveR2    String   @map("chave_r2")
+  sha256     String   @db.Char(64)
+  bytes      Int
+  coletadaEm DateTime @map("coletada_em") @db.Timestamptz(6)
+
+  execucao ExecucaoEtl @relation(fields: [execucaoId], references: [id])
+
+  // deduplicação: última coleta da mesma url
+  @@index([url, coletadaEm])
+  @@map("coleta_bruta")
+}
