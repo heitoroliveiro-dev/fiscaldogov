@@ -69,7 +69,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 ### Implementação
 
-- [ ] T013 Criar `web/prisma.config.ts` (schema em `prisma/schema.prisma`, migrations em `prisma/migrations`, `.env` via `dotenv`; a URL de `DATABASE_URL_DONO` é **opcional ao carregar** — exigida só pelos comandos de migration —, porque o `prisma generate` do `publicar.yml` roda sem ela; confirmar o comportamento do `env()` do Prisma 7 e, se ele exigir a variável, ler de `process.env` sem falhar) e `web/prisma/schema.prisma` com generator `prisma-client` (`output = "../src/generated/prisma"`) e as 10 tabelas de `data-model.md` via `@@map`:
+- [X] T013 Criar `web/prisma.config.ts` (schema em `prisma/schema.prisma`, migrations em `prisma/migrations`, `.env` via `dotenv`; a URL de `DATABASE_URL_DONO` é **opcional ao carregar** — exigida só pelos comandos de migration —, porque o `prisma generate` do `publicar.yml` roda sem ela; confirmar o comportamento do `env()` do Prisma 7 e, se ele exigir a variável, ler de `process.env` sem falhar) e `web/prisma/schema.prisma` com generator `prisma-client` (`output = "../src/generated/prisma"`) e as 10 tabelas de `data-model.md` via `@@map`:
   - `casa_legislativa`, `legislatura`, `partido`;
   - `parlamentar` (`nome_ordenacao`; **"Sem CPF e sem nome civil"**);
   - `identificador_externo` (enum `sistema`: `camara_v2`, `camara_v2_partido`);
@@ -78,7 +78,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - `filiacao`;
   - `execucao_etl`: enum `status` com `em_andamento`, `sucesso`, `com_pendencias`, `falha` e `dispensada`; enum `gatilho` com `agendada`, `reserva` e `manual`;
   - `coleta_bruta`.
-- [ ] T014 Gerar a migration `web/prisma/migrations/0001_fundacao/` com `prisma migrate dev --create-only` e acrescentar ao SQL:
+- [X] T014 Gerar a migration `web/prisma/migrations/0001_fundacao/` com `prisma migrate dev --create-only` e acrescentar ao SQL:
   - `CREATE EXTENSION IF NOT EXISTS btree_gist`;
   - CHECK `fim > inicio`;
   - `EXCLUDE USING gist (mandato_id WITH =, tstzrange(inicio, fim) WITH &&)`;

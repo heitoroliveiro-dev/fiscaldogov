@@ -82,7 +82,7 @@ INSERE_IDENTIFICADOR = (
 )
 
 
-def _periodo(conexao: Connection, mandato_id: int, inicio: datetime, fim: datetime | None) -> dict:
+def _periodo(mandato_id: int, inicio: datetime, fim: datetime | None) -> dict:
     return dict(mandato_id=mandato_id, inicio=inicio, fim=fim, fonte=FONTE, coletado_em=COLETADO_EM)
 
 
@@ -207,6 +207,25 @@ def test_invariante_4_identificador_aponta_para_exatamente_uma_entidade(
         partido_id=partido,
         sistema="camara_v2_partido",
         valor="36844",
+    )
+
+
+def test_identificador_sem_legislatura_nao_se_repete(conexao_dono: Connection) -> None:
+    # Único (sistema, valor, legislatura) com NULLS NOT DISTINCT: sem ele, o mesmo id
+    # da Câmara sem legislatura poderia ser gravado duas vezes.
+    parlamentar = _parlamentar(conexao_dono)
+    identificador = dict(parlamentar_id=parlamentar, partido_id=None, sistema="camara_v2")
+    _inserir(conexao_dono, INSERE_IDENTIFICADOR, **identificador, valor="204496")
+
+    _recusa(conexao_dono, VIOLA_UNICO, INSERE_IDENTIFICADOR, **identificador, valor="204496")
+
+    # o mesmo valor numa legislatura definida é outro identificador
+    _inserir(
+        conexao_dono,
+        "INSERT INTO identificador_externo "
+        "(parlamentar_id, sistema, valor, legislatura_numero) "
+        "VALUES (:parlamentar_id, 'camara_v2', '204496', 57) RETURNING id",
+        parlamentar_id=parlamentar,
     )
 
 
