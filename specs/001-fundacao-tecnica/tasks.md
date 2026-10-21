@@ -29,7 +29,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 **Purpose**: esqueletos das duas partes, ferramentas de estilo e banco local.
 
-- [ ] T001 ⚠️ Criar o serviço Postgres no Railway, anotar a versão major e confirmar que `CREATE EXTENSION btree_gist` é permitida; registrar o resultado em `specs/001-fundacao-tecnica/research.md` §11 (bloqueia só T006 e o job de banco do CI)
+- [X] T001 Definir a versão major do Postgres e confirmar `btree_gist`; registrar em `specs/001-fundacao-tecnica/research.md` §11 — feito: **18**, verificado localmente na mesma base da imagem da Railway. A criação do serviço em produção (imagem `postgres-ssl:18` explícita) passou para a T051, pois a Railway estava com deploys pausados em 2026-10-20
 - [X] T002 Criar `web/package.json` (`"type": "module"`, Node 24, scripts `dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e`, `tokens`, `db:generate`, `db:migrate:dev`, `db:migrate:deploy`), `web/tsconfig.json` (TypeScript 6 estrito, `module: ESNext`, `moduleResolution: bundler`) e `web/next.config.ts` com `output: 'export'`, conforme research §1–2
 - [X] T003 [P] Configurar ESLint 10 (`web/eslint.config.mjs`, base do design system) e Prettier (`web/.prettierrc.json`) em `web/`
 - [X] T004 [P] Copiar do design system (`../design-system/linear`, opção B, research §8) para `web/`: `tokens/`, `scripts/`, `src/styles/`, `src/lib/utils.ts`, `components.json` e os componentes `card`, `button` e `separator` em `web/src/components/ui/` (só os usados na página); `npm --prefix web run tokens` precisa passar (verificação WCAG)
@@ -41,7 +41,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - marcador pytest `integration`;
   - gerar `etl/uv.lock`;
   - criar o pacote vazio `etl/src/etl/__init__.py` com as subpastas `dominio/`, `portas/`, `adaptadores/{camara,persistencia,brutos_r2,backup_r2,publicacao,alertas}/` e `pipeline/` (cada uma com `__init__.py`).
-- [ ] T006 Criar `docker-compose.yml` na raiz com Postgres local na mesma major anotada em T001 e `scripts/dev-banco-papeis.sql` que cria os papéis `etl_escrita` e `site_leitura` com senhas de teste (só desenvolvimento e CI; senhas de produção nunca no repositório — research §3)
+- [X] T006 Criar `docker-compose.yml` na raiz com Postgres local na mesma major anotada em T001 e `scripts/dev-banco-papeis.sql` que cria os papéis `etl_escrita` e `site_leitura` com senhas de teste (só desenvolvimento e CI; senhas de produção nunca no repositório — research §3)
 - [X] T007 [P] Criar `web/.env.example` e `etl/.env.example` com os nomes de `contracts/ambientes-e-segredos.md`, sem valores; acrescentar ao `.gitignore` `web/src/generated/`, `web/out/`, `web/test-results/`, `etl/.venv/`
 
 **Checkpoint**: `npm --prefix web run lint` e `uv run --directory etl ruff check` rodam sem erro em projetos vazios; `docker compose up` sobe o banco.
@@ -193,6 +193,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [ ] T050 [P] [US1] Escrever `docs/05-runbooks/banco-papeis.md`: criar `etl_escrita` e `site_leitura` em produção (senha gerada e guardada só nos cofres), conferir as permissões, trocar senha com `ALTER ROLE ... PASSWORD`
 - [ ] T051 [US1] ⚠️ Em produção:
   - criar os papéis pelo runbook de T050;
+  - criar o serviço Postgres no Railway com a imagem `ghcr.io/railwayapp-templates/postgres-ssl:18` explícita (a `:latest` é a 16 — research §11) e conferir `CREATE EXTENSION btree_gist` nele;
   - criar o serviço do ETL no Railway, com pré-deploy `prisma migrate deploy` e as variáveis de `contracts/ambientes-e-segredos.md`;
   - criar a conta e o token da Cloudflare, os buckets `fiscaldogov-brutos` e `fiscaldogov-backup` e o token do R2;
   - criar o token fine-grained do GitHub (confirmar a permissão de Actions e anotar a validade);
