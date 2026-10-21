@@ -64,7 +64,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   4. `identificador_externo` com `num_nonnulls(parlamentar_id, partido_id) = 1`.
   5. As cargas fixas existem: (`CD`, Câmara dos Deputados) e a legislatura 57 de 2023-02-01 a 2027-01-31.
 - [X] T010 [P] Escrever `etl/tests/arquitetura/test_dependencias.py`: nenhum módulo em `etl/src/etl/dominio/` importa `etl.adaptadores` nem bibliotecas de I/O (`httpx`, `sqlalchemy`, `boto3`, `psycopg`) — FR-023, ADR-0003
-- [ ] T011 [P] Escrever `etl/tests/unidade/test_registro.py`: o logger de operação mascara valores de variáveis que contêm `TOKEN`, `SECRET`, `PASSWORD` ou `DATABASE_URL`, e senhas dentro de URLs de conexão (FR-030)
+- [X] T011 [P] Escrever `etl/tests/unidade/test_registro.py`: o logger de operação mascara valores de variáveis que contêm `TOKEN`, `SECRET`, `PASSWORD` ou `DATABASE_URL`, e senhas dentro de URLs de conexão (FR-030)
 - [ ] T012 [P] Escrever `etl/tests/unidade/test_config.py`: variável obrigatória ausente → `ConfiguracaoInvalida` com o nome da variável; o comando sai com código 2 (contracts/etl-cli.md)
 
 ### Implementação
