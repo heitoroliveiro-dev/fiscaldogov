@@ -105,9 +105,15 @@ def test_mascara_senha_de_url_na_mensagem_e_em_campo_comum(
     assert SENHA not in saida.getvalue()
 
 
-def test_url_sem_senha_fica_intacta(saida: io.StringIO, log: logging.Logger) -> None:
-    url = "https://dadosabertos.camara.leg.br/api/v2/deputados?itens=100&pagina=1"
-
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://dadosabertos.camara.leg.br/api/v2/deputados?itens=100&pagina=1",
+        # porta seguida de @ no caminho não é senha
+        "https://api.exemplo:443/perfil@fulano",
+    ],
+)
+def test_url_sem_senha_fica_intacta(saida: io.StringIO, log: logging.Logger, url: str) -> None:
     log.info("coletando", extra={"url": url})
 
     assert _unica_linha(saida)["url"] == url
