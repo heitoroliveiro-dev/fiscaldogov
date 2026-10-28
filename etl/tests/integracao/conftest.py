@@ -25,7 +25,7 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
             item.add_marker(pytest.mark.integration)
 
 
-def _engine_do_ambiente(variavel: str) -> Iterator[Engine]:
+def _url_do_ambiente(variavel: str) -> str:
     url = os.environ.get(variavel)
     if not url:
         mensagem = (
@@ -35,9 +35,20 @@ def _engine_do_ambiente(variavel: str) -> Iterator[Engine]:
         if os.environ.get("ETL_EXIGIR_INTEGRACAO") == "1":
             pytest.fail(f"{mensagem}. ETL_EXIGIR_INTEGRACAO=1 proíbe pular.", pytrace=False)
         pytest.skip(mensagem)
+    return url
+
+
+def _engine_do_ambiente(variavel: str) -> Iterator[Engine]:
+    url = _url_do_ambiente(variavel)
     engine = create_engine(make_url(url).set(drivername="postgresql+psycopg"))
     yield engine
     engine.dispose()
+
+
+@pytest.fixture(scope="session")
+def url_escrita() -> str:
+    """URL do papel etl_escrita, para testar o próprio adaptador de banco."""
+    return _url_do_ambiente("DATABASE_URL_ESCRITA_TESTE")
 
 
 def _conexao_com_rollback(engine: Engine) -> Iterator[Connection]:
