@@ -5,7 +5,7 @@
 ## Onde estou agora
 
 **Fase atual:** F2 — Fundação técnica · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** implementar a 001 (`/speckit-implement`): Setup concluído (T001–T007); agora a fase Foundational (T008–T020), depois a US1.
+**Próxima ação:** implementar a 001 (`/speckit-implement`): Setup (T001–T007) e metade da Foundational (T008–T016) concluídos; agora T017–T020, depois a US1.
 **Prazo:** M1 até 31/01/2027 · **Ritmo planejado:** 8 h/semana · **Próximo checkpoint:** 23/11 (F2).
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
@@ -55,7 +55,7 @@ Espelha a §12 do contexto (a fonte é lá).
 | 8 | Plano de arquitetura + definição da stack | contexto §12 | F1 (ADRs) | ✓ ADR-0001 a 0003 |
 | 9 | Executar SP01 | contexto §10 | spike | ✓ Câmara |
 | 13 | Decisões S1–S4 do SP01 | relatório SP01 | decisão | ✓ DA07, RN02, RN09 |
-| 14 | SP01-B (Senado) | DA05 | spike | antes de F3.y |
+| 14 | SP01-B (Senado) | DA05 | spike | antes da F6 |
 | 10 | Estudar projetos semelhantes e definir diferencial | R05 | F0 | ✓ `docs/00-discovery/estudo-semelhantes.md` |
 | 11 | Adaptações do design system ao público (densidade, tema, cor) | `docs/06-design/diretrizes-ui.md` | decisão | ✓ D1–D5 decididas em 2026-10-20 |
 
@@ -64,6 +64,7 @@ Espelha a §12 do contexto (a fonte é lá).
 | Prioridade | Achado | Risco | Status / PR |
 |---|---|---|---|
 | P3 | Lighthouse (LCP, RNF03) no CI em vez de medição manual | Regressão de desempenho passar despercebida | Planejar na F3.3 (origem: `/speckit-analyze` da 001, L6) |
+| P3 | Avaliar os arquivos em lote da Câmara (CSV/JSON por ano) no lugar de chamadas por votação/evento | Coleta volumosa esbarrar no limite da API e alongar a janela do cron | Decidir no plan da F3.1/F3.2 (origem: avaliação de fontes de 2026-10-28) |
 
 ## Pendências fora do código (⚠️)
 
@@ -71,8 +72,9 @@ Espelha a §12 do contexto (a fonte é lá).
 |---|---|---|---|
 | Branch protection em `main`/`develop` no GitHub | ⚠️ configuração manual em Settings → Branches (sem `gh` nesta máquina) | Proteção real das branches no remoto | Hoje a proteção é só o hook local |
 | Domínio do site | ⚠️ nome definitivo | Registro do domínio; até lá, subdomínio provisório do provedor (spec 001, FR-027) | M1 (o site público precisa do domínio próprio) |
-| Bot do Telegram para alertas | ⚠️ criação pelo responsável (BotFather) | Token + chat id como variáveis de ambiente | Alertas do RNF07 (F4) |
+| Bot do Telegram para alertas | ⚠️ criação pelo responsável (BotFather) | Token + chat id como variáveis de ambiente | Alertas de falha da coleta (RNF07), antecipados para a F2 (T075) |
 | Contas Cloudflare (Workers, R2, DNS) e token do GitHub para o ETL | ⚠️ criação pelo responsável | Publicação do site e backup (ADR-0002) | F2 (publicar o esqueleto) |
+| Postgres de produção na Railway (`postgres-ssl:18`) | ⚠️ deploys da Railway estavam pausados em 2026-10-20; conferir antes da T051 | Banco de produção e papéis (T050–T051) | Validação ponta a ponta da US1 (T052) |
 
 ## Backlog futuro (fora do escopo atual)
 
@@ -80,3 +82,4 @@ Espelha a §12 do contexto (a fonte é lá).
 - Ligação de um mesmo projeto entre Câmara e Senado — identificadores e fluxos diferentes; pós-MVP.
 - Votações em comissões — distorcem comparações; pós-MVP.
 - Métricas de alinhamento (fidelidade partidária, alinhamento com o governo, similaridade de votos) — substituem rótulo ideológico (DA04); priorizar após M1.
+- Emendas parlamentares por parlamentar — fonte candidata: Portal da Transparência (contexto §5.1); exige reconciliação do autor pelo nome; pós-M1, pelo fluxo SDD.

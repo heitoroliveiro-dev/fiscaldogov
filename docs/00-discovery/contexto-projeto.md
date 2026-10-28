@@ -60,6 +60,7 @@ Consequências para o produto:
 | Ligação de um mesmo projeto entre Câmara e Senado | Identificadores e fluxos diferentes entre as casas; alta complexidade. | Versão pós-MVP. |
 | Rótulo de "viés político" (esquerda/centro/direita) | Classificação contestada que compromete a credibilidade do site. | Substituído por métricas de alinhamento derivadas de votos (ver seção 9). |
 | Votações em comissões | Comissões só fazem sentido para os membros delas; distorce comparações. | Versão pós-MVP. |
+| Emendas parlamentares por parlamentar | Fonte externa às casas (Portal da Transparência, §5.1), com autor identificado só pelo nome; exige reconciliação e regra pública. | Após o M1, pelo fluxo SDD. |
 
 ## 5. Fontes de dados
 
@@ -82,6 +83,17 @@ Endpoints relevantes identificados no Senado:
 - `/plenario/votacao`: votações nominais e resultados.
 
 > Antes de implementar qualquer integração, validar os endpoints, limites e formatos na documentação oficial vigente.
+
+### 5.1 Fontes complementares avaliadas (fora do M1)
+
+Avaliadas em 2026-10-28. Nenhuma entra no M1. Cada fonte adotada vira um adaptador próprio (DA02).
+
+| Fonte | API | Autenticação | Situação |
+|------|-----|--------------|----------|
+| Portal da Transparência (CGU) | `https://api.portaldatransparencia.gov.br/api-de-dados` (OpenAPI em `/v3/api-docs`) | Chave gratuita, enviada no header `chave-api-dados` (vira segredo do ETL) | **Candidata** para emendas parlamentares: `GET /emendas` (filtros `nomeAutor`, `ano`, `tipoEmenda`, `codigoFuncao`, `codigoSubfuncao`, `pagina`) e `GET /emendas/documentos/{codigo}`. O autor é filtrado por **nome**, não pelo id da Câmara: exige regra de reconciliação, e emenda não reconciliada fica fora (ADR-0003). Limites de requisição não constam da especificação OpenAPI; fontes de terceiros citam 400/min de dia, 700/min entre 00:00 e 06:00 e 180/min em rotas restritas (emendas não está entre elas) — confirmar no portal antes do plan. |
+| Catálogo Conecta gov.br | `https://www.gov.br/conecta/catalogo/` | Acesso controlado, para troca de dados entre órgãos públicos | **Descartada:** voltada a órgãos de governo e sem API legislativa. O que interessa ao projeto (Portal da Transparência, dados.gov.br) é aberto ao público diretamente. |
+
+Limite de requisições das fontes não exige serviço de cache próprio: o site não consulta as APIs (DA01), o ETL coleta uma vez por dia e guarda cada resposta bruta no R2 sem regravar conteúdo igual (ADR-0002). Uma API dinâmica própria (por exemplo, FastAPI) contraria o site estático da ADR-0002 e só seria reavaliada se o produto decidir oferecer API pública a terceiros — mesmo assim, JSON estático gerado no build é a primeira alternativa.
 
 ## 6. Histórias de usuário
 
@@ -253,6 +265,7 @@ Entidades de domínio identificadas: Parlamentar, Casa Legislativa, Mandato, Par
 
 | Data | Alteração |
 |------|-----------|
+| 2026-10-28 | §5.1: Portal da Transparência registrado como fonte candidata (emendas, pós-M1); Conecta gov.br descartado; API dinâmica própria descartada (ADR-0002). Emendas por parlamentar na §4.2. |
 | 2026-10-20 | ADR-0003 (domínio, adaptadores, pipeline) e modelagem de dados do M1; F1 concluída. |
 | 2026-10-20 | Hospedagem, publicação diária, agendamento e backup definidos no ADR-0002. |
 | 2026-10-20 | Stack definida no ADR-0001. |
