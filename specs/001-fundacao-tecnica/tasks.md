@@ -94,7 +94,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [X] T016 [P] Implementar `etl/src/etl/registro.py` (logger estruturado em stdout com mascaramento de segredos) até T011 passar
 - [X] T017 Implementar `etl/src/etl/adaptadores/persistencia/banco.py`: engine SQLAlchemy 2 Core com psycopg 3, `MetaData.reflect()` das tabelas do Prisma, unidade de trabalho com uma única transação, `statement_timeout` de sessão
 - [X] T018 Implementar `etl/src/etl/adaptadores/persistencia/execucoes.py`: `iniciar(gatilho, versao_codigo)` (transação própria, status `em_andamento`), `finalizar(id, status, contagens, tentativas, erros, pendencias)` e `ultima_bem_sucedida()`; teste em `etl/tests/integracao/test_execucoes.py`
-- [ ] T019 [P] Criar `web/src/lib/db.ts`: `PrismaClient` com `@prisma/adapter-pg`, conectado a `DATABASE_URL_LEITURA`, importado de `web/src/generated/prisma`
+- [X] T019 [P] Criar `web/src/lib/db.ts`: `PrismaClient` com `@prisma/adapter-pg`, conectado a `DATABASE_URL_LEITURA`, importado de `web/src/generated/prisma`
 - [ ] T020 Rodar T010 (arquitetura) verde com a árvore de pacotes de T005 e documentar no `etl/README.md` como rodar unidade e integração localmente
 
 **Checkpoint**: `prisma migrate deploy` num banco vazio + `pytest -m integration` verde para invariantes e execuções; arquitetura e registro verdes.
