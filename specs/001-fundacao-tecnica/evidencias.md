@@ -74,3 +74,26 @@ $ npx playwright test
 - `noindex` e versão publicada.
 
 **Mutação de controle:** sem `lg:flex-row` na página, o teste do FR-003 falha (`Expected: >= 471.5625, Received: 152`). Restaurado o código, os 16 voltam a passar.
+
+## 2026-10-28 — imagem do ETL (T049)
+
+```
+$ docker build -f etl/Dockerfile -t fiscaldogov-etl:teste .     # contexto na raiz
+Successfully tagged fiscaldogov-etl:teste
+$ docker run --rm fiscaldogov-etl:teste            → código 2 (sem configuração)
+$ docker run --rm fiscaldogov-etl:teste pg_dump --version
+pg_dump (PostgreSQL) 18.6 (Debian 18.6-1.pgdg13+2)
+$ docker run --rm fiscaldogov-etl:teste sh -c 'whoami; python --version; node --version; find / -name .env | wc -l'
+etl
+Python 3.14.10
+v24.22.2
+0
+$ docker run --rm --network host -e DATABASE_URL_DONO=…/fiscaldogov_e2e fiscaldogov-etl:teste \
+    sh -c 'cd /app/web && node_modules/.bin/prisma migrate deploy'
+1 migration found in prisma/migrations
+No pending migrations to apply.
+```
+
+**Tamanho:** 1,06 GB.
+- Principais partes: CLI do Prisma 256 MB, Node 122 MB e venv 90 MB.
+- Aceitável para um job agendado; reduzir fica como otimização futura.

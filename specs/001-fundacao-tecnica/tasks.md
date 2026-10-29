@@ -186,7 +186,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - `concurrency: { group: publicar, cancel-in-progress: true }`;
   - ambiente `producao`;
   - passos 1–5 de `contracts/publicacao.md`.
-- [ ] T049 [US1] Criar `etl/Dockerfile`, construído com **contexto na raiz do repositório** (o serviço do Railway usa a raiz como diretório de build e `dockerfilePath = etl/Dockerfile`, porque a imagem precisa de `web/prisma/`), e `.dockerignore` na raiz excluindo `web/node_modules`, `web/.next`, `web/out`, `etl/.venv`, `.git`:
+- [X] T049 [US1] Criar `etl/Dockerfile`, construído com **contexto na raiz do repositório** (o serviço do Railway usa a raiz como diretório de build e `dockerfilePath = etl/Dockerfile`, porque a imagem precisa de `web/prisma/`), e `.dockerignore` na raiz excluindo `web/node_modules`, `web/.next`, `web/out`, `etl/.venv`, `.git`:
   - base Python 3.14 slim;
   - `postgresql-client` na major de T001;
   - Node 24 com `web/prisma/`, `web/prisma.config.ts` e os pacotes `prisma` e `dotenv` nas versões fixadas em `web/package-lock.json` (o CLI do Prisma 7 lê o `prisma.config.ts`);

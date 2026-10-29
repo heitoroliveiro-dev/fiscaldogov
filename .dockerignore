@@ -15,3 +15,11 @@ etl/.venv/
 !**/.env.example
 *.log
 coverage/
+
+# Fora da imagem do ETL: código do site, testes e documentação (T049)
+.github/
+docs/
+specs/
+web/src/
+web/tsconfig.tsbuildinfo
+etl/tests/
