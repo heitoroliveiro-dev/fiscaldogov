@@ -20,6 +20,10 @@ class RespostaInvalida(Exception):
     """JSON inválido, ou campo usado ausente ou de tipo inesperado: falha fechada."""
 
 
+class CredencialInvalida(Exception):
+    """Um serviço recusou a credencial (401/403): o alerta aponta a causa (FR-020a)."""
+
+
 class StatusExecucao(StrEnum):
     EM_ANDAMENTO = "em_andamento"
     SUCESSO = "sucesso"

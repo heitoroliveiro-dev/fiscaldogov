@@ -166,7 +166,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - `upsert` de parlamentar (por `identificador_externo` `camara_v2`), partido (por `camara_v2_partido`) e mandato;
   - substituição dos períodos e filiações do parlamentar dentro da transação;
   - `parlamentares_armazenados()`.
-- [ ] T039 [US1] Implementar `etl/src/etl/adaptadores/publicacao/github.py`: `POST /repos/{GITHUB_REPOSITORIO}/actions/workflows/publicar.yml/dispatches` com `ref=main` e `inputs.execucao_id`; erro 401/403 → `CredencialInvalida`. Teste em `etl/tests/unidade/test_publicacao.py` com transporte falso.
+- [X] T039 [US1] Implementar `etl/src/etl/adaptadores/publicacao/github.py`: `POST /repos/{GITHUB_REPOSITORIO}/actions/workflows/publicar.yml/dispatches` com `ref=main` e `inputs.execucao_id`; erro 401/403 → `CredencialInvalida`. Teste em `etl/tests/unidade/test_publicacao.py` com transporte falso.
 - [ ] T040 [US1] Implementar `etl/src/etl/pipeline/coletar.py` (etapas 1–5, 7 e 8 de `contracts/etl-cli.md`, com falha do bruto ou do disparo → `com_pendencias`) e os comandos `coletar` e `verificar-config` no `etl/src/etl/__main__.py` criado na T015, com os códigos de saída 0, 1 e 2, até T027 passar
 - [ ] T041 [P] [US1] Implementar `web/src/lib/formatar-data.ts` até T028 passar
 - [ ] T042 [P] [US1] Implementar `web/src/lib/dados.ts` (deputado exibido + última execução `sucesso`/`com_pendencias`, via Prisma) até T030 passar
