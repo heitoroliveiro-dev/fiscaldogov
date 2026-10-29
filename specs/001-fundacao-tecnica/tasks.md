@@ -136,9 +136,9 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - os parlamentares já armazenados têm o histórico atualizado (FR-007);
   - erro na gravação desfaz os dados de domínio, mas mantém os registros de `coleta_bruta` da execução que falhou (FR-012);
   - `execucao_etl` termina `sucesso`, com contagens.
-- [ ] T028 [P] [US1] Escrever `web/tests/formatar-data.test.ts`: "Conferido na fonte oficial em DD/MM/AAAA às HH:MM (horário de Brasília)" em `America/Sao_Paulo`, inclusive para um horário UTC que vira o dia anterior em Brasília
-- [ ] T029 [P] [US1] Escrever `web/tests/aviso-desatualizado.test.tsx`: aviso "Atenção: os dados podem estar desatualizados." com conferência de 49 h atrás; ausente com 47 h (FR-002a, SC-011)
-- [ ] T030 [P] [US1] Escrever `web/tests/dados.test.ts`: a consulta do deputado exibido escolhe o período aberto (`fim` nulo) da 57ª com menor `nome_ordenacao`; sem deputado em exercício, ou sem execução bem-sucedida, lança erro que faz o build falhar (FR-016a)
+- [X] T028 [P] [US1] Escrever `web/tests/formatar-data.test.ts`: "Conferido na fonte oficial em DD/MM/AAAA às HH:MM (horário de Brasília)" em `America/Sao_Paulo`, inclusive para um horário UTC que vira o dia anterior em Brasília
+- [X] T029 [P] [US1] Escrever `web/tests/aviso-desatualizado.test.tsx`: aviso "Atenção: os dados podem estar desatualizados." com conferência de 49 h atrás; ausente com 47 h (FR-002a, SC-011)
+- [X] T030 [P] [US1] Escrever `web/tests/dados.test.ts`: a consulta do deputado exibido escolhe o período aberto (`fim` nulo) da 57ª com menor `nome_ordenacao`; sem deputado em exercício, ou sem execução bem-sucedida, lança erro que faz o build falhar (FR-016a)
 - [ ] T031 [US1] Escrever `web/e2e/pagina.spec.ts` + `web/playwright.config.ts`, contra o `out/` servido localmente:
   - todos os elementos e seletores de `contracts/pagina-publica.md`;
   - `noindex` no HTML;
