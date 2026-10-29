@@ -46,7 +46,7 @@ def _url_pagina(numero: int) -> str:
 
 
 def _paginas(total: int) -> dict[int, dict]:
-    reais = PAGINA1["dados"]
+    reais = copy.deepcopy(PAGINA1["dados"])  # cada teste altera a sua cópia
     deputados = [
         reais[i] if i < len(reais) else {**reais[0], "id": 900_000 + i, "nome": f"Sintético {i}"}
         for i in range(total)

@@ -37,9 +37,18 @@ class Partido:
 
 
 @dataclass(frozen=True)
+class Origem:
+    """De onde e quando veio um dado: todo registro exibido é rastreável (princípio I)."""
+
+    url: str
+    coletado_em: datetime
+
+
+@dataclass(frozen=True)
 class Parlamentar:
     nome_parlamentar: str
     identificador: IdentificadorExterno
+    origem: Origem
     url_foto: str | None = None
 
     @property
@@ -92,3 +101,11 @@ class EventoHistorico:
     partido: Partido | None
     uf: str
     descricao: str
+
+
+@dataclass(frozen=True)
+class Historico:
+    """Todos os eventos do histórico de um parlamentar, na ordem da fonte."""
+
+    eventos: tuple[EventoHistorico, ...]
+    origem: Origem

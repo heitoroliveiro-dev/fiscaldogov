@@ -154,7 +154,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [X] T033 [P] [US1] Implementar `etl/src/etl/dominio/selecao.py` (`normalizar_nome`, `selecionar_deputado`) até T022 passar
 - [X] T034 [US1] Implementar `etl/src/etl/dominio/historico.py` (`derivar_periodos`, `derivar_filiacoes`, `derivar_uf`, como funções puras) até T023 passar
 - [ ] T035 [P] [US1] Criar as portas em `etl/src/etl/portas/__init__.py` como `typing.Protocol`: `FonteDaCasa`, `RepositorioDeDados`, `ArmazemDeBrutos`, `Backup`, `Publicador`, `Alertador`
-- [ ] T036 [US1] Implementar `etl/src/etl/adaptadores/camara/sanitizacao.py` e `etl/src/etl/adaptadores/camara/api_v2.py`:
+- [X] T036 [US1] Implementar `etl/src/etl/adaptadores/camara/sanitizacao.py` e `etl/src/etl/adaptadores/camara/api_v2.py`:
   - httpx com `User-Agent: fiscaldogov-etl (+https://github.com/heitoroliveiro-dev/fiscaldogov)`, timeout de 30 s e no máximo 4 requisições simultâneas;
   - `listar_em_exercicio()` paginado e `historico(id)`;
   - validação dos campos usados;
