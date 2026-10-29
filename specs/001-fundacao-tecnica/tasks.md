@@ -128,7 +128,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - lista vazia, ou menos de 500 deputados em exercício, → `FonteIncompleta`;
   - histórico vazio → `FonteIncompleta`;
   - nenhuma chamada a `/deputados/{id}`.
-- [ ] T026 [P] [US1] Escrever `etl/tests/unidade/test_brutos.py`: chave `camara/api-v2/<caminho>/<sha256>.json.gz`; conteúdo compactado; não regrava se o `sha256` for igual ao da última `coleta_bruta` da mesma URL (FR-011)
+- [X] T026 [P] [US1] Escrever `etl/tests/unidade/test_brutos.py`: chave `camara/api-v2/<caminho>/<sha256>.json.gz`; conteúdo compactado; não regrava se o `sha256` for igual ao da última `coleta_bruta` da mesma URL (FR-011) — a deduplicação consulta o banco e ficou em `etl/tests/integracao/test_armazem_brutos.py`
 - [ ] T027 [US1] Escrever `etl/tests/integracao/test_coletar.py`, com fonte falsa e armazém de brutos falso:
   - a coleta grava parlamentar, identificadores, mandato, períodos e filiação, todos com `fonte_url` e `coletado_em` (FR-008);
   - nenhuma coluna ou valor de CPF no banco (FR-009);
