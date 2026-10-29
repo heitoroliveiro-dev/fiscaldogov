@@ -120,7 +120,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - eventos de outras legislaturas (os 6 da 56ª na fixture) não geram período nem filiação (data-model.md, decisão de 2026-10-28);
   - a sigla `S.PART.` fecha a filiação anterior sem abrir outra (data-model.md, decisão de 2026-10-28).
 - [X] T024 [P] [US1] Escrever `etl/tests/unidade/test_sanitizacao.py`: remoção recursiva de `cpf`, `dataNascimento`, `municipioNascimento`, `ufNascimento`, `escolaridade` (contracts/fonte-camara-api-v2.md)
-- [ ] T025 [P] [US1] Escrever `etl/tests/unidade/test_api_v2.py`, com um transporte httpx falso servindo as fixtures:
+- [X] T025 [P] [US1] Escrever `etl/tests/unidade/test_api_v2.py`, com um transporte httpx falso servindo as fixtures:
   - a paginação segue `links[rel=next]`;
   - `User-Agent` e `Accept` são enviados;
   - o timeout é de 30 s;

@@ -9,6 +9,15 @@ Base: `https://dadosabertos.camara.leg.br/api/v2` (configurável por `CAMARA_API
 | `GET /deputados?itens=100&pagina=N` | Deputados **em exercício no momento** (sem parâmetro de tempo) → seleção do FR-006 | `id`, `nome`, `siglaPartido`, `uriPartido`, `siglaUf`, `idLegislatura`, `urlFoto`, `uri` | Seguir `links[rel=next]` até não existir |
 | `GET /deputados/{id}/historico` | Períodos de exercício, condição, filiações, UF | `dataHora`, `situacao`, `condicaoEleitoral`, `descricaoStatus`, `siglaPartido`, `uriPartido`, `siglaUf`, `idLegislatura`, `nomeEleitoral` | Sem paginação |
 
+## Tradução para o domínio
+
+Feita no adaptador; o domínio nunca vê o formato da API (DA02).
+
+- `dataHora` vem sem fuso (ex.: `2023-02-01T12:05`) e é lido como horário de Brasília (`America/Sao_Paulo`). A documentação da API não informa o fuso. A leitura segue os limites de legislatura do próprio histórico (`2023-01-31T23:59` e `2023-02-01T00:00`), que só fazem sentido no calendário local. Suposição registrada em 2026-10-28.
+- `situacao`: `"Exercício"` → em exercício; nula → evento só de nome ou partido (não abre nem fecha período); qualquer outra → fora de exercício.
+- `condicaoEleitoral`: `Titular`/`Suplente`; nula só em evento sem situação; outro valor → `RespostaInvalida`.
+- `siglaPartido = "S.PART."` → sem partido (a API a trata como partido, com URI própria; o domínio não — data-model.md).
+
 ## Endpoint proibido
 
 - `GET /deputados/{id}` — devolve `cpf`. Não é chamado (RNF06, FR-009; research §4).
