@@ -259,3 +259,13 @@ def test_nunca_chama_o_endpoint_que_devolve_cpf() -> None:
     fonte.historico(CELSO_SABINO)
 
     assert not [p for p in camara.pedidos if re.fullmatch(r"/api/v2/deputados/\d+", p.url.path)]
+
+
+def test_deputado_repetido_entre_paginas_e_resposta_invalida() -> None:
+    # os links next da API real alternam entre ordenação explícita e padrão
+    # (visto em 2026-10-28); repetição indica que outro deputado pode ter sumido
+    paginas = _paginas(513)
+    paginas[2]["dados"][0] = copy.deepcopy(paginas[1]["dados"][0])
+
+    with pytest.raises(RespostaInvalida, match="repetido"):
+        _fonte(_Camara(paginas=paginas)).listar_em_exercicio()

@@ -38,6 +38,7 @@ Remover recursivamente as chaves `cpf`, `dataNascimento`, `municipioNascimento`,
 | Erro de rede, tempo esgotado (30 s), HTTP 5xx, HTTP 429 | Nova tentativa: até 3, com espera de 5 s, 20 s e 60 s |
 | HTTP 4xx (exceto 429) | Falha imediata da execução |
 | JSON inválido ou campo usado ausente / de tipo inesperado | Falha imediata da execução (falha fechada); a resposta bruta é guardada para diagnóstico |
+| Mesmo deputado em duas páginas da lista | Falha imediata (`RespostaInvalida`): os links `next` alternam entre `ordem=ASC&ordenarPor=nome` e a ordem padrão (visto em 2026-10-28, sem repetição em 3 rodadas); repetição indicaria que outro deputado sumiu |
 | Lista de deputados vazia | Falha da execução ("fonte devolveu lista vazia") |
 
 ## Fixtures de teste

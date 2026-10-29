@@ -105,6 +105,11 @@ class CamaraApiV2:
                 deputados.append(self._parlamentar(item, origem))
             proxima, parametros = self._proxima_pagina(conteudo, url), None
 
+        # os links next alternam entre ordenação explícita e padrão; se as páginas
+        # vierem em ordens diferentes, um deputado se repete e outro some
+        repetidos = len(deputados) - len({deputado.identificador for deputado in deputados})
+        if repetidos:
+            raise RespostaInvalida(f"paginação inconsistente: {repetidos} deputados repetidos")
         if not deputados:
             raise FonteIncompleta("a fonte devolveu lista vazia de deputados em exercício")
         if len(deputados) < MINIMO_EM_EXERCICIO:
