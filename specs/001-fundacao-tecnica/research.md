@@ -150,5 +150,5 @@ Decisões técnicas da feature, com alternativas descartadas. Versões verificad
 
 - ✅ **Major do Postgres (2026-10-20): 18.** O template da Railway usa a imagem `ghcr.io/railwayapp-templates/postgres-ssl`, construída sobre a imagem oficial do Docker Hub, com tags 13 a 18; a tag `:latest` ainda aponta para a 16, por isso o serviço de produção é criado com a imagem **`:18` explícita**. Local e CI usam `postgres:18-trixie`, a mesma base da imagem da Railway (que fixa a distribuição para não mudar a ordenação de texto sem aviso). `postgresql-client` da imagem do ETL: 18.
 - ✅ **`btree_gist` (2026-10-20):** `CREATE EXTENSION btree_gist` e a restrição `EXCLUDE USING gist (… WITH =, tstzrange … WITH &&)` funcionam no Postgres 18.6 (trixie); inserir um período sobreposto é recusado. A Railway não acrescenta extensões aos templates, mas `btree_gist` faz parte do contrib incluído na imagem oficial.
-- Permissão exata do token fine-grained para `workflow_dispatch`.
+- ✅ **Permissão do token fine-grained para `workflow_dispatch` (2026-10-28):** *Actions* com acesso de **escrita** no repositório (tabela de permissões da doc do GitHub: `POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches` → `write`). *Metadata: read* vem junto, obrigatória.
 - Geração das imagens de prévia na exportação estática fica para a F3.3 (RF10); não há prévia na F2.

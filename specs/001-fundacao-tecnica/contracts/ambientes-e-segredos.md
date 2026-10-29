@@ -10,7 +10,7 @@ Nenhum valor real no repositório (princípio VI). `.env.example` em `etl/` e `w
 | `DATABASE_URL_DONO` | Conexão com o usuário dono — usada **só** no comando de pré-deploy (`prisma migrate deploy`) | sim |
 | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | Token do R2 restrito aos dois buckets | sim |
 | `R2_BUCKET_BRUTOS`, `R2_BUCKET_BACKUP` | `fiscaldogov-brutos`, `fiscaldogov-backup` | não |
-| `GITHUB_TOKEN_PUBLICACAO` | Token fine-grained: só este repositório, permissão de Actions (escrita) ⚠️ confirmar | sim |
+| `GITHUB_TOKEN_PUBLICACAO` | Token fine-grained: só este repositório, permissão de Actions (escrita), conferida na doc do GitHub em 2026-10-28 | sim |
 | `GITHUB_REPOSITORIO` | `heitoroliveiro-dev/fiscaldogov` | não |
 | `CAMARA_API_URL` | Padrão: URL oficial | não |
 | `ETL_TEMPO_LIMITE_S` | Padrão: 3600 | não |
