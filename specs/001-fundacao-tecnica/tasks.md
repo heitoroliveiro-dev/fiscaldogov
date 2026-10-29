@@ -109,7 +109,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 ### Testes da US1 (escrever primeiro, devem falhar)
 
-- [ ] T021 [P] [US1] Gravar as fixtures reais, sanitizadas, em `etl/tests/fixtures/camara/`: `deputados-pagina1-2026-10-20.json` (`GET /deputados?itens=100&pagina=1`) e `historico-204496-2026-10-20.json` (`GET /deputados/204496/historico`, 22 eventos) — nunca chamar `/deputados/{id}`
+- [X] T021 [P] [US1] Gravar as fixtures reais, sanitizadas, em `etl/tests/fixtures/camara/`: `deputados-pagina1-2026-10-28.json` (`GET /deputados?itens=100&pagina=1`) e `historico-204496-2026-10-28.json` (`GET /deputados/204496/historico`, 22 eventos) — nunca chamar `/deputados/{id}` — gravadas em 2026-10-28 (data da coleta no nome); o histórico tem os mesmos 22 eventos conferidos em 2026-10-20 e nenhuma chave da lista de bloqueio
 - [ ] T022 [P] [US1] Escrever `etl/tests/unidade/test_selecao.py`: ordenação por nome em minúsculas e sem acento ("Átila" antes de "Bruno", "álvaro" igual a "Alvaro"), escolha do primeiro, `nome_ordenacao` gerado (FR-006)
 - [ ] T023 [P] [US1] Escrever `etl/tests/unidade/test_historico.py`, com a fixture 204496:
   - os períodos abrem em `situacao = "Exercício"` e fecham no próximo evento diferente ("Licença", "Afastado"…);
