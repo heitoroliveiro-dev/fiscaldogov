@@ -5,7 +5,7 @@
 ## Onde estou agora
 
 **Fase atual:** F2 — Fundação técnica · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** implementar a 001 (`/speckit-implement`): Setup e Foundational concluídos (T001–T020); agora a US1 (T021–T052).
+**Próxima ação:** checkpoint da US1 — código pronto (T021–T050); falta a infraestrutura de produção (T051, ⚠️ responsável) e a validação ponta a ponta (T052). Depois, US3 → US4 → US2 → US5.
 **Prazo:** M1 até 31/01/2027 · **Ritmo planejado:** 8 h/semana · **Próximo checkpoint:** 23/11 (F2).
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
