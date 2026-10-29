@@ -117,7 +117,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - as filiações mudam quando muda a `siglaPartido`, e o evento inicial "Partido no início da legislatura" define a primeira;
   - a UF vem do primeiro evento;
   - eventos fora de ordem são ordenados por `dataHora`, com empate mantendo a ordem da fonte (FR-007b);
-  - eventos de outras legislaturas (os 5 da 56ª na fixture) não geram período nem filiação (data-model.md, decisão de 2026-10-28);
+  - eventos de outras legislaturas (os 6 da 56ª na fixture) não geram período nem filiação (data-model.md, decisão de 2026-10-28);
   - a sigla `S.PART.` fecha a filiação anterior sem abrir outra (data-model.md, decisão de 2026-10-28).
 - [X] T024 [P] [US1] Escrever `etl/tests/unidade/test_sanitizacao.py`: remoção recursiva de `cpf`, `dataNascimento`, `municipioNascimento`, `ufNascimento`, `escolaridade` (contracts/fonte-camara-api-v2.md)
 - [ ] T025 [P] [US1] Escrever `etl/tests/unidade/test_api_v2.py`, com um transporte httpx falso servindo as fixtures:
@@ -150,9 +150,9 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 ### Implementação da US1
 
-- [ ] T032 [P] [US1] Criar `etl/src/etl/dominio/entidades.py` (dataclasses imutáveis: `Parlamentar`, `IdentificadorExterno`, `Mandato`, `PeriodoDeExercicio`, `Partido`, `Filiacao`, `EventoHistorico`)
-- [ ] T033 [P] [US1] Implementar `etl/src/etl/dominio/selecao.py` (`normalizar_nome`, `selecionar_deputado`) até T022 passar
-- [ ] T034 [US1] Implementar `etl/src/etl/dominio/historico.py` (`derivar_periodos`, `derivar_filiacoes`, `derivar_uf`, como funções puras) até T023 passar
+- [X] T032 [P] [US1] Criar `etl/src/etl/dominio/entidades.py` (dataclasses imutáveis: `Parlamentar`, `IdentificadorExterno`, `Mandato`, `PeriodoDeExercicio`, `Partido`, `Filiacao`, `EventoHistorico`)
+- [X] T033 [P] [US1] Implementar `etl/src/etl/dominio/selecao.py` (`normalizar_nome`, `selecionar_deputado`) até T022 passar
+- [X] T034 [US1] Implementar `etl/src/etl/dominio/historico.py` (`derivar_periodos`, `derivar_filiacoes`, `derivar_uf`, como funções puras) até T023 passar
 - [ ] T035 [P] [US1] Criar as portas em `etl/src/etl/portas/__init__.py` como `typing.Protocol`: `FonteDaCasa`, `RepositorioDeDados`, `ArmazemDeBrutos`, `Backup`, `Publicador`, `Alertador`
 - [ ] T036 [US1] Implementar `etl/src/etl/adaptadores/camara/sanitizacao.py` e `etl/src/etl/adaptadores/camara/api_v2.py`:
   - httpx com `User-Agent: fiscaldogov-etl (+https://github.com/heitoroliveiro-dev/fiscaldogov)`, timeout de 30 s e no máximo 4 requisições simultâneas;

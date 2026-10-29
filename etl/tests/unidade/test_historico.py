@@ -1,7 +1,7 @@
 """Derivação de períodos de exercício, filiações e UF a partir do histórico (data-model.md).
 
 Base do futuro denominador das estatísticas (DA03): erro aqui vira taxa errada.
-Os casos com a fixture real (deputado 204496, 22 eventos, 17 da 57ª) foram
+Os casos com a fixture real (deputado 204496, 22 eventos, 16 da 57ª) foram
 conferidos à mão evento a evento; os sintéticos cobrem as bordas que ela não tem.
 """
 
@@ -98,7 +98,7 @@ def _intervalos(itens: list) -> list[tuple[datetime, datetime | None]]:
 
 def test_fixture_tem_os_22_eventos_conferidos(eventos_204496: list[EventoHistorico]) -> None:
     assert len(eventos_204496) == 22
-    assert sum(evento.legislatura == LEGISLATURA for evento in eventos_204496) == 17
+    assert sum(evento.legislatura == LEGISLATURA for evento in eventos_204496) == 16
 
 
 def test_periodos_abrem_no_exercicio_e_fecham_na_licenca(
@@ -153,7 +153,7 @@ def test_uf_vem_do_primeiro_evento_da_legislatura(eventos_204496: list[EventoHis
 
 
 def test_eventos_de_outras_legislaturas_nao_entram(eventos_204496: list[EventoHistorico]) -> None:
-    # os 5 eventos da 56ª trazem PSDB, S.PART. e PSL e começam em 2019
+    # os 6 eventos da 56ª trazem PSDB, S.PART. e PSL e começam em 2019
     inicio_da_57 = _momento("2023-02-01T00:00")
 
     periodos = derivar_periodos(eventos_204496, LEGISLATURA)
