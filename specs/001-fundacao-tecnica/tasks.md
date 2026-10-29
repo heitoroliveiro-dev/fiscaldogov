@@ -192,7 +192,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - Node 24 com `web/prisma/`, `web/prisma.config.ts` e os pacotes `prisma` e `dotenv` nas versões fixadas em `web/package-lock.json` (o CLI do Prisma 7 lê o `prisma.config.ts`);
   - instalação com `uv sync --frozen`;
   - `CMD ["python", "-m", "etl", "coletar"]` provisório (o agendamento entra na US2).
-- [ ] T050 [P] [US1] Escrever `docs/05-runbooks/banco-papeis.md`: criar `etl_escrita` e `site_leitura` em produção (senha gerada e guardada só nos cofres), conferir as permissões, trocar senha com `ALTER ROLE ... PASSWORD`
+- [X] T050 [P] [US1] Escrever `docs/05-runbooks/banco-papeis.md`: criar `etl_escrita` e `site_leitura` em produção (senha gerada e guardada só nos cofres), conferir as permissões, trocar senha com `ALTER ROLE ... PASSWORD`
 - [ ] T051 [US1] ⚠️ Em produção:
   - criar os papéis pelo runbook de T050;
   - criar o serviço Postgres no Railway com a imagem `ghcr.io/railwayapp-templates/postgres-ssl:18` explícita (a `:latest` é a 16 — research §11) e conferir `CREATE EXTENSION btree_gist` nele;
