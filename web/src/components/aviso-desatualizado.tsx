@@ -22,7 +22,7 @@ export function AvisoDesatualizado({ conferidoEm }: { conferidoEm: string }) {
 
   if (!desatualizado) return null;
   return (
-    <p role="alert" data-testid="aviso-desatualizado" className="font-medium text-destructive">
+    <p role="alert" data-testid="aviso-desatualizado" className="font-medium text-warning-text">
       Atenção: os dados podem estar desatualizados.
     </p>
   );

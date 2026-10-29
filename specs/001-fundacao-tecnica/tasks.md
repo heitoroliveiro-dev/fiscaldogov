@@ -170,17 +170,17 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [X] T040 [US1] Implementar `etl/src/etl/pipeline/coletar.py` (etapas 1–5, 7 e 8 de `contracts/etl-cli.md`, com falha do bruto ou do disparo → `com_pendencias`) e os comandos `coletar` e `verificar-config` no `etl/src/etl/__main__.py` criado na T015, com os códigos de saída 0, 1 e 2, até T027 passar
 - [X] T041 [P] [US1] Implementar `web/src/lib/formatar-data.ts` até T028 passar
 - [X] T042 [P] [US1] Implementar `web/src/lib/dados.ts` (deputado exibido + última execução `sucesso`/`com_pendencias`, via Prisma) até T030 passar
-- [ ] T043 [P] [US1] Criar os componentes `web/src/components/aviso-testes.tsx` (`role=status`), `web/src/components/fonte-oficial.tsx` (fonte, link com nome acessível "Ver registro na Câmara dos Deputados", `<time>` com `data-testid=conferido-em`) e `web/src/components/alternar-tema.tsx` (next-themes, padrão do sistema, nome acessível "Alternar tema")
+- [X] T043 [P] [US1] Criar os componentes `web/src/components/aviso-testes.tsx` (`role=status`), `web/src/components/fonte-oficial.tsx` (fonte, link com nome acessível "Ver registro na Câmara dos Deputados", `<time>` com `data-testid=conferido-em`) e `web/src/components/alternar-tema.tsx` (next-themes, padrão do sistema, nome acessível "Alternar tema")
 - [X] T044 [P] [US1] Criar `web/src/components/aviso-desatualizado.tsx` (componente de cliente que lê o `datetime` e mostra o aviso com `role=alert` após 48 h) até T029 passar
-- [ ] T045 [US1] Criar `web/src/app/layout.tsx` e `web/src/app/page.tsx`:
+- [X] T045 [US1] Criar `web/src/app/layout.tsx` e `web/src/app/page.tsx`:
   - `lang="pt-BR"`;
   - `<meta name="robots" content="noindex">`;
   - `<meta name="versao-publicada">` com `execucao` e `commit`;
   - nome como `h1` e `data-testid=partido-uf`;
   - corpo 16 px e alvos de 44 px abaixo de `lg` (D1, D2);
   - a partir de `lg` (1024 px): bloco de fonte e data ao lado do nome, conteúdo com largura máxima de 1200 px centralizado (FR-003).
-- [ ] T046 [P] [US1] Criar `web/src/app/versao.json/route.ts` (`dynamic = 'force-static'`, retorna `execucao_id` e commit — FR-028) e `web/public/_headers` com `X-Robots-Tag: noindex` para `/*` (FR-005)
-- [ ] T047 [US1] Criar `web/prisma/seed-e2e.sql` (um parlamentar com período aberto e uma execução `sucesso`), usado no build de teste, e rodar T031 até ficar verde localmente
+- [X] T046 [P] [US1] Criar `web/src/app/versao.json/route.ts` (`dynamic = 'force-static'`, retorna `execucao_id` e commit — FR-028) e `web/public/_headers` com `X-Robots-Tag: noindex` para `/*` (FR-005)
+- [X] T047 [US1] Criar `web/prisma/seed-e2e.sql` (um parlamentar com período aberto e uma execução `sucesso`), usado no build de teste, e rodar T031 até ficar verde localmente
 - [ ] T048 [US1] Criar `web/wrangler.jsonc` (sem script; `assets.directory = "./out"`) e `.github/workflows/publicar.yml`:
   - gatilhos `workflow_dispatch` (input `execucao_id`) e `push` em `main`;
   - `concurrency: { group: publicar, cancel-in-progress: true }`;
