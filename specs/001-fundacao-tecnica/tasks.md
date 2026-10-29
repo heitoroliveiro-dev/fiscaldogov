@@ -168,10 +168,10 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - `parlamentares_armazenados()`.
 - [X] T039 [US1] Implementar `etl/src/etl/adaptadores/publicacao/github.py`: `POST /repos/{GITHUB_REPOSITORIO}/actions/workflows/publicar.yml/dispatches` com `ref=main` e `inputs.execucao_id`; erro 401/403 → `CredencialInvalida`. Teste em `etl/tests/unidade/test_publicacao.py` com transporte falso.
 - [X] T040 [US1] Implementar `etl/src/etl/pipeline/coletar.py` (etapas 1–5, 7 e 8 de `contracts/etl-cli.md`, com falha do bruto ou do disparo → `com_pendencias`) e os comandos `coletar` e `verificar-config` no `etl/src/etl/__main__.py` criado na T015, com os códigos de saída 0, 1 e 2, até T027 passar
-- [ ] T041 [P] [US1] Implementar `web/src/lib/formatar-data.ts` até T028 passar
-- [ ] T042 [P] [US1] Implementar `web/src/lib/dados.ts` (deputado exibido + última execução `sucesso`/`com_pendencias`, via Prisma) até T030 passar
+- [X] T041 [P] [US1] Implementar `web/src/lib/formatar-data.ts` até T028 passar
+- [X] T042 [P] [US1] Implementar `web/src/lib/dados.ts` (deputado exibido + última execução `sucesso`/`com_pendencias`, via Prisma) até T030 passar
 - [ ] T043 [P] [US1] Criar os componentes `web/src/components/aviso-testes.tsx` (`role=status`), `web/src/components/fonte-oficial.tsx` (fonte, link com nome acessível "Ver registro na Câmara dos Deputados", `<time>` com `data-testid=conferido-em`) e `web/src/components/alternar-tema.tsx` (next-themes, padrão do sistema, nome acessível "Alternar tema")
-- [ ] T044 [P] [US1] Criar `web/src/components/aviso-desatualizado.tsx` (componente de cliente que lê o `datetime` e mostra o aviso com `role=alert` após 48 h) até T029 passar
+- [X] T044 [P] [US1] Criar `web/src/components/aviso-desatualizado.tsx` (componente de cliente que lê o `datetime` e mostra o aviso com `role=alert` após 48 h) até T029 passar
 - [ ] T045 [US1] Criar `web/src/app/layout.tsx` e `web/src/app/page.tsx`:
   - `lang="pt-BR"`;
   - `<meta name="robots" content="noindex">`;
