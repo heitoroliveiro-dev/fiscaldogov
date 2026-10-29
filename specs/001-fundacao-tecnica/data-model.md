@@ -43,7 +43,9 @@ O Prisma não expressa 1–5 no `schema.prisma`: entram como SQL na migration (`
   - fecha no próximo evento com `situacao` diferente de "Exercício" (ex.: "Licença", "Afastado", "Fim de Mandato");
   - `condicao` vem de `condicaoEleitoral` (Titular → `titular`, Suplente → `suplente`);
   - os motivos vêm de `descricaoStatus`.
+- **Escopo:** antes de derivar, o histórico é filtrado por `idLegislatura = 57` (o M1 cobre só a 57ª; decisão de 2026-10-28). Eventos de outras legislaturas não geram período nem filiação; a 56ª entra na F5.2 com regra própria.
 - **Filiação:** abre na primeira ocorrência de uma `siglaPartido` e fecha quando a sigla muda. O evento inicial "Partido no início da legislatura" (com `situacao` nula) define a primeira filiação.
+- **Sem partido:** a sigla `S.PART.` não é partido (decisão de 2026-10-28). Ela fecha a filiação anterior e não abre outra; o parlamentar fica sem filiação aberta até a próxima sigla. `S.PART.` nunca vira linha em `partido`.
 - **UF do mandato:** `siglaUf` do primeiro evento da legislatura.
 - A derivação é **função pura no domínio**, testada com o histórico real gravado: deputado 204496, 22 eventos com licenças e reassunções.
 

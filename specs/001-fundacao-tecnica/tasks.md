@@ -116,7 +116,9 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - a `condicao` sai de `condicaoEleitoral`;
   - as filiações mudam quando muda a `siglaPartido`, e o evento inicial "Partido no início da legislatura" define a primeira;
   - a UF vem do primeiro evento;
-  - eventos fora de ordem são ordenados por `dataHora`, com empate mantendo a ordem da fonte (FR-007b).
+  - eventos fora de ordem são ordenados por `dataHora`, com empate mantendo a ordem da fonte (FR-007b);
+  - eventos de outras legislaturas (os 5 da 56ª na fixture) não geram período nem filiação (data-model.md, decisão de 2026-10-28);
+  - a sigla `S.PART.` fecha a filiação anterior sem abrir outra (data-model.md, decisão de 2026-10-28).
 - [X] T024 [P] [US1] Escrever `etl/tests/unidade/test_sanitizacao.py`: remoção recursiva de `cpf`, `dataNascimento`, `municipioNascimento`, `ufNascimento`, `escolaridade` (contracts/fonte-camara-api-v2.md)
 - [ ] T025 [P] [US1] Escrever `etl/tests/unidade/test_api_v2.py`, com um transporte httpx falso servindo as fixtures:
   - a paginação segue `links[rel=next]`;

@@ -12,7 +12,7 @@ O parlamentar com período de exercício aberto (`fim` nulo) na 57ª legislatura
 |---|---|---|
 | Aviso de testes | "Versão de testes — os dados ainda não estão completos." | `role=status` |
 | Nome | `nome_parlamentar` | `role=heading`, nível 1 |
-| Partido e UF | "<sigla do partido atual> · <UF>" | `data-testid=partido-uf` |
+| Partido e UF | "<sigla do partido atual> · <UF>"; sem filiação aberta: "Sem partido · <UF>" | `data-testid=partido-uf` |
 | Fonte | "Fonte: Câmara dos Deputados" | `data-testid=fonte` |
 | Registro original | link para `https://www.camara.leg.br/deputados/{id}`, `rel="noopener"`, abre em nova aba com aviso acessível | `role=link`, nome acessível "Ver registro na Câmara dos Deputados" |
 | Conferência | "Conferido na fonte oficial em DD/MM/AAAA às HH:MM (horário de Brasília)" — `terminada_em` da última execução `sucesso` ou `com_pendencias` | `<time datetime=...>`, `data-testid=conferido-em` |
