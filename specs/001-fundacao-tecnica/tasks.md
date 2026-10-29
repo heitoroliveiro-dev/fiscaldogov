@@ -181,7 +181,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - a partir de `lg` (1024 px): bloco de fonte e data ao lado do nome, conteúdo com largura máxima de 1200 px centralizado (FR-003).
 - [X] T046 [P] [US1] Criar `web/src/app/versao.json/route.ts` (`dynamic = 'force-static'`, retorna `execucao_id` e commit — FR-028) e `web/public/_headers` com `X-Robots-Tag: noindex` para `/*` (FR-005)
 - [X] T047 [US1] Criar `web/prisma/seed-e2e.sql` (um parlamentar com período aberto e uma execução `sucesso`), usado no build de teste, e rodar T031 até ficar verde localmente
-- [ ] T048 [US1] Criar `web/wrangler.jsonc` (sem script; `assets.directory = "./out"`) e `.github/workflows/publicar.yml`:
+- [X] T048 [US1] Criar `web/wrangler.jsonc` (sem script; `assets.directory = "./out"`) e `.github/workflows/publicar.yml`:
   - gatilhos `workflow_dispatch` (input `execucao_id`) e `push` em `main`;
   - `concurrency: { group: publicar, cancel-in-progress: true }`;
   - ambiente `producao`;

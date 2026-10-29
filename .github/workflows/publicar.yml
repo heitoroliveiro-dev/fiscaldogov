@@ -1,0 +1,71 @@
+# Publicação do site estático na Cloudflare (contracts/publicacao.md, ADR-0002).
+# Qualquer passo falhando → nada é publicado e a versão anterior segue no ar (FR-016).
+# O alerta de falha (passo final if: failure()) entra na T073.
+name: publicar
+
+on:
+  workflow_dispatch:
+    inputs:
+      execucao_id:
+        description: "Execução da coleta que originou a publicação (só rastreio)"
+        required: false
+        type: string
+  push:
+    branches: [main]
+
+concurrency:
+  group: publicar
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment: producao
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Registrar a origem
+        env:
+          # input via variável, nunca interpolado no script (injeção de comando)
+          EXECUCAO_ID: ${{ inputs.execucao_id }}
+        run: echo "Publicação da execução ${EXECUCAO_ID:-(push em main)} no commit $GITHUB_SHA"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Gerar o cliente do Prisma
+        run: npx prisma generate
+
+      - name: Gerar o site (lê o banco com site_leitura)
+        env:
+          DATABASE_URL_LEITURA: ${{ secrets.DATABASE_URL_LEITURA }}
+        run: npm run build
+
+      - name: Conferir o resultado
+        run: |
+          test -f out/index.html
+          grep -q 'name="robots" content="noindex' out/index.html
+          grep -q 'name="versao-publicada"' out/index.html
+          grep -q 'X-Robots-Tag: noindex' out/_headers
+          test -f out/versao.json
+
+      - name: Publicar na Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler deploy
