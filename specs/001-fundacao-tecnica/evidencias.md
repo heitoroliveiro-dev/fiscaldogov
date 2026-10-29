@@ -97,3 +97,32 @@ No pending migrations to apply.
 **Tamanho:** 1,06 GB.
 - Principais partes: CLI do Prisma 256 MB, Node 122 MB e venv 90 MB.
 - Aceitável para um job agendado; reduzir fica como otimização futura.
+
+## 2026-10-28 — produção, parte 1 (T051, passos 1 e 2)
+
+Nenhum valor de segredo nem endereço de conexão aparece aqui: o repositório é público.
+
+**Railway:**
+- Projeto `fiscaldogov`, ambiente `production`.
+- Serviço `Postgres` com a imagem `postgres-ssl:18` e TCP Proxy ativo.
+
+```
+SELECT version();
+PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, …
+
+SELECT name, default_version FROM pg_available_extensions WHERE name = 'btree_gist';
+btree_gist | 1.8
+```
+
+**Papéis criados pelo runbook `docs/05-runbooks/banco-papeis.md`:**
+- `CREATE ROLE … LOGIN` e `\password`;
+- senhas geradas com `openssl` e guardadas só no gerenciador de senhas do responsável.
+
+```
+    papel     | faz_login | tem_senha | privilegio_admin | cria_no_schema
+--------------+-----------+-----------+------------------+----------------
+ etl_escrita  | t         | t         | f                | f
+ site_leitura | t         | t         | f                | f
+```
+
+**Pendente:** as permissões nas tabelas chegam com a migration, no primeiro deploy do ETL (passo 5). A conferência da seção 2 do runbook roda depois disso.
