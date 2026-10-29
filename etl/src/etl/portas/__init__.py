@@ -4,7 +4,7 @@ O pipeline depende destas interfaces, não das implementações; os erros das
 fontes também moram aqui, para que o pipeline os trate sem conhecer a Câmara.
 """
 
-from typing import Protocol
+from typing import Any, Protocol
 
 from etl.dominio.entidades import Historico, IdentificadorExterno, Parlamentar
 
@@ -21,3 +21,7 @@ class FonteDaCasa(Protocol):
     def listar_em_exercicio(self) -> list[Parlamentar]: ...
 
     def historico(self, parlamentar: IdentificadorExterno) -> Historico: ...
+
+
+class ArmazemDeBrutos(Protocol):
+    def guardar(self, execucao_id: int, url: str, conteudo: Any) -> bool: ...
