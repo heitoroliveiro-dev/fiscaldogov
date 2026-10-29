@@ -32,6 +32,11 @@ def _mascarar(valor: Any, nome: str = "") -> Any:
     return valor
 
 
+def mascarar(valor: Any) -> Any:
+    """Mesmo mascaramento do registro, para texto que vai a outro destino (ex.: o banco)."""
+    return _mascarar(valor)
+
+
 class _FormatoJson(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         campos = {

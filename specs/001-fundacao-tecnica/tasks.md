@@ -162,7 +162,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
   Rodar até T024 e T025 passarem.
 - [X] T037 [US1] Implementar `etl/src/etl/adaptadores/brutos_r2/armazem.py` (boto3 no endpoint S3 do R2, gzip, sha256, deduplicação consultando `coleta_bruta`; o registro em `coleta_bruta` é gravado em **transação própria**, como `execucao_etl`, para sobreviver ao rollback da coleta — FR-012) e um `ArmazemDeBrutosEmDisco` para testes e desenvolvimento, até T026 passar
-- [ ] T038 [US1] Implementar `etl/src/etl/adaptadores/persistencia/repositorio.py`:
+- [X] T038 [US1] Implementar `etl/src/etl/adaptadores/persistencia/repositorio.py`:
   - `upsert` de parlamentar (por `identificador_externo` `camara_v2`), partido (por `camara_v2_partido`) e mandato;
   - substituição dos períodos e filiações do parlamentar dentro da transação;
   - `parlamentares_armazenados()`.

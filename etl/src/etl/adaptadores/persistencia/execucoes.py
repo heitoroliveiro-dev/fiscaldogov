@@ -7,26 +7,14 @@ ROLLBACK dos dados (FR-012).
 
 from dataclasses import dataclass
 from datetime import datetime
-from enum import StrEnum
 from typing import Any
 
 from sqlalchemy import func, select
 
 from etl.adaptadores.persistencia.banco import Banco
+from etl.portas import Gatilho, StatusExecucao
 
-
-class StatusExecucao(StrEnum):
-    EM_ANDAMENTO = "em_andamento"
-    SUCESSO = "sucesso"
-    COM_PENDENCIAS = "com_pendencias"
-    FALHA = "falha"
-    DISPENSADA = "dispensada"
-
-
-class Gatilho(StrEnum):
-    AGENDADA = "agendada"
-    RESERVA = "reserva"
-    MANUAL = "manual"
+__all__ = ["ExecucaoNaoEmAndamento", "Execucao", "Execucoes", "Gatilho", "StatusExecucao"]
 
 
 BEM_SUCEDIDAS = (StatusExecucao.SUCESSO, StatusExecucao.COM_PENDENCIAS)

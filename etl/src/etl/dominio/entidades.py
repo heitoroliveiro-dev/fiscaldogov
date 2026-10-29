@@ -109,3 +109,19 @@ class Historico:
 
     eventos: tuple[EventoHistorico, ...]
     origem: Origem
+
+
+@dataclass(frozen=True)
+class DadosDoParlamentar:
+    """Tudo o que uma coleta grava de um parlamentar numa legislatura.
+
+    parlamentar é None quando ele já não está na lista de em exercício: o
+    histórico é atualizado e o cadastro gravado antes é mantido.
+    """
+
+    identificador: IdentificadorExterno
+    parlamentar: Parlamentar | None
+    mandato: Mandato
+    periodos: tuple[PeriodoDeExercicio, ...]
+    filiacoes: tuple[Filiacao, ...]
+    origem: Origem
