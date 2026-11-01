@@ -268,33 +268,33 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 ### Testes da US2 (escrever primeiro, devem falhar)
 
-- [ ] T061 [P] [US2] Escrever `etl/tests/unidade/test_tentativas.py`:
+- [X] T061 [P] [US2] Escrever `etl/tests/unidade/test_tentativas.py`:
   - até 3 tentativas (a original + 2 novas), com esperas de 5 s e 20 s (espera injetável; research §5, decisão de 2026-11-01);
   - nova tentativa só para erro de rede, tempo esgotado, HTTP 5xx e 429;
   - HTTP 4xx e `RespostaInvalida` falham na hora;
   - cada tentativa é registrada em `tentativas` (FR-013).
-- [ ] T062 [P] [US2] Escrever `etl/tests/unidade/test_agenda.py`:
+- [X] T062 [P] [US2] Escrever `etl/tests/unidade/test_agenda.py`:
   - `agendado` às 06h UTC → `coletar --gatilho agendada`;
   - às 08h UTC → `reserva`;
   - `reserva` com `sucesso`/`com_pendencias` no dia de Brasília → `dispensada`;
   - `reserva` sem sucesso → coleta.
-- [ ] T063 [P] [US2] Escrever `etl/tests/integracao/test_concorrencia.py`:
+- [X] T063 [P] [US2] Escrever `etl/tests/integracao/test_concorrencia.py`:
   - com `em_andamento` iniciada há menos de 60 min, `coletar` sai com código 3 sem gravar;
   - com uma iniciada há mais de 60 min, ela é fechada como `falha` ("interrompida") e o alerta é chamado (FR-013, FR-013a).
-- [ ] T064 [P] [US2] Escrever `etl/tests/integracao/test_tempo_limite.py`: com `ETL_TEMPO_LIMITE_S=2` e uma fonte falsa que demora, a execução é interrompida, termina `falha` com motivo "tempo esgotado", nada é gravado e a próxima execução roda (FR-013a)
-- [ ] T065 [P] [US2] Escrever `etl/tests/unidade/test_alertas.py`:
+- [X] T064 [P] [US2] Escrever `etl/tests/integracao/test_tempo_limite.py`: com `ETL_TEMPO_LIMITE_S=2` e uma fonte falsa que demora, a execução é interrompida, termina `falha` com motivo "tempo esgotado", nada é gravado e a próxima execução roda (FR-013a)
+- [X] T065 [P] [US2] Escrever `etl/tests/unidade/test_alertas.py`:
   - a mensagem tem tipo da falha e `execucao_id`;
   - `CredencialInvalida` aparece como "falha de autenticação: <credencial>";
   - falha no envio só é registrada no log e não altera o status (FR-029, FR-020a).
-- [ ] T066 [US2] Escrever `etl/tests/integracao/test_falha_fonte.py`: fonte indisponível → 3 tentativas, `falha`, código 1, nenhum dado alterado, publicação não disparada, alerta chamado (FR-012, FR-016)
+- [X] T066 [US2] Escrever `etl/tests/integracao/test_falha_fonte.py`: fonte indisponível → 3 tentativas, `falha`, código 1, nenhum dado alterado, publicação não disparada, alerta chamado (FR-012, FR-016)
 
 ### Implementação da US2
 
-- [ ] T067 [P] [US2] Implementar `etl/src/etl/pipeline/tentativas.py` e usá-lo em `etl/src/etl/adaptadores/camara/api_v2.py` até T061 passar
-- [ ] T068 [P] [US2] Implementar `etl/src/etl/adaptadores/alertas/telegram.py` (`sendMessage` com `ALERTA_TELEGRAM_TOKEN`/`ALERTA_TELEGRAM_CHAT_ID`, uma nova tentativa, sem token nos logs) até T065 passar
-- [ ] T069 [US2] Implementar `etl/src/etl/pipeline/vigia.py` (`signal.alarm` com `ETL_TEMPO_LIMITE_S`, padrão 3600; rollback; motivo "tempo esgotado") até T064 passar
-- [ ] T070 [US2] Implementar em `etl/src/etl/pipeline/coletar.py` a recusa com código 3, o fechamento de `em_andamento` com mais de 60 min e o envio de alerta para `falha`/`com_pendencias` (etapa 9 de `contracts/etl-cli.md`) até T063 e T066 passarem
-- [ ] T071 [US2] Implementar `etl/src/etl/pipeline/reserva.py` e os comandos `reserva` e `agendado` em `etl/src/etl/__main__.py` até T062 passar
+- [X] T067 [P] [US2] Implementar `etl/src/etl/pipeline/tentativas.py` e usá-lo em `etl/src/etl/adaptadores/camara/api_v2.py` até T061 passar
+- [X] T068 [P] [US2] Implementar `etl/src/etl/adaptadores/alertas/telegram.py` (`sendMessage` com `ALERTA_TELEGRAM_TOKEN`/`ALERTA_TELEGRAM_CHAT_ID`, uma nova tentativa, sem token nos logs) até T065 passar
+- [X] T069 [US2] Implementar `etl/src/etl/pipeline/vigia.py` (`signal.alarm` com `ETL_TEMPO_LIMITE_S`, padrão 3600; rollback; motivo "tempo esgotado") até T064 passar
+- [X] T070 [US2] Implementar em `etl/src/etl/pipeline/coletar.py` a recusa com código 3, o fechamento de `em_andamento` com mais de 60 min e o envio de alerta para `falha`/`com_pendencias` (etapa 9 de `contracts/etl-cli.md`) até T063 e T066 passarem
+- [X] T071 [US2] Implementar `etl/src/etl/pipeline/reserva.py` e os comandos `reserva` e `agendado` em `etl/src/etl/__main__.py` até T062 passar
 - [ ] T072 [US2] Criar `etl/railway.json` (no serviço do Railway, apontar o caminho do arquivo de configuração para `etl/railway.json`, mantendo o diretório de build na raiz — T049):
   - `deploy.cronSchedule = "0 6,8 * * *"`;
   - `deploy.startCommand = "python -m etl agendado"`;

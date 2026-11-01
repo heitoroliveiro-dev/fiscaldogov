@@ -50,6 +50,7 @@ class PublicadorGitHub:
         )
         if resposta.status_code in (401, 403):
             raise CredencialInvalida(
-                f"GitHub recusou o token de publicação (HTTP {resposta.status_code})"
+                "token de publicação do GitHub (GITHUB_TOKEN_PUBLICACAO)",
+                f"HTTP {resposta.status_code}",
             )
         resposta.raise_for_status()

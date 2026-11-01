@@ -5,7 +5,8 @@ O caminho completo de coletar contra o banco está em tests/integracao/test_cole
 
 import pytest
 
-from etl.__main__ import codigo_de_saida, interpretar, verificar, versao_do_codigo
+from etl.__main__ import codigo_de_saida, interpretar, rodar, verificar, versao_do_codigo
+from etl.pipeline.coletar import ColetaEmAndamento, Resultado
 from etl.portas import Gatilho, StatusExecucao
 
 
@@ -74,3 +75,22 @@ def test_verificar_config_roda_todas_e_falha_se_alguma_falhar() -> None:
 
     assert codigo == 1
     assert feitas == ["banco", "api"]
+
+
+@pytest.mark.parametrize("comando", ["reserva", "agendado"])
+def test_comandos_da_agenda(comando: str) -> None:
+    assert interpretar([comando]).comando == comando
+
+
+def test_coleta_recusada_por_outra_em_andamento_sai_com_codigo_3() -> None:
+    def recusar() -> Resultado:
+        raise ColetaEmAndamento("já há uma coleta em andamento (execução 5)")
+
+    assert rodar(recusar) == 3
+
+
+@pytest.mark.parametrize(
+    ("status", "codigo"), [(StatusExecucao.DISPENSADA, 0), (StatusExecucao.FALHA, 1)]
+)
+def test_rodar_traduz_o_status_no_codigo(status: StatusExecucao, codigo: int) -> None:
+    assert rodar(lambda: Resultado(1, status)) == codigo

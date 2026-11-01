@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 import pytest
+from apoio_coleta import AlertadorFalso
 from sqlalchemy import Connection, func, select, text
 
 from etl.adaptadores.brutos_r2.armazem import ArmazemDeBrutos, GravadorEmDisco
@@ -174,6 +175,7 @@ class _Cenario:
         self.banco = banco
         self.pasta = pasta
         self.publicador = _Publicador()
+        self.alertador = AlertadorFalso()
         self.fontes: list[_FonteFalsa] = []
 
     def coletar(
@@ -185,7 +187,7 @@ class _Cenario:
         gravador: Any = None,
         historico_quebrado: str | None = None,
     ):
-        def criar_fonte(ao_receber: Callable[[str, Any], None]) -> _FonteFalsa:
+        def criar_fonte(ao_receber: Callable[[str, Any], None], _ao_tentar: Any) -> _FonteFalsa:
             fonte = _FonteFalsa(ao_receber, deputados, historicos, historico_quebrado)
             self.fontes.append(fonte)
             return fonte
@@ -196,6 +198,7 @@ class _Cenario:
             brutos=ArmazemDeBrutos(self.banco, gravador or GravadorEmDisco(self.pasta)),
             execucoes=Execucoes(self.banco),
             publicador=self.publicador,
+            alertador=self.alertador,
             versao_codigo="teste",
         )
         return coleta.executar(Gatilho.MANUAL)

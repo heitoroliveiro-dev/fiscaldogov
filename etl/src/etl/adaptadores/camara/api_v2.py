@@ -4,9 +4,11 @@ Traduz as respostas para as entidades do domínio. Cada resposta é sanitizada e
 entregue a ao_receber antes da validação, para ficar guardada para diagnóstico
 mesmo quando é inválida. GET /deputados/{id} nunca é chamado: devolve CPF.
 
-Novas tentativas (5xx, 429, rede) entram na T067; aqui, um erro HTTP propaga.
+Falha passageira (rede, tempo esgotado, HTTP 5xx e 429) tenta de novo até 3
+vezes no total (FR-013); 4xx e formato inesperado falham na hora.
 """
 
+import time
 from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Any
@@ -25,6 +27,7 @@ from etl.dominio.entidades import (
     Partido,
     SistemaExterno,
 )
+from etl.pipeline.tentativas import com_tentativas
 from etl.portas import FonteIncompleta, RespostaInvalida
 
 USER_AGENT = "fiscaldogov-etl (+https://github.com/heitoroliveiro-dev/fiscaldogov)"
@@ -46,6 +49,16 @@ def criar_cliente(url_base: str, transporte: httpx.BaseTransport | None = None) 
         limits=httpx.Limits(max_connections=MAXIMO_SIMULTANEAS),
         transport=transporte,
     )
+
+
+def erro_passageiro(erro: Exception) -> bool:
+    """Rede, tempo esgotado, HTTP 5xx e 429 passam; o resto é permanente (FR-013)."""
+    if isinstance(erro, httpx.TransportError):
+        return True
+    if isinstance(erro, httpx.HTTPStatusError):
+        codigo = erro.response.status_code
+        return codigo >= 500 or codigo == 429
+    return False
 
 
 def _campo(registro: Any, nome: str, tipo: type, url: str, *, opcional: bool = False) -> Any:
@@ -73,14 +86,29 @@ class CamaraApiV2:
         cliente: httpx.Client,
         ao_receber: Callable[[str, Any], None],
         relogio: Callable[[], datetime] = lambda: datetime.now(UTC),
+        *,
+        esperar: Callable[[float], None] = time.sleep,
+        ao_tentar: Callable[[dict[str, Any]], None] = lambda _: None,
     ) -> None:
         self._cliente = cliente
         self._ao_receber = ao_receber
         self._relogio = relogio
+        self._esperar = esperar
+        self._ao_tentar = ao_tentar
 
     def _obter(self, url: str, parametros: dict[str, int] | None = None) -> tuple[str, Any]:
-        resposta = self._cliente.get(url, params=parametros)
-        resposta.raise_for_status()
+        def pedir() -> httpx.Response:
+            resposta = self._cliente.get(url, params=parametros)
+            resposta.raise_for_status()
+            return resposta
+
+        resposta = com_tentativas(
+            pedir,
+            passageira=erro_passageiro,
+            descricao=f"GET {url}",
+            esperar=self._esperar,
+            registrar=self._ao_tentar,
+        )
         url_consultada = str(resposta.request.url)
         try:
             conteudo = sanitizar(resposta.json())
