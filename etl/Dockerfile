@@ -54,5 +54,6 @@ RUN useradd --system --uid 10001 --no-create-home etl
 USER etl
 WORKDIR /app/etl
 
-# provisório: o agendamento (comando agendado) entra na US2 (T071)
-CMD ["python", "-m", "etl", "coletar"]
+# a configuração de execução vale a de etl/railway.json (cron 0 6,8 * * *, sem reinício);
+# o CMD só define o padrão de um `docker run` sem comando
+CMD ["python", "-m", "etl", "agendado"]

@@ -295,14 +295,14 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [X] T069 [US2] Implementar `etl/src/etl/pipeline/vigia.py` (`signal.alarm` com `ETL_TEMPO_LIMITE_S`, padrão 3600; rollback; motivo "tempo esgotado") até T064 passar
 - [X] T070 [US2] Implementar em `etl/src/etl/pipeline/coletar.py` a recusa com código 3, o fechamento de `em_andamento` com mais de 60 min e o envio de alerta para `falha`/`com_pendencias` (etapa 9 de `contracts/etl-cli.md`) até T063 e T066 passarem
 - [X] T071 [US2] Implementar `etl/src/etl/pipeline/reserva.py` e os comandos `reserva` e `agendado` em `etl/src/etl/__main__.py` até T062 passar
-- [ ] T072 [US2] Criar `etl/railway.json` (no serviço do Railway, apontar o caminho do arquivo de configuração para `etl/railway.json`, mantendo o diretório de build na raiz — T049):
+- [ ] T072 [US2] (arquivo criado em 2026-11-01; falta apontar o serviço para ele, no release, para não ligar o cron em produção antes da publicação existir na `main`) Criar `etl/railway.json` (no serviço do Railway, apontar o caminho do arquivo de configuração para `etl/railway.json`, mantendo o diretório de build na raiz — T049):
   - `deploy.cronSchedule = "0 6,8 * * *"`;
   - `deploy.startCommand = "python -m etl agendado"`;
   - `deploy.preDeployCommand` = `prisma migrate deploy`;
   - `restartPolicyType = "NEVER"`;
   - retirar o `CMD` provisório de T049.
-- [ ] T073 [US2] Acrescentar a `.github/workflows/publicar.yml` o passo final `if: failure()`, que envia o alerta (FR-029) com o link da execução do workflow e identifica falha de autenticação (FR-020a)
-- [ ] T074 [P] [US2] Escrever `docs/05-runbooks/operacao-coleta.md`:
+- [X] T073 [US2] Acrescentar a `.github/workflows/publicar.yml` o passo final `if: failure()`, que envia o alerta (FR-029) com o link da execução do workflow e identifica falha de autenticação (FR-020a)
+- [X] T074 [P] [US2] Escrever `docs/05-runbooks/operacao-coleta.md`:
   - acionar coleta manual no Railway;
   - ler `execucao_etl` (status, tentativas, pendências);
   - entender os códigos de saída;
