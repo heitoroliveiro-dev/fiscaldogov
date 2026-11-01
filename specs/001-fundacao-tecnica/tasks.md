@@ -249,12 +249,12 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 **Independent Test**: quickstart R4.
 
-- [ ] T059 [US4] Escrever `etl/tests/integracao/test_papeis.py`:
+- [X] T059 [US4] Escrever `etl/tests/integracao/test_papeis.py`:
   - com `site_leitura`, `INSERT`, `UPDATE`, `DELETE` e `CREATE TABLE` são recusados com "permission denied", e `SELECT` funciona;
   - com `etl_escrita`, DML funciona e `CREATE TABLE`/`DROP TABLE` são recusados (FR-019, SC-005).
 
   Corrigir os GRANTs de T014 se algum caso falhar.
-- [ ] T060 [US4] Executar o quickstart R4 em produção com `site_leitura` (somente leitura: tentar `INSERT` dentro de `BEGIN … ROLLBACK`) e anexar a evidência em `specs/001-fundacao-tecnica/evidencias.md`
+- [X] T060 [US4] Executar o quickstart R4 em produção com `site_leitura` (somente leitura: tentar `INSERT` dentro de `BEGIN … ROLLBACK`) e anexar a evidência em `specs/001-fundacao-tecnica/evidencias.md`
 
 **Checkpoint**: o princípio V está garantido pelo banco, com teste no CI.
 

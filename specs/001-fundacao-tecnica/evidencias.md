@@ -301,3 +301,18 @@ required_status_checks web-lint,web-test,web-build,web-e2e,etl-lint,etl-test,etl
 - Checks no commit `5bcf6e2`: `etl-test` com `failure`; os outros 6 com `success`. Todos marcados como *Required*.
 - Caixa de merge: "Some checks were not successful — 1 failing, 6 successful checks", com o botão **Merge pull request desabilitado** ("Merging is blocked due to failing merge requirements").
 - PR #9 fechado sem merge. A branch `chore/r7-pr-com-teste-falhando` continua no remoto, aguardando confirmação para ser apagada.
+
+## 2026-11-01 — acesso separado (US4: T059, T060)
+
+**T059:** `etl/tests/integracao/test_papeis.py`, com 13 casos. Cada recusa confere o SQLSTATE `42501` **e** a mensagem do objeto: com `INSERT` liberado na tabela, o `site_leitura` ainda esbarra na sequência do `id`, com o mesmo SQLSTATE. Na primeira versão, que olhava só o SQLSTATE, o teste passou mesmo com o bug abaixo.
+
+```
+banco das migrations                                → 13 passed
+bug: GRANT INSERT ON partido TO site_leitura        → FAILED test_site_leitura_nao_escreve_nem_altera_a_estrutura[insert]
+bug: GRANT CREATE ON SCHEMA public TO etl_escrita   → FAILED test_etl_escrita_nao_altera_a_estrutura[create_table]
+bug: REVOKE DELETE ON partido FROM etl_escrita      → FAILED test_etl_escrita_insere_atualiza_e_apaga
+```
+
+Os bugs foram aplicados em bancos descartáveis, apagados em seguida. Nenhum GRANT da migration precisou de correção.
+
+**T060 (quickstart R4 em produção):** feito em 01/11 com `SET LOCAL ROLE site_leitura` dentro de `BEGIN … ROLLBACK` (ver "produção, parte 3"): `ERROR: permission denied for table partido`. O `SET ROLE` aplica exatamente os privilégios do papel, sem usar a senha dele. O login real com a senha do `site_leitura` pelo proxy é provado pelo primeiro build do `publicar.yml` (T052).
