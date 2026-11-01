@@ -220,7 +220,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - ferramenta ausente → falha com instrução de instalação (falha fechada);
   - documentar o comportamento em `CONTRIBUTING.md`.
 - [X] T055 [US3] Escrever `etl/tests/integracao/test_contrato_schema.py`: depois de `prisma migrate deploy`, a reflection do SQLAlchemy encontra todas as tabelas e colunas que o ETL usa (lista explícita no teste), pegando divergência entre schema e ETL (ADR-0001)
-- [ ] T056 [US3] Criar `.github/workflows/ci.yml` com os 7 jobs de research §9, rodando em `pull_request` e em `push` para `develop`/`main`:
+- [X] T056 [US3] Criar `.github/workflows/ci.yml` com os 7 jobs de research §9, rodando em `pull_request` e em `push` para `develop`/`main`:
 
   | Job | O que roda |
   |---|---|

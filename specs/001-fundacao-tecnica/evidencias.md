@@ -236,3 +236,38 @@ telegram: getChat -> 200 | tipo: private
 A escrita de Actions só é provada pelo disparo real do `publicar.yml` (T052).
 
 **GitHub, ambiente `producao`:** segredos `ALERTA_TELEGRAM_CHAT_ID`, `ALERTA_TELEGRAM_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` e `DATABASE_URL_LEITURA`; regra de branch `main`. O `DATABASE_URL_LEITURA` é provado no primeiro build do `publicar.yml` (T052).
+
+## 2026-11-01 — travas de qualidade (US3: T053–T056)
+
+**pre-commit (T053, T054)**, testado com arquivos temporários staged, sem commit:
+
+| Caso | Resultado |
+|---|---|
+| `web/`: `export const   valorTeste=1` | código 0; corrigido para `export const valorTeste = 1;` e reposto no stage |
+| `web/`: `export const valor: any = 1;` | código 1 — `error  Unexpected any … no-explicit-any` |
+| `web/`: `formatar-data.ts` quebrado | código 1 — `tests/formatar-data.test.ts (3 tests \| 3 failed)` |
+| `web/`: arquivo sem teste relacionado | `vitest related`: "No affected test files found", código 0 |
+| `etl/`: `x   =  1` | código 1 — `1 file would be reformatted` |
+| `etl/`: `x = 1` | código 0 — `126 passed, 37 deselected` |
+| `etl/` com `PATH` sem `uv` | código 1 — `BLOQUEADO: uv não encontrado. Instale: …` |
+
+Aviso de lint (ex.: variável não usada) não bloqueia, como no `npm run lint` do CI.
+
+**Contrato schema ↔ ETL (T055):** `39 passed` na integração local. Num banco descartável com `ALTER TABLE parlamentar RENAME COLUMN url_foto TO foto`, o teste falha com `AssertionError: assert {'parlamentar': ['url_foto']} == {}`.
+
+**CI (T056)**, PR #8 (rascunho, `feature/001-fundacao-tecnica` → `develop`):
+- `actionlint` 1.7.12 sem achados em `ci.yml` e `publicar.yml`.
+- Primeira execução: os 3 jobs do ETL falharam com ``Unable to resolve action `astral-sh/setup-uv@v10` `` (a action não publica tag flutuante). Corrigido em `0ebf4c9`, fixando `v10.3.0`.
+- Execução `41335769946` no commit `0ebf4c9`: os 7 jobs com `success`.
+
+```
+web-lint         success   lint + typecheck + format:check; prisma generate sem DATABASE_URL_DONO
+web-test         success   Test Files 3 passed (3) · Tests 11 passed (11)   (dados.test.ts com o banco: 5)
+web-build        success   Postgres 18 + papéis + migrate deploy + seed-e2e + next build → artefato out/
+web-e2e          success   Playwright + axe sobre o out/ do web-build
+etl-lint         success   ruff format --check + ruff check
+etl-test         success   pytest -m "not integration"
+etl-integration  success   39 passed, 126 deselected   (ETL_EXIGIR_INTEGRACAO=1)
+```
+
+O `web-test` ganhou Postgres de serviço: sem ele, o `dados.test.ts` seria pulado em silêncio (`1 skipped`, `5 skipped` sem o banco).
