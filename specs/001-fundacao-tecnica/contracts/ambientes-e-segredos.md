@@ -26,7 +26,7 @@ Nenhum valor real no repositório (princípio VI). `.env.example` em `etl/` e `w
 | Segredo | Conteúdo |
 |---|---|
 | `DATABASE_URL_LEITURA` | Proxy público, papel `site_leitura`, `sslmode=require` |
-| `CLOUDFLARE_API_TOKEN` | Token restrito a "Workers Scripts: Edit" na conta do projeto |
+| `CLOUDFLARE_API_TOKEN` | Token de conta com "Individual Workers Editor" só no Worker `fiscaldogov`, validade de 1 ano. Se o deploy pedir mais, ampliar para "Workers Scripts: Edit" na conta e registrar aqui |
 | `CLOUDFLARE_ACCOUNT_ID` | ID da conta |
 | `ALERTA_TELEGRAM_TOKEN`, `ALERTA_TELEGRAM_CHAT_ID` | Mesmo canal de alertas |
 

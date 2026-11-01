@@ -126,3 +126,113 @@ btree_gist | 1.8
 ```
 
 **Pendente:** as permissões nas tabelas chegam com a migration, no primeiro deploy do ETL (passo 5). A conferência da seção 2 do runbook roda depois disso.
+
+## 2026-10-31 — produção, parte 2 (T051, Cloudflare e GitHub)
+
+**Cloudflare:**
+- Worker `fiscaldogov` criado com o Hello World em `fiscaldogov.heitoroliveiro-dev.workers.dev`; o primeiro deploy do `publicar.yml` o substitui pelo site.
+- Token de conta `fiscaldogov-publicar`, conferido na tela de revisão antes de criar:
+
+```
+NAME        fiscaldogov-publicar
+EXPIRATION  October 31, 2027 (1 year)
+Permission  Workers > fiscaldogov > Individual Workers Editor
+IP filter   All IP addresses allowed   (runners do GitHub não têm IP fixo)
+```
+
+O valor foi copiado pelo responsável direto para o GitHub, sem passar por arquivo nem chat.
+
+**GitHub, ambiente `producao`** (página *Configure environment*):
+
+```
+Environment secrets
+CLOUDFLARE_ACCOUNT_ID
+CLOUDFLARE_API_TOKEN
+```
+
+**Pendente nesta parte:** `DATABASE_URL_LEITURA` e `ALERTA_TELEGRAM_*` no ambiente; R2 (ativação, buckets e token).
+
+## 2026-11-01 — produção, parte 3 (T051, serviço do ETL e permissões)
+
+**GitHub, ambiente `producao`:** *Deployment branches and tags* = `Selected branches and tags`, regra `main` ("1 branch and 0 tags allowed"). O `publicar.yml` só roda na `main`, tanto no push quanto no disparo do ETL (`ref=main`).
+
+**Railway, serviço `etl`** (região `ams`, a mesma da Postgres), configuração lida com `railway environment config`:
+
+```
+build.builder            DOCKERFILE
+build.dockerfilePath     etl/Dockerfile        (contexto na raiz — T049)
+deploy.preDeployCommand  sh -c 'cd /app/web && node_modules/.bin/prisma migrate deploy'
+deploy.startCommand      python -m etl verificar-config   (provisório até a T072)
+deploy.restartPolicyType NEVER
+```
+
+- Variáveis sem segredo: `R2_BUCKET_*`, `GITHUB_REPOSITORIO`, `CAMARA_API_URL`, `ETL_TEMPO_LIMITE_S`.
+- `DATABASE_URL_DONO` é a referência `${{Postgres.DATABASE_URL}}`: a credencial do dono não sai da Railway.
+- Primeiro deploy por `railway up` a partir da branch `feature/001-fundacao-tecnica`, porque a `main` ainda não tem o código. Depois do release, o serviço passa a ser ligado ao GitHub na `main`. A partir daqui, a `0001_fundacao` está aplicada em produção e não muda mais: qualquer alteração vira migration nova.
+
+```
+deployment 74fc02d0-… | SUCCESS
+Applying migration `0001_fundacao`
+All migrations have been successfully applied.
+nivel="ERROR" mensagem="configuração inválida: DATABASE_URL_ESCRITA ausente; R2_ACCOUNT_ID ausente; …"
+```
+
+O erro do `verificar-config` é o esperado enquanto os segredos não estão cadastrados (código 2, só nomes, nenhum valor).
+
+**Conferência da seção 2 de `docs/05-runbooks/banco-papeis.md`** (como dono), idêntica ao esperado:
+
+```
+    papel     | cria_no_schema | le | insere | trunca | le_migrations | privilegio_admin
+ etl_escrita  | f              | t  | t      | f      | t             | f
+ site_leitura | f              | t  | f      | f      | t             | f
+
+ migration_name | concluida | sem_rollback
+ 0001_fundacao  | t         | t                      tabelas no schema public: 11
+```
+
+**Prova prática do papel de leitura** (`SET LOCAL ROLE site_leitura` como dono, transação desfeita):
+
+```
+ current_user = site_leitura
+INSERT INTO partido (sigla) VALUES ('X');
+ERROR:  permission denied for table partido
+ROLLBACK
+```
+
+## 2026-11-01 — produção, parte 4 (T051, R2, segredos e conferência final)
+
+**Cloudflare R2** (ativado pelo responsável, US$ 0/mês dentro da franquia):
+- Buckets `fiscaldogov-brutos` e `fiscaldogov-backup`: localização automática com dica *Western Europe (WEUR)*, perto da Postgres em `ams`; classe *Standard*; acesso público desativado. As regras de ciclo de vida ficam para a T080.
+- Token de conta `fiscaldogov-etl-r2`: *Object Read & Write* só nos dois buckets, TTL de 1 ano.
+
+**GitHub:** token fine-grained `fiscaldogov-publicacao`. Acesso só ao repositório `fiscaldogov`, com *Actions: Read and write* e *Metadata: Read-only* (obrigatório); expira em 31/10/2027.
+
+**Validade das credenciais** (vai para a tabela da T074):
+
+| Credencial | Expira em |
+|---|---|
+| Cloudflare `fiscaldogov-publicar` (Workers) | 31/10/2027 |
+| Cloudflare `fiscaldogov-etl-r2` (R2) | ~01/11/2027 (TTL de 1 ano) |
+| GitHub `fiscaldogov-publicacao` | 31/10/2027 |
+
+**Railway, serviço `etl`:** as 13 variáveis de `contracts/ambientes-e-segredos.md` estão presentes (conferidas só por nome e tamanho, sem espaço nas pontas). Deploy `02e1e580-…` com `SUCCESS`:
+
+```
+No pending migrations to apply.
+conferencia="banco"         mensagem="conferência ok"   (papel etl_escrita, rede privada)
+conferencia="r2"            mensagem="conferência ok"   (head_bucket nos dois buckets)
+conferencia="api_da_camara" mensagem="conferência ok"
+```
+
+**Conferência só de leitura dos tokens que o `verificar-config` não cobre** (`railway run`, imprimindo só o status):
+
+```
+github: repositorio -> 200
+github: actions/workflows -> 200 | workflows visiveis: []   (a develop, branch padrão, ainda não tem workflows)
+telegram: getMe -> 200 | bot: fiscaldogovbot
+telegram: getChat -> 200 | tipo: private
+```
+
+A escrita de Actions só é provada pelo disparo real do `publicar.yml` (T052).
+
+**GitHub, ambiente `producao`:** segredos `ALERTA_TELEGRAM_CHAT_ID`, `ALERTA_TELEGRAM_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` e `DATABASE_URL_LEITURA`; regra de branch `main`. O `DATABASE_URL_LEITURA` é provado no primeiro build do `publicar.yml` (T052).

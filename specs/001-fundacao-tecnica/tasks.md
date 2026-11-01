@@ -193,7 +193,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - instalação com `uv sync --frozen`;
   - `CMD ["python", "-m", "etl", "coletar"]` provisório (o agendamento entra na US2).
 - [X] T050 [P] [US1] Escrever `docs/05-runbooks/banco-papeis.md`: criar `etl_escrita` e `site_leitura` em produção (senha gerada e guardada só nos cofres), conferir as permissões, trocar senha com `ALTER ROLE ... PASSWORD`
-- [ ] T051 [US1] ⚠️ Em produção:
+- [X] T051 [US1] ⚠️ Em produção (concluída em 2026-11-01; o serviço do ETL subiu por `railway up` a partir da branch da feature e passa a ser ligado à `main` no release — evidências, partes 1 a 4):
   - criar os papéis pelo runbook de T050;
   - criar o serviço Postgres no Railway com a imagem `ghcr.io/railwayapp-templates/postgres-ssl:18` explícita (a `:latest` é a 16 — research §11) e conferir `CREATE EXTENSION btree_gist` nele;
   - criar o serviço do ETL no Railway, com pré-deploy `prisma migrate deploy` e as variáveis de `contracts/ambientes-e-segredos.md`;
