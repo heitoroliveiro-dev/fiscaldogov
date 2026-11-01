@@ -271,3 +271,14 @@ etl-integration  success   39 passed, 126 deselected   (ETL_EXIGIR_INTEGRACAO=1)
 ```
 
 O `web-test` ganhou Postgres de serviço: sem ele, o `dados.test.ts` seria pulado em silêncio (`1 skipped`, `5 skipped` sem o banco).
+
+## 2026-11-01 — proteção de `main` e `develop` (T057)
+
+Ruleset `protecao-main-develop` (id 26321483): *Active*, lista de exceções vazia (nem o administrador passa), alvos `main` e `develop`. Regras em vigor, lidas da API pública (`GET /repos/heitoroliveiro-dev/fiscaldogov/rules/branches/{main,develop}`), iguais nas duas branches:
+
+```
+deletion                       (proíbe apagar a branch)
+non_fast_forward               (proíbe force push)
+pull_request (aprovacoes=0)    (PR obrigatório; 0 aprovações porque o autor não aprova o próprio PR)
+required_status_checks web-lint,web-test,web-build,web-e2e,etl-lint,etl-test,etl-integration (strict=False)
+```
