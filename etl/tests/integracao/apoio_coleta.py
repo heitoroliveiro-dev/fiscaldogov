@@ -16,7 +16,16 @@ from etl.adaptadores.brutos_r2.armazem import ArmazemDeBrutos, GravadorEmDisco
 from etl.adaptadores.persistencia.banco import Banco
 from etl.adaptadores.persistencia.execucoes import Execucoes
 from etl.adaptadores.persistencia.repositorio import Repositorio
-from etl.dominio.entidades import IdentificadorExterno, Origem, Parlamentar, SistemaExterno
+from etl.dominio.entidades import (
+    Condicao,
+    EventoHistorico,
+    Historico,
+    IdentificadorExterno,
+    Origem,
+    Parlamentar,
+    Partido,
+    SistemaExterno,
+)
 from etl.pipeline.coletar import Coleta
 from etl.portas import FonteDaCasa
 
@@ -37,6 +46,22 @@ CELSO = Parlamentar(
     "Celso Sabino",
     IdentificadorExterno(SistemaExterno.CAMARA_V2, "204496"),
     Origem(f"{BASE}/deputados?itens=100&pagina=1", AGORA),
+)
+
+PDT = Partido("PDT", IdentificadorExterno(SistemaExterno.CAMARA_V2_PARTIDO, "36786"))
+HISTORICO = Historico(
+    eventos=(
+        EventoHistorico(
+            data_hora=datetime(2023, 2, 1, 15, 0, tzinfo=UTC),
+            legislatura=57,
+            em_exercicio=True,
+            condicao=Condicao.TITULAR,
+            partido=PDT,
+            uf="PA",
+            descricao="Entrada",
+        ),
+    ),
+    origem=Origem(f"{BASE}/deputados/204496/historico", datetime(2026, 11, 2, 6, tzinfo=UTC)),
 )
 
 
@@ -68,6 +93,15 @@ class PublicadorFalso:
         self.disparos.append(execucao_id)
 
 
+class BackupFalso:
+    def __init__(self) -> None:
+        self.copias = 0
+
+    def copiar(self) -> list[str]:
+        self.copias += 1
+        return ["diario/teste.dump"]
+
+
 class AlertadorFalso:
     def __init__(self, falhar: bool = False) -> None:
         self.textos: list[str] = []
@@ -93,6 +127,7 @@ def montar_coleta(
         repositorio=Repositorio(banco),
         brutos=ArmazemDeBrutos(banco, GravadorEmDisco(pasta)),
         execucoes=Execucoes(banco),
+        backup=BackupFalso(),
         publicador=publicador or PublicadorFalso(),
         alertador=alertador or AlertadorFalso(),
         versao_codigo="teste",

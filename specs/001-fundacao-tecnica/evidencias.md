@@ -316,3 +316,31 @@ bug: REVOKE DELETE ON partido FROM etl_escrita      → FAILED test_etl_escrita_
 Os bugs foram aplicados em bancos descartáveis, apagados em seguida. Nenhum GRANT da migration precisou de correção.
 
 **T060 (quickstart R4 em produção):** feito em 01/11 com `SET LOCAL ROLE site_leitura` dentro de `BEGIN … ROLLBACK` (ver "produção, parte 3"): `ERROR: permission denied for table partido`. O `SET ROLE` aplica exatamente os privilégios do papel, sem usar a senha dele. O login real com a senha do `site_leitura` pelo proxy é provado pelo primeiro build do `publicar.yml` (T052).
+
+## 2026-11-01 — US2 e US5: código e testes (T061–T075, T077–T081)
+
+**Decisão registrada:** novas tentativas = até 3 no total (a original + 2 novas), com esperas de 5 s e 20 s. Os documentos citavam também 60 s, o que daria 4 chamadas e contrariaria a FR-013. Research §5, T061, quickstart R5 e o contrato da fonte foram corrigidos.
+
+**Suíte do ETL** (local, Postgres 18, `ETL_EXIGIR_INTEGRACAO=1`, `pg_dump`/`pg_restore` 18 da imagem `postgres:18` via `PG_BIN_DIR`): `239 passed`.
+
+**Mutações de prova** (cada uma aplicada e desfeita):
+
+| Mutação | Teste que ficou vermelho |
+|---|---|
+| vida máxima da `em_andamento` de 60 para 30 min | `test_coleta_com_exatamente_59_min_ainda_e_considerada_viva` |
+| vigia ignorando o tempo limite configurado | `test_fonte_que_demora_e_interrompida_como_tempo_esgotado`, `test_gravacao_interrompida_no_meio_e_desfeita` |
+| backup sem a conferência `pg_restore --list` | `test_arquivo_corrompido_no_destino_e_backup_invalido` |
+
+**Alerta de teste (T075):** enviado pelo `AlertadorTelegram` com as variáveis do serviço `etl` da Railway; log `{"logger": "etl.alertas", "mensagem": "alerta enviado"}`. O bot `fiscaldogovbot` e os segredos `ALERTA_TELEGRAM_*` foram criados pelo responsável na T051 (Railway e ambiente `producao`).
+
+**Alerta da publicação (T073):** `scripts/alerta-publicacao.sh` testado com logs de exemplo:
+
+```
+build.log com "password authentication failed"   → - falha de autenticação: DATABASE_URL_LEITURA (papel site_leitura)
+deploy.log com "Authentication error [code: 10000]" → - falha de autenticação: CLOUDFLARE_API_TOKEN
+outra falha, sem execucao_id                     → só título e link
+```
+
+`actionlint` 1.7.12 e `shellcheck` sem achados.
+
+**Ensaio local do runbook de restauração (T081):** `pg_dump` como `etl_escrita` → `pg_restore --list` com 11 `TABLE DATA` → papéis recriados → `pg_restore --exit-on-error` com código 0 → `diff` das contagens por tabela: idênticas → **7 s**. O banco local quase não tem dados. O ensaio que vale para a SC-006 é o de produção (T082).

@@ -96,6 +96,12 @@ class RegistroDeExecucoes(Protocol):
     ) -> None: ...
 
 
+class Backup(Protocol):
+    def copiar(self) -> list[str]:
+        """pg_dump enviado e conferido no destino; devolve as chaves (FR-024)."""
+        ...
+
+
 class Publicador(Protocol):
     def disparar(self, execucao_id: int) -> None: ...
 

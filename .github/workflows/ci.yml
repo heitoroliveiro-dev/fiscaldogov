@@ -219,6 +219,14 @@ jobs:
         run: |
           npm ci
           npm run db:migrate:deploy
+      # o backup (test_backup.py) roda pg_dump/pg_restore, que precisam da major do servidor
+      - name: Instalar pg_dump e pg_restore 18
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-client-18
+          echo "PG_BIN_DIR=/usr/lib/postgresql/18/bin" >> "$GITHUB_ENV"
       - name: Testes de integração
         working-directory: etl
         env:

@@ -18,6 +18,7 @@ from typing import Any
 
 from etl import registro
 from etl.adaptadores.alertas.telegram import AlertadorTelegram, criar_cliente_telegram
+from etl.adaptadores.backup_r2.backup import ArmazenamentoR2, BackupR2
 from etl.adaptadores.brutos_r2.armazem import ArmazemDeBrutos, GravadorR2, criar_cliente_r2
 from etl.adaptadores.camara.api_v2 import CamaraApiV2, criar_cliente
 from etl.adaptadores.persistencia.banco import Banco
@@ -110,6 +111,9 @@ def _montar(config: Configuracao) -> Iterator[tuple[Coleta, Execucoes]]:
                 repositorio=Repositorio(banco),
                 brutos=ArmazemDeBrutos(banco, GravadorR2(s3, config.r2_bucket_brutos)),
                 execucoes=execucoes,
+                backup=BackupR2(
+                    config.database_url_escrita, ArmazenamentoR2(s3, config.r2_bucket_backup)
+                ),
                 publicador=PublicadorGitHub(
                     github, config.github_repositorio, config.github_token_publicacao
                 ),

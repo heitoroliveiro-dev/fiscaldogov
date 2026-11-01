@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "id": "backup-diario-7-dias",
+      "enabled": true,
+      "conditions": { "prefix": "diario/" },
+      "deleteObjectsTransition": {
+        "condition": { "type": "Age", "maxAge": 604800 }
+      }
+    },
+    {
+      "id": "backup-semanal-28-dias",
+      "enabled": true,
+      "conditions": { "prefix": "semanal/" },
+      "deleteObjectsTransition": {
+        "condition": { "type": "Age", "maxAge": 2419200 }
+      }
+    }
+  ]
+}

@@ -8,45 +8,29 @@ execução seguinte roda (não sobra em_andamento bloqueando).
 import signal
 import time
 from collections.abc import Iterator
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import pytest
-from apoio_coleta import BASE, CELSO, AlertadorFalso, banco_limpo, contar, linhas, montar_coleta
+from apoio_coleta import (
+    CELSO,
+    HISTORICO,
+    AlertadorFalso,
+    BackupFalso,
+    banco_limpo,
+    contar,
+    linhas,
+    montar_coleta,
+)
 from sqlalchemy import Connection
 
 from etl.adaptadores.brutos_r2.armazem import ArmazemDeBrutos, GravadorEmDisco
 from etl.adaptadores.persistencia.banco import Banco
 from etl.adaptadores.persistencia.execucoes import Execucoes
 from etl.adaptadores.persistencia.repositorio import Repositorio
-from etl.dominio.entidades import (
-    Condicao,
-    EventoHistorico,
-    Historico,
-    IdentificadorExterno,
-    Origem,
-    Partido,
-    SistemaExterno,
-)
+from etl.dominio.entidades import Historico
 from etl.pipeline.coletar import Coleta
 from etl.portas import Gatilho, StatusExecucao
-
-PDT = Partido("PDT", IdentificadorExterno(SistemaExterno.CAMARA_V2_PARTIDO, "36786"))
-HISTORICO = Historico(
-    eventos=(
-        EventoHistorico(
-            data_hora=datetime(2023, 2, 1, 15, 0, tzinfo=UTC),
-            legislatura=57,
-            em_exercicio=True,
-            condicao=Condicao.TITULAR,
-            partido=PDT,
-            uf="PA",
-            descricao="Entrada",
-        ),
-    ),
-    origem=Origem(f"{BASE}/deputados/204496/historico", datetime(2026, 11, 2, 6, tzinfo=UTC)),
-)
 
 
 @pytest.fixture
@@ -110,6 +94,7 @@ def test_gravacao_interrompida_no_meio_e_desfeita(banco: Banco, tmp_path: Path) 
         repositorio=_RepositorioLento(banco),
         brutos=ArmazemDeBrutos(banco, GravadorEmDisco(tmp_path)),
         execucoes=Execucoes(banco),
+        backup=BackupFalso(),
         publicador=_SemPublicar(),
         alertador=AlertadorFalso(),
         versao_codigo="teste",

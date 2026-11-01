@@ -14,7 +14,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 import pytest
-from apoio_coleta import AlertadorFalso
+from apoio_coleta import AlertadorFalso, BackupFalso
 from sqlalchemy import Connection, func, select, text
 
 from etl.adaptadores.brutos_r2.armazem import ArmazemDeBrutos, GravadorEmDisco
@@ -197,6 +197,7 @@ class _Cenario:
             repositorio=repositorio or Repositorio(self.banco),
             brutos=ArmazemDeBrutos(self.banco, gravador or GravadorEmDisco(self.pasta)),
             execucoes=Execucoes(self.banco),
+            backup=BackupFalso(),
             publicador=self.publicador,
             alertador=self.alertador,
             versao_codigo="teste",

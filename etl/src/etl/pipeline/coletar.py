@@ -9,10 +9,10 @@ As respostas brutas chegam durante a coleta e ficam em memória até haver
 execucao_id; são guardadas antes da gravação dos dados (etapa 4) e também
 quando a coleta falha, para diagnóstico. Falha da fonte ou da gravação vira
 `falha` sem gravar nada; falha ao guardar bruto ou ao disparar a publicação vira
-`com_pendencias`, com os dados gravados. `falha` e `com_pendencias` geram alerta
-(etapa 9); falha no envio do alerta não muda o resultado (FR-029).
-
-O backup (etapa 6) entra na US5.
+`com_pendencias`, com os dados gravados. O mesmo vale para o backup (etapa 6):
+falha ao gerar, enviar ou conferir a cópia vira pendência e a publicação segue
+(FR-026). `falha` e `com_pendencias` geram alerta (etapa 9); falha no envio do
+alerta não muda o resultado (FR-029).
 """
 
 import logging
@@ -28,6 +28,7 @@ from etl.pipeline.vigia import TempoEsgotado, limite_de_tempo
 from etl.portas import (
     Alertador,
     ArmazemDeBrutos,
+    Backup,
     ColetaEmAndamento,
     FonteDaCasa,
     Gatilho,
@@ -65,6 +66,7 @@ class Coleta:
     repositorio: RepositorioDeDados
     brutos: ArmazemDeBrutos
     execucoes: RegistroDeExecucoes
+    backup: Backup
     publicador: Publicador
     alertador: Alertador
     versao_codigo: str
@@ -131,6 +133,13 @@ class Coleta:
             contagens = self.repositorio.gravar(todos)
         except Exception as erro:
             return self._falha("gravacao", erro, execucao_id)
+
+        try:
+            chaves = self.backup.copiar()
+            log.info("backup conferido", extra={"execucao_id": execucao_id, "chaves": chaves})
+        except Exception as erro:
+            log.error("backup falhou", extra={"execucao_id": execucao_id})
+            pendencias.append({"etapa": "backup", **descrever_erro(erro)})
 
         try:
             self.publicador.disparar(execucao_id)

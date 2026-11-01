@@ -153,7 +153,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [X] T032 [P] [US1] Criar `etl/src/etl/dominio/entidades.py` (dataclasses imutáveis: `Parlamentar`, `IdentificadorExterno`, `Mandato`, `PeriodoDeExercicio`, `Partido`, `Filiacao`, `EventoHistorico`)
 - [X] T033 [P] [US1] Implementar `etl/src/etl/dominio/selecao.py` (`normalizar_nome`, `selecionar_deputado`) até T022 passar
 - [X] T034 [US1] Implementar `etl/src/etl/dominio/historico.py` (`derivar_periodos`, `derivar_filiacoes`, `derivar_uf`, como funções puras) até T023 passar
-- [ ] T035 [P] [US1] Criar as portas em `etl/src/etl/portas/__init__.py` como `typing.Protocol`: `FonteDaCasa`, `RepositorioDeDados`, `ArmazemDeBrutos`, `Backup`, `Publicador`, `Alertador`
+- [X] T035 [P] [US1] Criar as portas em `etl/src/etl/portas/__init__.py` como `typing.Protocol`: `FonteDaCasa`, `RepositorioDeDados`, `ArmazemDeBrutos`, `Backup`, `Publicador`, `Alertador`
 - [X] T036 [US1] Implementar `etl/src/etl/adaptadores/camara/sanitizacao.py` e `etl/src/etl/adaptadores/camara/api_v2.py`:
   - httpx com `User-Agent: fiscaldogov-etl (+https://github.com/heitoroliveiro-dev/fiscaldogov)`, timeout de 30 s e no máximo 4 requisições simultâneas;
   - `listar_em_exercicio()` paginado e `historico(id)`;
@@ -310,7 +310,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - ajuste do horário se o horário de verão voltar;
   - o que fazer quando o limite rígido de gasto for atingido;
   - migration que falhou no pré-deploy: como confirmar que o deploy foi abortado e a versão anterior segue agendada, e como reverter (migration corretiva ou restauração — FR-017a).
-- [ ] T075 [US2] ⚠️ Criar o bot do Telegram (BotFather), obter o `chat_id`, cadastrar `ALERTA_TELEGRAM_*` no Railway e no ambiente `producao` do GitHub; enviar mensagem de teste e registrar a captura em `specs/001-fundacao-tecnica/evidencias.md`
+- [X] T075 [US2] ⚠️ Criar o bot do Telegram (BotFather), obter o `chat_id`, cadastrar `ALERTA_TELEGRAM_*` no Railway e no ambiente `producao` do GitHub; enviar mensagem de teste e registrar a captura em `specs/001-fundacao-tecnica/evidencias.md`
 - [ ] T076 [US2] Executar os quickstart R5, R6, R9.4 e R9b e iniciar a observação de 5 dias do R9.3 (SC-002), anotando o horário de início de cada execução agendada (janela 03:00–03:15, FR-013) e a chegada de cada alerta (SC-010); anexar a evidência e as mensagens de alerta recebidas em `specs/001-fundacao-tecnica/evidencias.md`
 
 **Checkpoint**: a coleta roda sozinha, se recupera de quedas e avisa o responsável quando falha.
@@ -323,17 +323,17 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 **Independent Test**: quickstart R8.
 
-- [ ] T077 [P] [US5] Escrever `etl/tests/unidade/test_backup_chaves.py`:
+- [X] T077 [P] [US5] Escrever `etl/tests/unidade/test_backup_chaves.py`:
   - chave `diario/AAAA-MM-DD.dump` todo dia;
   - também `semanal/AAAA-MM-DD.dump` quando o dia, em Brasília, for domingo.
-- [ ] T078 [US5] Escrever `etl/tests/integracao/test_backup.py`, com armazenamento falso em disco:
+- [X] T078 [US5] Escrever `etl/tests/integracao/test_backup.py`, com armazenamento falso em disco:
   - `pg_dump --format=custom` do banco de teste **com o papel `etl_escrita`** (prova que as permissões de T014 bastam);
   - o envio é conferido com `pg_restore --list`;
   - arquivo corrompido → `BackupInvalido`;
   - falha no envio ou na conferência → execução `com_pendencias` e alerta, com a publicação ainda disparada (FR-024, FR-026).
-- [ ] T079 [US5] Implementar `etl/src/etl/adaptadores/backup_r2/backup.py` (o `pg_dump` usa `DATABASE_URL_ESCRITA`, papel `etl_escrita`) e ligá-lo na etapa 6 de `etl/src/etl/pipeline/coletar.py` até T077 e T078 passarem
-- [ ] T080 [P] [US5] Criar `scripts/r2-ciclo-de-vida-backup.json` (`diario/` expira em 7 dias, `semanal/` em 28) e `scripts/r2-ciclo-de-vida-brutos.json` (365 dias), aplicados com `wrangler r2 bucket lifecycle set`
-- [ ] T081 [P] [US5] Escrever `docs/05-runbooks/restauracao-backup.md`: baixar o objeto mais recente, criar banco vazio na mesma major, `pg_restore`, recriar papéis, comparar contagens por tabela, cronometrar
+- [X] T079 [US5] Implementar `etl/src/etl/adaptadores/backup_r2/backup.py` (o `pg_dump` usa `DATABASE_URL_ESCRITA`, papel `etl_escrita`) e ligá-lo na etapa 6 de `etl/src/etl/pipeline/coletar.py` até T077 e T078 passarem
+- [X] T080 [P] [US5] Criar `scripts/r2-ciclo-de-vida-backup.json` (`diario/` expira em 7 dias, `semanal/` em 28) e `scripts/r2-ciclo-de-vida-brutos.json` (365 dias), aplicados com `wrangler r2 bucket lifecycle set`
+- [X] T081 [P] [US5] Escrever `docs/05-runbooks/restauracao-backup.md`: baixar o objeto mais recente, criar banco vazio na mesma major, `pg_restore`, recriar papéis, comparar contagens por tabela, cronometrar
 - [ ] T082 [US5] ⚠️ Aplicar os ciclos de vida de T080 nos buckets de produção e executar o quickstart R8 (restauração ≤ 30 min, contagens idênticas — SC-006); anexar a evidência em `specs/001-fundacao-tecnica/evidencias.md`
 
 **Checkpoint**: cópias diárias conferidas, retenção automática, restauração provada.
