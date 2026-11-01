@@ -237,7 +237,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
   - `etl-integration` define `ETL_EXIGIR_INTEGRACAO=1` e falha se nenhum teste com o marcador `integration` for coletado;
   - o Postgres de serviço usa a major de T001, e o workflow não tem segredos.
 - [X] T057 [US3] ⚠️ Configurar a proteção de `main` e `develop` no GitHub: PR obrigatório, os 7 jobs de T056 como checks obrigatórios, sem force push; registrar a captura da regra em `specs/001-fundacao-tecnica/evidencias.md`
-- [ ] T058 [US3] Executar o quickstart R7 (commits com erro de estilo, de formatação e com teste quebrado bloqueados; PR com teste falhando impedido) e anexar a evidência em `specs/001-fundacao-tecnica/evidencias.md`
+- [X] T058 [US3] Executar o quickstart R7 (commits com erro de estilo, de formatação e com teste quebrado bloqueados; PR com teste falhando impedido) e anexar a evidência em `specs/001-fundacao-tecnica/evidencias.md`
 
 **Checkpoint**: nenhuma alteração quebrada entra em `develop`/`main` (SC-004).
 

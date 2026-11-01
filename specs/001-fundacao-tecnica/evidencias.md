@@ -282,3 +282,22 @@ non_fast_forward               (proíbe force push)
 pull_request (aprovacoes=0)    (PR obrigatório; 0 aprovações porque o autor não aprova o próprio PR)
 required_status_checks web-lint,web-test,web-build,web-e2e,etl-lint,etl-test,etl-integration (strict=False)
 ```
+
+## 2026-11-01 — quickstart R7 (T058)
+
+**Passos 1–3**, com `git commit` de verdade na `feature/001-fundacao-tecnica`. Os três commits foram recusados e o HEAD ficou em `807b1cc`:
+
+```
+1. web/: export const valor: any = 1;      → git commit saída 1
+   1:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2. etl/: x   =  1                          → git commit saída 1
+   1 file would be reformatted, 43 files already formatted
+3. etl/: teste de unidade assert 1 == 2   → git commit saída 1
+   FAILED tests/unidade/test_config.py::test_r7_quebrado - assert 1 == 2
+   1 failed, 126 passed, 39 deselected
+```
+
+**Passo 4**, PR #9 (`chore/r7-pr-com-teste-falhando` → `develop`, não rascunho). O teste `etl/tests/unidade/test_r7_ci.py` falha só com `CI=true`: passa no pre-commit, então não precisou de `--no-verify`, e fica vermelho no Actions.
+- Checks no commit `5bcf6e2`: `etl-test` com `failure`; os outros 6 com `success`. Todos marcados como *Required*.
+- Caixa de merge: "Some checks were not successful — 1 failing, 6 successful checks", com o botão **Merge pull request desabilitado** ("Merging is blocked due to failing merge requirements").
+- PR #9 fechado sem merge. A branch `chore/r7-pr-com-teste-falhando` continua no remoto, aguardando confirmação para ser apagada.
