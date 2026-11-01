@@ -72,7 +72,7 @@ Decisões técnicas da feature, com alternativas descartadas. Versões verificad
 
 - **Transação:** cada execução grava tudo numa **única transação**. Falha em qualquer etapa → `ROLLBACK` (FR-012).
 - **Registro da execução:** `execucao_etl` é inserida antes, em transação separada, com status `em_andamento`, e atualizada no fim.
-- **Nova tentativa (FR-013):** até 3 tentativas por requisição, com espera de 5 s, 20 s e 60 s. Vale só para falhas de rede, tempo esgotado e respostas HTTP 5xx ou 429. Resposta 4xx ou formato inesperado falha na hora.
+- **Nova tentativa (FR-013):** até 3 tentativas por requisição (a original + 2 novas), com espera de 5 s e 20 s entre elas. Decisão de 2026-11-01: a versão anterior citava também 60 s, o que exigiria 4 chamadas e contrariava o "até 3 vezes" da FR-013. Vale só para falhas de rede, tempo esgotado e respostas HTTP 5xx ou 429. Resposta 4xx ou formato inesperado falha na hora.
 - **Tempo limite (FR-013a):**
   - um vigia de 60 min no processo (`signal.alarm`), que desfaz a transação, marca `falha` com motivo "tempo esgotado" e encerra com código ≠ 0;
   - mais `statement_timeout` na sessão do banco;

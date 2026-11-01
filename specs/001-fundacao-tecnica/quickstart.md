@@ -40,7 +40,7 @@ Roteiros checáveis: **ação → resultado esperado**. Cada um gera a evidênci
 ## R5 — Falha da fonte e nova tentativa (US2, FR-012, FR-013)
 
 1. `CAMARA_API_URL=http://127.0.0.1:9 uv run --directory etl python -m etl coletar`
-2. **Esperado:** três tentativas registradas em `execucao_etl.tentativas` (esperas de 5 s, 20 s e 60 s; reduzidas por variável apenas em teste), status `falha`, código de saída 1, nenhum registro de dado alterado, nenhuma publicação disparada.
+2. **Esperado:** três tentativas registradas em `execucao_etl.tentativas` (a original + 2 novas, com esperas de 5 s e 20 s), status `falha`, código de saída 1, nenhum registro de dado alterado, nenhuma publicação disparada.
 3. `python -m etl reserva` logo depois, com a fonte normal. **Esperado:** executa a coleta (não houve sucesso no dia) e termina com `sucesso`.
 4. `python -m etl reserva` de novo. **Esperado:** `dispensada`.
 5. Conferir o canal de alertas. **Esperado:** uma mensagem para a falha do passo 2, com o `execucao_id` (SC-010).

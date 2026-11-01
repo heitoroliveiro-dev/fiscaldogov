@@ -269,7 +269,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 ### Testes da US2 (escrever primeiro, devem falhar)
 
 - [ ] T061 [P] [US2] Escrever `etl/tests/unidade/test_tentativas.py`:
-  - até 3 tentativas, com esperas de 5 s, 20 s e 60 s (relógio injetável);
+  - até 3 tentativas (a original + 2 novas), com esperas de 5 s e 20 s (espera injetável; research §5, decisão de 2026-11-01);
   - nova tentativa só para erro de rede, tempo esgotado, HTTP 5xx e 429;
   - HTTP 4xx e `RespostaInvalida` falham na hora;
   - cada tentativa é registrada em `tentativas` (FR-013).
