@@ -1,0 +1,231 @@
+# Travas de qualidade (research §9, T056): um job por check, todos obrigatórios
+# na proteção de main e develop (T057). Sem segredos: o Postgres é de serviço,
+# efêmero, com as senhas de teste de scripts/dev-banco-papeis.sql.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [develop, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  web-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      # DATABASE_URL_DONO não existe neste job: prova que a publicação gera o cliente sem ela (T013)
+      - run: npm run db:generate
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run format:check
+
+  web-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # tests/dados.test.ts consulta o banco: sem ele os casos seriam pulados em silêncio
+    services:
+      postgres:
+        image: postgres:18-trixie
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: fiscaldogov
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d fiscaldogov"
+          --health-interval 2s --health-timeout 5s --health-retries 30
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run db:generate
+      - name: Criar os papéis de teste
+        run: >-
+          docker exec -i ${{ job.services.postgres.id }}
+          psql -U postgres -d fiscaldogov -v ON_ERROR_STOP=1 < ../scripts/dev-banco-papeis.sql
+      - run: npm run db:migrate:deploy
+        env:
+          DATABASE_URL_DONO: postgresql://postgres:postgres@localhost:5432/fiscaldogov
+      - run: npm test
+        env:
+          DATABASE_URL_TESTE: postgresql://postgres:postgres@localhost:5432/fiscaldogov
+          # banco ausente vira erro, nunca pulo
+          ETL_EXIGIR_INTEGRACAO: "1"
+
+  web-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        # mesma major da produção (T001) e mesma base da imagem da Railway (research §11)
+        image: postgres:18-trixie
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: fiscaldogov
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d fiscaldogov"
+          --health-interval 2s --health-timeout 5s --health-retries 30
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run db:generate
+      - name: Criar os papéis de teste
+        run: >-
+          docker exec -i ${{ job.services.postgres.id }}
+          psql -U postgres -d fiscaldogov -v ON_ERROR_STOP=1 < ../scripts/dev-banco-papeis.sql
+      - run: npm run db:migrate:deploy
+        env:
+          DATABASE_URL_DONO: postgresql://postgres:postgres@localhost:5432/fiscaldogov
+      - name: Semear o dado fictício do E2E
+        run: >-
+          docker exec -i ${{ job.services.postgres.id }}
+          psql -U postgres -d fiscaldogov -v ON_ERROR_STOP=1 < prisma/seed-e2e.sql
+      - name: Gerar o site (lê o banco com site_leitura)
+        env:
+          DATABASE_URL_LEITURA: postgresql://site_leitura:dev_site_leitura@localhost:5432/fiscaldogov
+        run: npm run build
+      - uses: actions/upload-artifact@v7
+        with:
+          name: site-out
+          path: web/out
+          retention-days: 1
+          if-no-files-found: error
+
+  web-e2e:
+    needs: web-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run db:generate
+      - uses: actions/download-artifact@v8
+        with:
+          name: site-out
+          path: web/out
+      - run: npx playwright install --with-deps chromium
+      # o out/ exato que web-build gerou, servido localmente: 360 e 1440 px, claro e escuro, axe
+      - run: npm run test:e2e
+
+  etl-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: etl
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: "0.13.4"
+          enable-cache: true
+          cache-dependency-glob: etl/uv.lock
+      - run: uv run --frozen ruff format --check
+      - run: uv run --frozen ruff check
+
+  etl-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: etl
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: "0.13.4"
+          enable-cache: true
+          cache-dependency-glob: etl/uv.lock
+      # unidade + arquitetura
+      - run: uv run --frozen pytest -m "not integration"
+
+  etl-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        # mesma major da produção (T001) e mesma base da imagem da Railway (research §11)
+        image: postgres:18-trixie
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: fiscaldogov
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d fiscaldogov"
+          --health-interval 2s --health-timeout 5s --health-retries 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: "0.13.4"
+          enable-cache: true
+          cache-dependency-glob: etl/uv.lock
+      - name: Criar os papéis de teste
+        run: >-
+          docker exec -i ${{ job.services.postgres.id }}
+          psql -U postgres -d fiscaldogov -v ON_ERROR_STOP=1 < scripts/dev-banco-papeis.sql
+      - name: Aplicar as migrations (o mesmo comando do pré-deploy da Railway)
+        working-directory: web
+        env:
+          DATABASE_URL_DONO: postgresql://postgres:postgres@localhost:5432/fiscaldogov
+        run: |
+          npm ci
+          npm run db:migrate:deploy
+      - name: Testes de integração
+        working-directory: etl
+        env:
+          # variável de banco ausente vira erro, nunca pulo (tests/integracao/conftest.py)
+          ETL_EXIGIR_INTEGRACAO: "1"
+          DATABASE_URL_TESTE: postgresql://postgres:postgres@localhost:5432/fiscaldogov
+          DATABASE_URL_ESCRITA_TESTE: postgresql://etl_escrita:dev_etl_escrita@localhost:5432/fiscaldogov
+          DATABASE_URL_LEITURA_TESTE: postgresql://site_leitura:dev_site_leitura@localhost:5432/fiscaldogov
+        # nenhum teste coletado com o marcador faz o pytest sair com código 5: o job falha
+        run: uv run --frozen pytest -m integration
