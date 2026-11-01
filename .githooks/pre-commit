@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# Gitflow + segredos. Lint/format/testes entram aqui na F2, quando a stack estiver decidida.
+# Gitflow + segredos + travas de qualidade por parte do repositório (research §9, T054).
+# Ferramenta ausente bloqueia o commit com instrução: falha fechada, nunca pulo silencioso.
 set -euo pipefail
 
 branch="$(git symbolic-ref --short -q HEAD || true)"
 git_dir="$(git rev-parse --git-dir)"
+raiz="$(git rev-parse --show-toplevel)"
 
 # Merge em andamento (ex.: release/hotfix sendo integrada) é permitido; commit avulso não.
 if [ ! -f "$git_dir/MERGE_HEAD" ]; then
@@ -21,4 +23,26 @@ if [ ! -f "$git_dir/MERGE_HEAD" ]; then
   esac
 fi
 
-"$(git rev-parse --show-toplevel)/scripts/check-no-secrets.sh"
+"$raiz/scripts/check-no-secrets.sh"
+
+staged="$(git diff --cached --name-only --diff-filter=ACMR)"
+
+# web/: ESLint, Prettier e os testes relacionados, só nos arquivos staged (web/.lintstagedrc.json)
+if grep -q '^web/' <<<"$staged"; then
+  if [ ! -x "$raiz/web/node_modules/.bin/lint-staged" ]; then
+    echo "BLOQUEADO: dependências do site ausentes. Rode: npm --prefix web ci"
+    exit 1
+  fi
+  (cd "$raiz/web" && node_modules/.bin/lint-staged)
+fi
+
+# etl/: formatação, lint e testes de unidade e arquitetura (o de integração fica no CI)
+if grep -q '^etl/' <<<"$staged"; then
+  if ! command -v uv >/dev/null 2>&1; then
+    echo "BLOQUEADO: uv não encontrado. Instale: https://docs.astral.sh/uv/getting-started/installation/"
+    exit 1
+  fi
+  uv run --directory "$raiz/etl" --frozen ruff format --check
+  uv run --directory "$raiz/etl" --frozen ruff check
+  uv run --directory "$raiz/etl" --frozen pytest -m "not integration" -q
+fi

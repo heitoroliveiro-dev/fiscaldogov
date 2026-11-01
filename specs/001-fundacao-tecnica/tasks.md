@@ -213,8 +213,8 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 **Independent Test**: quickstart R7.
 
-- [ ] T053 [P] [US3] Criar `web/.lintstagedrc.json` (`*.{ts,tsx}`: `eslint --fix`, `prettier --write`, `vitest related --run`; `*.{json,md,css}`: `prettier --write`)
-- [ ] T054 [US3] Estender `.githooks/pre-commit`, mantendo as travas atuais:
+- [X] T053 [P] [US3] Criar `web/.lintstagedrc.json` (`*.{ts,tsx}`: `eslint --fix`, `prettier --write`, `vitest related --run`; `*.{json,md,css}`: `prettier --write`)
+- [X] T054 [US3] Estender `.githooks/pre-commit`, mantendo as travas atuais:
   - com arquivos staged em `web/`: `npm --prefix web exec lint-staged`;
   - em `etl/`: `uv run --directory etl ruff format --check`, `ruff check` e `pytest -m "not integration" -q`;
   - ferramenta ausente → falha com instrução de instalação (falha fechada);
