@@ -1,0 +1,12 @@
+{
+  "rules": [
+    {
+      "id": "brutos-365-dias",
+      "enabled": true,
+      "conditions": { "prefix": "camara/" },
+      "deleteObjectsTransition": {
+        "condition": { "type": "Age", "maxAge": 31536000 }
+      }
+    }
+  ]
+}

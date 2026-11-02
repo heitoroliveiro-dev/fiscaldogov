@@ -5,7 +5,7 @@
 ## Onde estou agora
 
 **Fase atual:** F2 — Fundação técnica · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** especificar a F2 pelo fluxo SDD (`/speckit-specify`).
+**Próxima ação:** a 001 está com o código das cinco histórias pronto, testado, com CI verde e review por subagente feito (T087). Falta: PR #8 para `develop` → release para `main` → provas em produção (T052, T072 no serviço, T076, T082, T086) → fechar a F2 (T088).
 **Prazo:** M1 até 31/01/2027 · **Ritmo planejado:** 8 h/semana · **Próximo checkpoint:** 23/11 (F2).
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
@@ -24,12 +24,12 @@ Capacidade: 8 h/semana (~115 h até 31/01/2027). Horas são estimativa de ordem 
 | F0.2 | Constituição | `.specify/memory/constitution.md` | — | — | Ratificada | ✓ v1.0.0 |
 | SP01 | Spike Câmara | Fontes de presença, justificativa e autoria | — | — | Relatório + decisões S1–S4 | ✓ |
 | F1 | Arquitetura | ADR-0001 stack; ADR-0002 hospedagem; ADR-0003 domínio e adaptadores; modelagem de dados | 10–15 | 02/11 | Todo ADR crítico aceito com alternativas | ✓ 2026-10-20 |
-| F2 | Fundação técnica | Scaffold com o design system, projeto do ETL, banco + migrations, CI, deploy de um "esqueleto" em produção | 15–25 | 23/11 | Página vazia no ar via CI; ETL grava um deputado com fonte e data | |
+| F2 | Fundação técnica | Scaffold com o design system, projeto do ETL, banco + migrations, CI, deploy de um "esqueleto" em produção; alertas de falha (antecipados da F4); backup conferido | 25–40 (revisto em 2026-10-20 após `/speckit-tasks`: 88 tarefas; alavanca de corte: adiar a US5 — backup — para a F3.1) | 23/11 | Página vazia no ar via CI; ETL grava um deputado com fonte e data | em andamento |
 | F3.1 | ETL base da Câmara | Deputados, mandatos, partidos da 57ª (paginação, DA03) | 12–20 | 07/12 | Banco com os 513 deputados e mandatos da 57ª, conferidos contra a API | |
 | F3.2 | HU01 Presença | Presença e justificativa (DA07), cálculo RN03–RN05 e RN08, ranking, link oficial (RN09) | 20–30 | 04/01 | Taxa de deputados de amostra confere com o cálculo manual documentado | |
 | F3.3 | Perfil + home + metodologia | RF05 (troca de partido), RF06–RF08, RF09 (home com gráficos, RN10), RF10 (prévia de compartilhamento) | 19–31 | 18/01 | Toda tela de dado mostra fonte, link e data; metodologia publicada; link compartilhado mostra a prévia | |
-| F4 | Operação mínima | CDN, monitor externo, alertas no Telegram (RNF02, RNF07) | 8–12 | 31/01 | Falha simulada do ETL chega no Telegram; site atrás de cache | |
-| ⭐ M1 | **Câmara no ar** | Eleitor consulta a presença dos deputados da 57ª pelo celular, com metodologia e fonte | **89–140** | **31/01/2027** | Pessoa real sem conhecimento técnico responde "meu deputado comparece?" sem ajuda | |
+| F4 | Operação mínima | Monitor externo de disponibilidade e sinal periódico de vida da coleta (RNF02, RNF07); o alerta de falha no Telegram foi antecipado para a F2 | 4–8 | 31/01 | Site fora do ar ou coleta sem sinal em 26 h geram alerta | |
+| ⭐ M1 | **Câmara no ar** | Eleitor consulta a presença dos deputados da 57ª pelo celular, com metodologia e fonte | **95–151** | **31/01/2027** | Pessoa real sem conhecimento técnico responde "meu deputado comparece?" sem ajuda | |
 | F5.1 | HU02 Propostas | Ranking por tipo, autoria, coautoria e apoios | 15–20 | pós-M1 | — | |
 | F5.2 | 56ª legislatura | Carga histórica, lacuna de 2020 (S1), divergência de 2019 (S4) | 6–10 | pós-M1 | RNF10 completo | |
 | F5.3 | HU03 Tramitação | Busca, detalhe, votos nominais | 25–35 | pós-M1 | — | |
@@ -55,7 +55,7 @@ Espelha a §12 do contexto (a fonte é lá).
 | 8 | Plano de arquitetura + definição da stack | contexto §12 | F1 (ADRs) | ✓ ADR-0001 a 0003 |
 | 9 | Executar SP01 | contexto §10 | spike | ✓ Câmara |
 | 13 | Decisões S1–S4 do SP01 | relatório SP01 | decisão | ✓ DA07, RN02, RN09 |
-| 14 | SP01-B (Senado) | DA05 | spike | antes de F3.y |
+| 14 | SP01-B (Senado) | DA05 | spike | antes da F6 |
 | 10 | Estudar projetos semelhantes e definir diferencial | R05 | F0 | ✓ `docs/00-discovery/estudo-semelhantes.md` |
 | 11 | Adaptações do design system ao público (densidade, tema, cor) | `docs/06-design/diretrizes-ui.md` | decisão | ✓ D1–D5 decididas em 2026-10-20 |
 
@@ -63,16 +63,15 @@ Espelha a §12 do contexto (a fonte é lá).
 
 | Prioridade | Achado | Risco | Status / PR |
 |---|---|---|---|
-| — | — | — | — |
+| P3 | Lighthouse (LCP, RNF03) no CI em vez de medição manual | Regressão de desempenho passar despercebida | Planejar na F3.3 (origem: `/speckit-analyze` da 001, L6) |
+| P3 | Avaliar os arquivos em lote da Câmara (CSV/JSON por ano) no lugar de chamadas por votação/evento | Coleta volumosa esbarrar no limite da API e alongar a janela do cron | Decidir no plan da F3.1/F3.2 (origem: avaliação de fontes de 2026-10-28) |
 
 ## Pendências fora do código (⚠️)
 
 | Item | Bloqueado por | O que desbloqueia | Impede o quê |
 |---|---|---|---|
-| Branch protection em `main`/`develop` no GitHub | ⚠️ configuração manual em Settings → Branches (sem `gh` nesta máquina) | Proteção real das branches no remoto | Hoje a proteção é só o hook local |
-| Domínio do site | ⚠️ nome definitivo | Registro do domínio | M2 |
-| Bot do Telegram para alertas | ⚠️ criação pelo responsável (BotFather) | Token + chat id como variáveis de ambiente | Alertas do RNF07 (F4) |
-| Contas Cloudflare (Workers, R2, DNS) e token do GitHub para o ETL | ⚠️ criação pelo responsável | Publicação do site e backup (ADR-0002) | F2 (publicar o esqueleto) |
+| Domínio do site | ⚠️ nome definitivo | Registro do domínio; até lá, subdomínio provisório do provedor (spec 001, FR-027) | M1 (o site público precisa do domínio próprio) |
+| Limite de gasto na Railway (alerta US$ 10, rígido US$ 20) | ⚠️ configuração do responsável (T083) | FR-031 | Fechar a F2 |
 
 ## Backlog futuro (fora do escopo atual)
 
@@ -80,3 +79,4 @@ Espelha a §12 do contexto (a fonte é lá).
 - Ligação de um mesmo projeto entre Câmara e Senado — identificadores e fluxos diferentes; pós-MVP.
 - Votações em comissões — distorcem comparações; pós-MVP.
 - Métricas de alinhamento (fidelidade partidária, alinhamento com o governo, similaridade de votos) — substituem rótulo ideológico (DA04); priorizar após M1.
+- Emendas parlamentares por parlamentar — fonte candidata: Portal da Transparência (contexto §5.1); exige reconciliação do autor pelo nome; pós-M1, pelo fluxo SDD.

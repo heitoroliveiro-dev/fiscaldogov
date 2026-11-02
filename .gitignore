@@ -37,3 +37,8 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 *.log
+
+# Gerados pelo site e pelos testes
+web/src/generated/
+web/test-results/
+web/playwright-report/

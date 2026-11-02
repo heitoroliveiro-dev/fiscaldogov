@@ -1,0 +1,259 @@
+"""Comando coletar: etapas de contracts/etl-cli.md (T040, T070).
+
+A execução só começa se não houver outra em andamento há menos de 60 min; as
+travadas há mais tempo são fechadas como "interrompida" e alertadas (FR-013a).
+O vigia cobre da coleta ao disparo da publicação: estourou, tudo é desfeito e a
+execução termina `falha` por tempo esgotado.
+
+As respostas brutas chegam durante a coleta e ficam em memória até haver
+execucao_id; são guardadas antes da gravação dos dados (etapa 4) e também
+quando a coleta falha, para diagnóstico. Falha da fonte ou da gravação vira
+`falha` sem gravar nada; falha ao guardar bruto ou ao disparar a publicação vira
+`com_pendencias`, com os dados gravados. O mesmo vale para o backup (etapa 6):
+falha ao gerar, enviar ou conferir a cópia vira pendência e a publicação segue
+(FR-026). `falha` e `com_pendencias` geram alerta (etapa 9); falha no envio do
+alerta não muda o resultado (FR-029).
+"""
+
+import logging
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from typing import Any
+
+from etl.dominio.entidades import (
+    DadosDoParlamentar,
+    Historico,
+    IdentificadorExterno,
+    Mandato,
+    Parlamentar,
+)
+from etl.dominio.historico import derivar_filiacoes, derivar_periodos, derivar_uf
+from etl.dominio.selecao import selecionar_deputado
+from etl.pipeline.alertas import descrever_erro, montar_alerta
+from etl.pipeline.vigia import TempoEsgotado, limite_de_tempo
+from etl.portas import (
+    Alertador,
+    ArmazemDeBrutos,
+    Backup,
+    ColetaEmAndamento,
+    CredencialInvalida,
+    FonteDaCasa,
+    Gatilho,
+    Publicador,
+    RegistroDeExecucoes,
+    RepositorioDeDados,
+    StatusExecucao,
+)
+
+__all__ = ["Coleta", "ColetaEmAndamento", "Resultado"]
+
+LEGISLATURA = 57  # o M1 cobre só a 57ª (contexto §4.1)
+CASA = "CD"
+TEMPO_LIMITE_PADRAO_S = 3600
+TITULOS_DO_ALERTA = {
+    StatusExecucao.FALHA: "coleta com falha",
+    StatusExecucao.COM_PENDENCIAS: "coleta com pendências",
+}
+
+log = logging.getLogger("etl.coletar")
+
+AoReceber = Callable[[str, Any], None]
+AoTentar = Callable[[dict[str, Any]], None]
+
+
+@dataclass(frozen=True)
+class Resultado:
+    execucao_id: int
+    status: StatusExecucao
+
+
+@dataclass
+class _Progresso:
+    """O que já foi feito quando o vigia interrompe: decide entre falha e pendência."""
+
+    contagens: dict[str, Any] | None = None
+    pendencias: list[dict[str, Any]] = field(default_factory=list)
+    pelo_vigia: bool = False
+
+    def interrompido(self, vigia: dict[str, Any]) -> tuple[StatusExecucao, dict[str, Any]]:
+        self.pelo_vigia = True
+        if self.contagens is None:
+            # nada gravado: o rollback desfez a transação (FR-013a)
+            return StatusExecucao.FALHA, {"erros": [vigia]}
+        # dados já com COMMIT: não é "falha" (FR-010); a publicação fica para a próxima
+        return StatusExecucao.COM_PENDENCIAS, {
+            "contagens": self.contagens,
+            "pendencias": [*self.pendencias, vigia],
+        }
+
+
+@dataclass(frozen=True)
+class Coleta:
+    criar_fonte: Callable[[AoReceber, AoTentar], FonteDaCasa]
+    repositorio: RepositorioDeDados
+    brutos: ArmazemDeBrutos
+    execucoes: RegistroDeExecucoes
+    backup: Backup
+    publicador: Publicador
+    alertador: Alertador
+    versao_codigo: str
+    tempo_limite_s: int = TEMPO_LIMITE_PADRAO_S
+
+    def executar(self, gatilho: Gatilho) -> Resultado:
+        abertura = self.execucoes.abrir(gatilho, self.versao_codigo)
+        for travada in abertura.interrompidas:
+            log.error("coleta anterior interrompida", extra={"execucao_id": travada})
+            self._alertar(
+                montar_alerta(
+                    "coleta interrompida (passou de 60 min sem terminar)",
+                    travada,
+                    [{"etapa": "vigia", "tipo": "interrompida"}],
+                )
+            )
+
+        execucao_id = abertura.execucao_id
+        log.info("coleta iniciada", extra={"execucao_id": execucao_id, "gatilho": gatilho.value})
+        tentativas: list[dict[str, Any]] = []
+        progresso = _Progresso()
+        try:
+            with limite_de_tempo(self.tempo_limite_s):
+                status, detalhes = self._etapas(execucao_id, tentativas, progresso)
+        except TempoEsgotado as erro:
+            log.error("coleta interrompida pelo vigia", extra={"execucao_id": execucao_id})
+            status, detalhes = progresso.interrompido({"etapa": "vigia", **descrever_erro(erro)})
+
+        if tentativas:
+            detalhes["tentativas"] = tentativas
+        # finaliza ANTES de publicar: o build lê a data e o id da última execução
+        # bem-sucedida, que tem que ser esta (FR-002, FR-028)
+        self.execucoes.finalizar(execucao_id, status, **detalhes)
+
+        if status is StatusExecucao.SUCESSO or (
+            status is StatusExecucao.COM_PENDENCIAS and not progresso.pelo_vigia
+        ):
+            status = self._publicar(execucao_id, status, detalhes)
+
+        log.info(
+            "coleta terminada",
+            extra={"execucao_id": execucao_id, "status": status.value, **detalhes},
+        )
+        if status in TITULOS_DO_ALERTA:
+            problemas = detalhes.get("erros") or detalhes.get("pendencias") or []
+            self._alertar(montar_alerta(TITULOS_DO_ALERTA[status], execucao_id, problemas))
+        return Resultado(execucao_id, status)
+
+    def _etapas(
+        self, execucao_id: int, tentativas: list[dict[str, Any]], progresso: _Progresso
+    ) -> tuple[StatusExecucao, dict[str, Any]]:
+        """Etapas 2 a 6; a publicação vem depois do registro do resultado."""
+        respostas: list[tuple[str, Any]] = []
+        fonte = self.criar_fonte(
+            lambda url, conteudo: respostas.append((url, conteudo)), tentativas.append
+        )
+
+        try:
+            todos, lidos = self._coletar(fonte)
+        except Exception as erro:
+            self._guardar_brutos(execucao_id, respostas)
+            return self._falha("coleta", erro, execucao_id)
+
+        falhas_de_bruto, credencial = self._guardar_brutos(execucao_id, respostas)
+        if falhas_de_bruto:
+            pendencia: dict[str, Any] = {"etapa": "brutos", "falhas": falhas_de_bruto}
+            if credencial:
+                pendencia["credencial"] = credencial
+            progresso.pendencias.append(pendencia)
+
+        try:
+            progresso.contagens = {"lidos": lidos, "gravados": self.repositorio.gravar(todos)}
+        except Exception as erro:
+            return self._falha("gravacao", erro, execucao_id)
+
+        try:
+            chaves = self.backup.copiar()
+            log.info("backup conferido", extra={"execucao_id": execucao_id, "chaves": chaves})
+        except Exception as erro:
+            log.error("backup falhou", extra={"execucao_id": execucao_id})
+            progresso.pendencias.append({"etapa": "backup", **descrever_erro(erro)})
+
+        status = StatusExecucao.COM_PENDENCIAS if progresso.pendencias else StatusExecucao.SUCESSO
+        return status, {"contagens": progresso.contagens, "pendencias": progresso.pendencias}
+
+    def _publicar(
+        self, execucao_id: int, status: StatusExecucao, detalhes: dict[str, Any]
+    ) -> StatusExecucao:
+        try:
+            self.publicador.disparar(execucao_id)
+        except Exception as erro:
+            log.error("disparo da publicação falhou", extra={"execucao_id": execucao_id})
+            pendencia = {"etapa": "publicacao", **descrever_erro(erro)}
+            detalhes["pendencias"] = [*detalhes.get("pendencias", []), pendencia]
+            self.execucoes.registrar_pendencia(execucao_id, pendencia)
+            return StatusExecucao.COM_PENDENCIAS
+        return status
+
+    def _coletar(self, fonte: FonteDaCasa) -> tuple[list[DadosDoParlamentar], dict[str, int]]:
+        """Devolve os dados de cada alvo e o que foi lido da fonte (FR-010)."""
+        deputados = fonte.listar_em_exercicio()
+        selecionado = selecionar_deputado(deputados)
+        em_exercicio = {deputado.identificador: deputado for deputado in deputados}
+        # o selecionado e todos os já armazenados: quem saiu de exercício tem o período fechado
+        alvos = [selecionado.identificador] + [
+            identificador
+            for identificador in self.repositorio.parlamentares_armazenados()
+            if identificador != selecionado.identificador
+        ]
+        historicos = {alvo: fonte.historico(alvo) for alvo in alvos}
+        lidos = {
+            "deputados_em_exercicio": len(deputados),
+            "historicos": len(historicos),
+            "eventos_do_historico": sum(len(h.eventos) for h in historicos.values()),
+        }
+        todos = [self._dados(alvo, em_exercicio.get(alvo), historicos[alvo]) for alvo in alvos]
+        return todos, lidos
+
+    @staticmethod
+    def _dados(
+        identificador: IdentificadorExterno, parlamentar: Parlamentar | None, historico: Historico
+    ) -> DadosDoParlamentar:
+        return DadosDoParlamentar(
+            identificador=identificador,
+            parlamentar=parlamentar,
+            mandato=Mandato(CASA, LEGISLATURA, derivar_uf(historico.eventos, LEGISLATURA)),
+            periodos=tuple(derivar_periodos(historico.eventos, LEGISLATURA)),
+            filiacoes=tuple(derivar_filiacoes(historico.eventos, LEGISLATURA)),
+            origem=historico.origem,
+        )
+
+    def _guardar_brutos(
+        self, execucao_id: int, respostas: list[tuple[str, Any]]
+    ) -> tuple[int, str | None]:
+        """Guarda cada resposta; devolve quantas falharam e a credencial recusada, se houve.
+
+        Falha não interrompe a coleta.
+        """
+        falhas, credencial = 0, None
+        for url, conteudo in respostas:
+            try:
+                self.brutos.guardar(execucao_id, url, conteudo)
+            except Exception as erro:
+                falhas += 1
+                if isinstance(erro, CredencialInvalida):
+                    credencial = erro.credencial
+                log.exception("resposta bruta não guardada", extra={"url": url})
+        return falhas, credencial
+
+    @staticmethod
+    def _falha(
+        etapa: str, erro: Exception, execucao_id: int
+    ) -> tuple[StatusExecucao, dict[str, Any]]:
+        descricao = {"etapa": etapa, **descrever_erro(erro)}
+        log.error("coleta falhou", extra={"execucao_id": execucao_id, **descricao})
+        return StatusExecucao.FALHA, {"erros": [descricao]}
+
+    def _alertar(self, texto: str) -> None:
+        try:
+            self.alertador.alertar(texto)
+        except Exception:
+            # o alertador real não levanta; isto protege o resultado de um alertador defeituoso
+            log.exception("alerta não enviado")

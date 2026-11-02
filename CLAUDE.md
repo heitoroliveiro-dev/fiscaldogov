@@ -62,15 +62,22 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 ## Comandos
 
 ```
-# hooks: git config core.hooksPath .githooks   (uma vez por clone)
-# dev / test / lint / build / migrate / etl: definidos na F2 (stack: ADR-0001)
+git config core.hooksPath .githooks          # uma vez por clone (gitflow, segredos, lint, testes)
+docker compose up -d --wait                  # Postgres 18 local com os papéis de dev
+DATABASE_URL_DONO=postgresql://postgres:postgres@localhost:5432/fiscaldogov npm --prefix web run db:migrate:deploy
+npm --prefix web ci && npm --prefix web run db:generate
+npm --prefix web run lint | typecheck | test | build | test:e2e   # build exige DATABASE_URL_LEITURA
+uv run --directory etl --frozen pytest -m "not integration"       # integração: ver etl/README.md
+uv run --directory etl --frozen ruff check . && uv run --directory etl --frozen ruff format --check .
+python -m etl coletar | reserva | agendado | verificar-config      # contracts/etl-cli.md
 ```
+Produção: Railway (`etl`, `Postgres`), Cloudflare (Worker `fiscaldogov`, R2), GitHub (`publicar.yml`, ambiente `producao`). Operação: `docs/05-runbooks/`.
 
 ## Fase atual
 
-- **Fase:** F2 — Fundação técnica. **Feature ativa:** nenhuma.
+- **Fase:** F2 — Fundação técnica. **Feature ativa:** `specs/001-fundacao-tecnica` (tarefas prontas, implementação em andamento).
 - **Marco 1:** presença + perfil + metodologia, 57ª legislatura, até 31/01/2027 (contexto §4.1).
-- **Próximo:** F2 pelo fluxo SDD (`/speckit-specify` da fundação técnica).
+- **Próximo:** código das 5 histórias da 001 pronto, CI verde e review da T087 corrigido. Falta: PR #8 para `develop` → release para `main` → provas em produção (T052, T072 no serviço, T076, T082, T086) → T088 (ordem e progresso em `specs/001-fundacao-tecnica/tasks.md`).
 - Histórico completo: `docs/ROADMAP.md` e `CHANGELOG.md` (não duplicar aqui).
 
 ## Índice de documentação (carregar sob demanda)

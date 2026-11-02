@@ -5,6 +5,8 @@
 
 ## Visão geral
 
+**Já no banco** (migration `0001_fundacao`, spec 001): `casa_legislativa`, `legislatura`, `partido`, `parlamentar`, `identificador_externo`, `mandato`, `periodo_exercicio`, `filiacao`, `execucao_etl` e `coleta_bruta`, conferidas contra o `schema.prisma` em 2026-11-01. As demais tabelas entram com as features que as usam, cada uma com a sua migration.
+
 ```mermaid
 erDiagram
     casa_legislativa ||--o{ mandato : ""
@@ -36,17 +38,17 @@ erDiagram
 |---|---|---|
 | `casa_legislativa` | `id`, `sigla` (`CD`, `SF`), `nome` | Carga fixa (seed). |
 | `legislatura` | `numero` (PK: 56, 57, 58), `inicio`, `fim` | R03, RNF10. |
-| `partido` | `id`, `sigla`, `nome` | Identificado pelo id da Câmara em `identificador_externo`. |
+| `partido` | `id`, `sigla`, `nome` | Identificado pelo id da Câmara em `identificador_externo` (`camara_v2_partido`). |
 
 ### Pessoas e mandatos
 
 | Tabela | Colunas principais | Observações |
 |---|---|---|
-| `parlamentar` | `id`, `nome_parlamentar`, `nome_civil`, `url_foto` | **Não armazena CPF** (RNF06). |
-| `identificador_externo` | `parlamentar_id`, `sistema` (`camara_v2`, `camara_carteira`, `senado`), `valor`, `legislatura_numero` (só para identificadores por legislatura) | Único por (`sistema`, `valor`, `legislatura_numero`). Base da reconciliação (ADR-0003 §2). |
+| `parlamentar` | `id`, `nome_parlamentar`, `nome_ordenacao`, `url_foto`, `fonte_url`, `coletado_em` | **Não armazena CPF nem nome civil** — ambos só vêm do endpoint que devolve CPF (spec 001, research §4). `nome_ordenacao` = nome em minúsculas, sem acento, com `COLLATE "C"` (migration 0002): ordena por código de caractere, como o ETL (FR-006). |
+| `identificador_externo` | `id`, `parlamentar_id` (nulo), `partido_id` (nulo), `sistema`, `valor`, `legislatura_numero` (só para identificadores por legislatura) | Exatamente um entre `parlamentar_id` e `partido_id`. Único por (`sistema`, `valor`, `legislatura_numero`). Valores de `sistema` entram com cada feature: `camara_v2` e `camara_v2_partido` (spec 001), `camara_carteira` (HU01), `senado` (F6). Base da reconciliação (ADR-0003 §2). |
 | `mandato` | `id`, `parlamentar_id`, `casa_id`, `legislatura_numero`, `uf` | Único por (parlamentar, casa, legislatura). DA03. |
-| `periodo_exercicio` | `id`, `mandato_id`, `inicio`, `fim` (nulo = em exercício), `condicao` (`titular`, `suplente`), `motivo_inicio`, `motivo_fim`, `fonte_url` | Derivado de `/deputados/{id}/historico`. Períodos de um mesmo mandato **não se sobrepõem**. |
-| `filiacao` | `id`, `parlamentar_id`, `partido_id`, `inicio`, `fim` (nulo = atual), `fonte_url` | No máximo **uma filiação aberta** por parlamentar (RN01). |
+| `periodo_exercicio` | `id`, `mandato_id`, `inicio`, `fim` (nulo = em exercício), `condicao` (`titular`, `suplente`), `motivo_inicio`, `motivo_fim`, `fonte_url`, `coletado_em` | Derivado de `/deputados/{id}/historico`. Períodos de um mesmo mandato **não se sobrepõem**. |
+| `filiacao` | `id`, `parlamentar_id`, `partido_id`, `inicio`, `fim` (nulo = atual), `fonte_url`, `coletado_em` | No máximo **uma filiação aberta** por parlamentar (RN01). |
 
 ### Sessões e presença
 
@@ -69,7 +71,7 @@ erDiagram
 
 | Tabela | Colunas principais | Observações |
 |---|---|---|
-| `execucao_etl` | `id`, `iniciada_em`, `terminada_em`, `status` (`sucesso`, `com_pendencias`, `falha`), `contagens` (jsonb), `erros` (jsonb), `versao_codigo` (commit) | RNF07. |
+| `execucao_etl` | `id`, `iniciada_em`, `terminada_em`, `status` (`em_andamento`, `sucesso`, `com_pendencias`, `falha`, `dispensada`), `gatilho` (`agendada`, `reserva`, `manual`), `tentativas`, `contagens`, `erros`, `pendencias` (jsonb), `versao_codigo` (commit) | RNF07; transições em `specs/001-fundacao-tecnica/data-model.md`. |
 | `coleta_bruta` | `id`, `execucao_id`, `fonte`, `url`, `chave_r2`, `sha256`, `bytes`, `coletada_em` | Aponta para a resposta bruta no R2; só grava quando o hash muda (ADR-0003 §4). |
 | `alteracao_registro` | `id`, `execucao_id`, `tabela`, `chave` (jsonb), `campo`, `valor_anterior`, `valor_novo`, `detectada_em` | Correções da fonte em registros já coletados. |
 | `historico_estatistica` | `id`, `execucao_id`, `tabela`, `chave` (jsonb), `valor_anterior` (jsonb), `valor_novo` (jsonb), `motivo` (`novos_dados`, `correcao_fonte`, `nova_versao_metodologia`), `registrado_em` | Só quando o valor muda. |

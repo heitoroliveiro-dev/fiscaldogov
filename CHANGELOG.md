@@ -26,3 +26,4 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 - Regras de negócio RN04–RN07 decididas, RN02 detalhada e RN08 nova; SP01 ampliado.
 - Requisitos não funcionais RNF01–RNF10 e restrições do projeto no contexto (entrevista de 2026-10-20).
 - Adaptações do design system ao público decididas (D1–D5: texto 16px e alvos de 44px no mobile, tema do sistema operacional, marca violeta, efeitos só na landing).
+- Fontes complementares avaliadas (contexto §5.1): Portal da Transparência como candidata para emendas parlamentares após o M1; Conecta gov.br e API dinâmica própria descartados.

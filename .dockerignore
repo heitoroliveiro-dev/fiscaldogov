@@ -1,0 +1,25 @@
+# Contexto de build na raiz do repositório (imagem do ETL — spec 001, T049)
+.git/
+**/node_modules/
+web/.next/
+web/out/
+web/src/generated/
+web/test-results/
+web/playwright-report/
+etl/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+**/.env
+**/.env.*
+!**/.env.example
+*.log
+coverage/
+
+# Fora da imagem do ETL: código do site, testes e documentação (T049)
+.github/
+docs/
+specs/
+web/src/
+web/tsconfig.tsbuildinfo
+etl/tests/

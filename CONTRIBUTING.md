@@ -59,10 +59,14 @@ Ativar uma vez por clone:
 git config core.hooksPath .githooks
 ```
 
-1. **pre-commit:** bloqueia commit direto em `main`/`develop` e branch fora do padrão → bloqueia `.env`/segredo staged.
+1. **pre-commit**, nesta ordem:
+   - bloqueia commit direto em `main`/`develop` e branch fora do padrão;
+   - bloqueia `.env`/segredo staged;
+   - com arquivo staged em `web/`: `lint-staged` (`web/.lintstagedrc.json`) roda ESLint com `--fix`, Prettier e `vitest related --run` só nos arquivos staged. O que dá para corrigir sozinho (formatação, parte do lint) é corrigido e volta para o stage; erro de lint ou teste quebrado bloqueia. Aviso de lint não bloqueia, como no CI;
+   - com arquivo staged em `etl/`: `ruff format --check`, `ruff check` e `pytest -m "not integration"` (unidade + arquitetura). Aqui nada é corrigido sozinho: rode `uv run --directory etl ruff format` e faça o stage de novo. Essas três checagens olham a pasta inteira, não só o que está staged.
 2. **commit-msg:** Conventional Commits.
 
-Lint, format e testes relacionados entram no pre-commit na F2 (fundação técnica), quando a stack estiver decidida.
+Ferramenta ausente bloqueia o commit com a instrução (falha fechada): `npm --prefix web ci` para o site, [uv](https://docs.astral.sh/uv/getting-started/installation/) para o ETL. Os testes de integração (precisam de Postgres) rodam só no CI.
 
 Hook falhou? Conserte o problema. **Nunca** `--no-verify`.
 

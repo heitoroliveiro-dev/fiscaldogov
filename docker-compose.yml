@@ -1,0 +1,20 @@
+# Postgres local para desenvolvimento — mesma major e base da produção (research §11).
+services:
+  postgres:
+    image: postgres:18-trixie
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fiscaldogov
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./scripts/dev-banco-papeis.sql:/docker-entrypoint-initdb.d/01-papeis.sql:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "fiscaldogov"]
+      interval: 2s
+      retries: 30
+
+volumes:
+  pgdata:

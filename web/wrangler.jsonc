@@ -1,0 +1,11 @@
+// Publicação na Cloudflare (ADR-0002): Worker só de assets estáticos, sem script.
+// Sem script, o _headers de out/ vale para todas as respostas (X-Robots-Tag, FR-005).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fiscaldogov",
+  "compatibility_date": "2026-10-13",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page",
+  },
+}

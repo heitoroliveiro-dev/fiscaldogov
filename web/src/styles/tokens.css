@@ -1,0 +1,256 @@
+/* ARQUIVO GERADO por scripts/build-tokens.mjs — não edite à mão.
+   Fonte da verdade: tokens/*.tokens.json (W3C DTCG 2025.10). Rode `npm run tokens`. */
+
+/* Primitivos — light */
+:root {
+  --gray-1: oklch(99.3% 0.0002 70);
+  --gray-2: oklch(97.9% 0.0005 70);
+  --gray-3: oklch(95.5% 0.0008 70);
+  --gray-4: oklch(93.2% 0.0011 70);
+  --gray-5: oklch(90.9% 0.0014 70);
+  --gray-6: oklch(88.2% 0.0018 70);
+  --gray-7: oklch(84.5% 0.0022 70);
+  --gray-8: oklch(78% 0.0028 70);
+  --gray-9: oklch(60% 0.004 70);
+  --gray-10: oklch(55% 0.004 70);
+  --gray-11: oklch(50% 0.0034 70);
+  --gray-12: oklch(24% 0.002 70);
+  --brand-1: oklch(99.3% 0.0033 277);
+  --brand-2: oklch(97.9% 0.0099 277);
+  --brand-3: oklch(95.5% 0.0215 277);
+  --brand-4: oklch(93.2% 0.0327 277);
+  --brand-5: oklch(90.9% 0.0442 277);
+  --brand-6: oklch(88.2% 0.0579 277);
+  --brand-7: oklch(84.5% 0.0772 277);
+  --brand-8: oklch(78% 0.1126 277);
+  --brand-9: oklch(53% 0.17 277);
+  --brand-10: oklch(48% 0.17 277);
+  --brand-11: oklch(50% 0.1445 277);
+  --brand-12: oklch(24% 0.085 277);
+  --red-1: oklch(99.3% 0.0034 25);
+  --red-2: oklch(97.9% 0.0102 25);
+  --red-3: oklch(95.5% 0.0223 25);
+  --red-4: oklch(93.2% 0.0343 25);
+  --red-5: oklch(90.9% 0.0469 25);
+  --red-6: oklch(88.2% 0.0623 25);
+  --red-7: oklch(84.5% 0.0847 25);
+  --red-8: oklch(78% 0.1284 25);
+  --red-9: oklch(55% 0.2 25);
+  --red-10: oklch(50% 0.2 25);
+  --red-11: oklch(50% 0.17 25);
+  --red-12: oklch(24% 0.0973 25);
+  --green-1: oklch(99.3% 0.009 152);
+  --green-2: oklch(97.9% 0.018 152);
+  --green-3: oklch(95.5% 0.03 152);
+  --green-4: oklch(93.2% 0.042 152);
+  --green-5: oklch(90.9% 0.054 152);
+  --green-6: oklch(88.2% 0.0675 152);
+  --green-7: oklch(84.5% 0.0825 152);
+  --green-8: oklch(78% 0.105 152);
+  --green-9: oklch(56% 0.1473 152);
+  --green-10: oklch(51% 0.1342 152);
+  --green-11: oklch(50% 0.1275 152);
+  --green-12: oklch(24% 0.0631 152);
+  --amber-1: oklch(99.3% 0.0055 75);
+  --amber-2: oklch(97.9% 0.0167 75);
+  --amber-3: oklch(95.5% 0.032 75);
+  --amber-4: oklch(93.2% 0.0448 75);
+  --amber-5: oklch(90.9% 0.0576 75);
+  --amber-6: oklch(88.2% 0.072 75);
+  --amber-7: oklch(84.5% 0.088 75);
+  --amber-8: oklch(78% 0.112 75);
+  --amber-9: oklch(78% 0.16 75);
+  --amber-10: oklch(73% 0.154 75);
+  --amber-11: oklch(50% 0.1055 75);
+  --amber-12: oklch(24% 0.0506 75);
+  --blue-1: oklch(99.3% 0.0035 245);
+  --blue-2: oklch(97.9% 0.0106 245);
+  --blue-3: oklch(95.5% 0.023 245);
+  --blue-4: oklch(93.2% 0.035 245);
+  --blue-5: oklch(90.9% 0.0473 245);
+  --blue-6: oklch(88.2% 0.0619 245);
+  --blue-7: oklch(84.5% 0.0825 245);
+  --blue-8: oklch(78% 0.112 245);
+  --blue-9: oklch(56% 0.141 245);
+  --blue-10: oklch(51% 0.1284 245);
+  --blue-11: oklch(50% 0.1259 245);
+  --blue-12: oklch(24% 0.0604 245);
+  --white: oklch(100% 0 0);
+  --black: oklch(0% 0 0);
+}
+
+/* Primitivos — dark (padrão do sistema: <html class="dark">) */
+.dark {
+  --gray-1: oklch(13% 0.0005 70);
+  --gray-2: oklch(16% 0.0006 70);
+  --gray-3: oklch(19.5% 0.001 70);
+  --gray-4: oklch(22.5% 0.0014 70);
+  --gray-5: oklch(25.5% 0.0017 70);
+  --gray-6: oklch(29% 0.002 70);
+  --gray-7: oklch(34% 0.0024 70);
+  --gray-8: oklch(43% 0.003 70);
+  --gray-9: oklch(55% 0.004 70);
+  --gray-10: oklch(58% 0.004 70);
+  --gray-11: oklch(77% 0.003 70);
+  --gray-12: oklch(96% 0.001 70);
+  --brand-1: oklch(13% 0.0204 277);
+  --brand-2: oklch(16% 0.0272 277);
+  --brand-3: oklch(19.5% 0.0442 277);
+  --brand-4: oklch(22.5% 0.0578 277);
+  --brand-5: oklch(25.5% 0.0714 277);
+  --brand-6: oklch(29% 0.085 277);
+  --brand-7: oklch(34% 0.102 277);
+  --brand-8: oklch(43% 0.1275 277);
+  --brand-9: oklch(53% 0.17 277);
+  --brand-10: oklch(56% 0.17 277);
+  --brand-11: oklch(77% 0.1182 277);
+  --brand-12: oklch(96% 0.019 277);
+  --red-1: oklch(13% 0.024 25);
+  --red-2: oklch(16% 0.032 25);
+  --red-3: oklch(19.5% 0.052 25);
+  --red-4: oklch(22.5% 0.068 25);
+  --red-5: oklch(25.5% 0.084 25);
+  --red-6: oklch(29% 0.1 25);
+  --red-7: oklch(34% 0.12 25);
+  --red-8: oklch(43% 0.15 25);
+  --red-9: oklch(55% 0.2 25);
+  --red-10: oklch(58% 0.2 25);
+  --red-11: oklch(77% 0.1356 25);
+  --red-12: oklch(96% 0.0197 25);
+  --green-1: oklch(13% 0.018 152);
+  --green-2: oklch(16% 0.024 152);
+  --green-3: oklch(19.5% 0.039 152);
+  --green-4: oklch(22.5% 0.051 152);
+  --green-5: oklch(25.5% 0.063 152);
+  --green-6: oklch(29% 0.075 152);
+  --green-7: oklch(34% 0.0894 152);
+  --green-8: oklch(43% 0.1125 152);
+  --green-9: oklch(56% 0.1473 152);
+  --green-10: oklch(59% 0.15 152);
+  --green-11: oklch(77% 0.1125 152);
+  --green-12: oklch(96% 0.0375 152);
+  --amber-1: oklch(13% 0.0192 75);
+  --amber-2: oklch(16% 0.0256 75);
+  --amber-3: oklch(19.5% 0.0411 75);
+  --amber-4: oklch(22.5% 0.0475 75);
+  --amber-5: oklch(25.5% 0.0538 75);
+  --amber-6: oklch(29% 0.0612 75);
+  --amber-7: oklch(34% 0.0717 75);
+  --amber-8: oklch(43% 0.0907 75);
+  --amber-9: oklch(78% 0.16 75);
+  --amber-10: oklch(81% 0.16 75);
+  --amber-11: oklch(77% 0.12 75);
+  --amber-12: oklch(96% 0.0322 75);
+  --blue-1: oklch(13% 0.0192 245);
+  --blue-2: oklch(16% 0.0256 245);
+  --blue-3: oklch(19.5% 0.0416 245);
+  --blue-4: oklch(22.5% 0.0544 245);
+  --blue-5: oklch(25.5% 0.0642 245);
+  --blue-6: oklch(29% 0.073 245);
+  --blue-7: oklch(34% 0.0856 245);
+  --blue-8: oklch(43% 0.1082 245);
+  --blue-9: oklch(56% 0.141 245);
+  --blue-10: oklch(59% 0.1485 245);
+  --blue-11: oklch(77% 0.12 245);
+  --blue-12: oklch(96% 0.0204 245);
+  --white: oklch(100% 0 0);
+  --black: oklch(0% 0 0);
+}
+
+/* Semânticos — compartilhados (aliases resolvem pelo modo ativo) */
+:root {
+  --background: var(--gray-1);
+  --foreground: var(--gray-12);
+  --card: var(--gray-2);
+  --card-foreground: var(--gray-12);
+  --popover: var(--gray-3);
+  --popover-foreground: var(--gray-12);
+  --primary: var(--brand-9);
+  --primary-foreground: var(--white);
+  --primary-hover: var(--brand-10);
+  --secondary: var(--gray-3);
+  --secondary-foreground: var(--gray-12);
+  --muted: var(--gray-3);
+  --muted-foreground: var(--gray-11);
+  --subtle-foreground: var(--gray-10);
+  --accent: var(--gray-4);
+  --accent-foreground: var(--gray-12);
+  --destructive: var(--red-9);
+  --destructive-foreground: var(--white);
+  --border: var(--gray-6);
+  --border-subtle: var(--gray-5);
+  --border-strong: var(--gray-8);
+  --input: var(--gray-7);
+  --ring: var(--brand-10);
+  --brand: var(--brand-9);
+  --brand-subtle: var(--brand-3);
+  --brand-border: var(--brand-7);
+  --brand-text: var(--brand-11);
+  --success: var(--green-9);
+  --success-subtle: var(--green-3);
+  --success-border: var(--green-7);
+  --success-text: var(--green-11);
+  --warning: var(--amber-9);
+  --warning-subtle: var(--amber-3);
+  --warning-border: var(--amber-7);
+  --warning-text: var(--amber-11);
+  --danger-subtle: var(--red-3);
+  --danger-border: var(--red-7);
+  --danger-text: var(--red-11);
+  --info: var(--blue-9);
+  --info-subtle: var(--blue-3);
+  --info-border: var(--blue-7);
+  --info-text: var(--blue-11);
+  --chart-1: var(--brand-9);
+  --chart-2: var(--green-9);
+  --chart-3: var(--amber-9);
+  --chart-4: var(--blue-9);
+  --chart-5: var(--red-9);
+  --sidebar: var(--gray-1);
+  --sidebar-foreground: var(--gray-11);
+  --sidebar-primary: var(--brand-9);
+  --sidebar-primary-foreground: var(--white);
+  --sidebar-accent: var(--gray-4);
+  --sidebar-accent-foreground: var(--gray-12);
+  --sidebar-border: var(--gray-5);
+  --sidebar-ring: var(--brand-10);
+}
+
+/* Semânticos — sobrescritas light */
+:root {
+  --background: var(--gray-1);
+  --card: var(--white);
+  --popover: var(--white);
+  --sidebar: var(--gray-2);
+  --ring: var(--brand-9);
+  --sidebar-ring: var(--brand-9);
+  --elevation-raised: 0px 1px 2px 0px rgb(0 0 0 / 6%), 0px 1px 1px 0px rgb(0 0 0 / 4%);
+  --elevation-overlay: 0px 2px 6px 0px rgb(0 0 0 / 6%), 0px 8px 24px -6px rgb(0 0 0 / 12%);
+  --elevation-modal: 0px 4px 12px 0px rgb(0 0 0 / 6%), 0px 24px 48px -12px rgb(0 0 0 / 18%);
+}
+
+/* Semânticos — sobrescritas dark (inclui o valor base de tudo que o light sobrescreve) */
+.dark {
+  --background: var(--gray-1);
+  --card: var(--gray-2);
+  --popover: var(--gray-3);
+  --sidebar: var(--gray-1);
+  --ring: var(--brand-10);
+  --sidebar-ring: var(--brand-10);
+  --elevation-raised: inset 0px 1px 0px 0px rgb(255 255 255 / 4%), 0px 1px 2px 0px rgb(0 0 0 / 40%);
+  --elevation-overlay: inset 0px 1px 0px 0px rgb(255 255 255 / 5%), 0px 8px 24px -4px rgb(0 0 0 / 60%);
+  --elevation-modal: inset 0px 1px 0px 0px rgb(255 255 255 / 6%), 0px 24px 48px -12px rgb(0 0 0 / 70%);
+}
+
+/* Alto contraste (data-contrast="high") */
+:root[data-contrast="high"] {
+  --muted-foreground: var(--gray-12);
+  --subtle-foreground: var(--gray-11);
+  --border: var(--gray-8);
+  --border-subtle: var(--gray-7);
+  --border-strong: var(--gray-10);
+  --input: var(--gray-9);
+  --ring: var(--brand-11);
+  --sidebar-foreground: var(--gray-12);
+  --sidebar-border: var(--gray-7);
+}

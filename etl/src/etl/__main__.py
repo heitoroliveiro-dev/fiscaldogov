@@ -1,0 +1,213 @@
+"""Ponto de entrada: python -m etl <comando> (contracts/etl-cli.md).
+
+A configuração é validada antes de qualquer comando: inválida, sai com código 2
+sem executar nada. Aqui se montam os adaptadores reais; o pipeline só conhece as
+portas. O cron do Railway roda `agendado`, que escolhe entre coletar e reserva
+pelo horário UTC.
+"""
+
+import argparse
+import logging
+import os
+import sys
+from collections.abc import Callable, Iterator, Mapping
+from contextlib import contextmanager
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
+
+from etl import registro
+from etl.adaptadores.alertas.telegram import AlertadorTelegram, criar_cliente_telegram
+from etl.adaptadores.backup_r2.backup import ArmazenamentoR2, BackupR2
+from etl.adaptadores.brutos_r2.armazem import ArmazemDeBrutos, GravadorR2, criar_cliente_r2
+from etl.adaptadores.camara.api_v2 import CamaraApiV2, criar_cliente
+from etl.adaptadores.persistencia.banco import Banco, traduzir_erro_de_conexao
+from etl.adaptadores.persistencia.execucoes import Execucoes
+from etl.adaptadores.persistencia.repositorio import Repositorio
+from etl.adaptadores.publicacao.github import PublicadorGitHub, criar_cliente_github
+from etl.config import Configuracao, ConfiguracaoInvalida, carregar
+from etl.pipeline.alertas import descrever_erro, montar_alerta
+from etl.pipeline.coletar import Coleta, ColetaEmAndamento, Resultado
+from etl.pipeline.reserva import Reserva, comando_agendado
+from etl.portas import Alertador, Gatilho, StatusExecucao
+
+SAIDA_SUCESSO = 0
+SAIDA_FALHA = 1
+SAIDA_CONFIGURACAO_INVALIDA = 2
+SAIDA_EM_ANDAMENTO = 3
+
+log = logging.getLogger("etl")
+
+
+def codigo_de_saida(status: StatusExecucao) -> int:
+    return SAIDA_FALHA if status is StatusExecucao.FALHA else SAIDA_SUCESSO
+
+
+def rodar(acao: Callable[[], Resultado]) -> int:
+    """Executa uma coleta ou reserva e traduz o desfecho no código de saída."""
+    try:
+        resultado = acao()
+    except ColetaEmAndamento as erro:
+        log.warning(str(erro))
+        return SAIDA_EM_ANDAMENTO
+    return codigo_de_saida(resultado.status)
+
+
+def proteger(acao: Callable[[], int], alertador: Alertador) -> int:
+    """Falha antes de a execução existir (banco fora do ar, senha recusada) também alerta.
+
+    Sem isto, o erro subiria como traceback em texto puro, fora do registro
+    mascarado, sem linha em execucao_etl e sem alerta (FR-029, FR-020a).
+    """
+    try:
+        return acao()
+    except Exception as erro:
+        descricao = {"etapa": "inicio", **descrever_erro(traduzir_erro_de_conexao(erro))}
+        log.error("coleta não começou", extra=descricao)
+        try:
+            alertador.alertar(montar_alerta("coleta não começou", None, [descricao]))
+        except Exception:
+            log.error("alerta não enviado", extra={"etapa": "inicio"})
+        return SAIDA_FALHA
+
+
+def versao_do_codigo(ambiente: Mapping[str, str]) -> str:
+    # variável da Railway em deploys vindos do GitHub; conferir no serviço real (T051)
+    return ambiente.get("RAILWAY_GIT_COMMIT_SHA") or "desconhecida"
+
+
+def interpretar(argumentos: list[str]) -> argparse.Namespace:
+    """Argumento inválido sai com código 2, o mesmo da configuração inválida."""
+    analisador = argparse.ArgumentParser(prog=f"python -m {Path(__file__).parent.name}")
+    comandos = analisador.add_subparsers(dest="comando", required=True)
+    coletar = comandos.add_parser("coletar", help="coleta da Câmara, gravação e publicação")
+    coletar.add_argument(
+        "--gatilho",
+        type=Gatilho,
+        choices=[Gatilho.AGENDADA, Gatilho.MANUAL],
+        default=Gatilho.MANUAL,
+    )
+    comandos.add_parser("reserva", help="coleta das 05:00, só se ainda não houve sucesso no dia")
+    comandos.add_parser("agendado", help="cron do Railway: 06h UTC coleta, outro horário reserva")
+    comandos.add_parser("verificar-config", help="variáveis e conectividade, sem gravar nada")
+    return analisador.parse_args(argumentos)
+
+
+def verificar(conferencias: Mapping[str, Callable[[], Any]]) -> int:
+    """Roda todas as conferências, mesmo depois de uma falha, e relata cada uma."""
+    falhas = 0
+    for nome, conferir in conferencias.items():
+        try:
+            conferir()
+        except Exception as erro:
+            falhas += 1
+            log.error(
+                "conferência falhou",
+                extra={"conferencia": nome, "erro": registro.mascarar(str(erro))},
+            )
+        else:
+            log.info("conferência ok", extra={"conferencia": nome})
+    return SAIDA_FALHA if falhas else SAIDA_SUCESSO
+
+
+@contextmanager
+def _montar(config: Configuracao) -> Iterator[tuple[Coleta, Execucoes]]:
+    banco = Banco.conectar(config.database_url_escrita, config.tempo_limite_s)
+    s3 = criar_cliente_r2(
+        config.r2_account_id, config.r2_access_key_id, config.r2_secret_access_key
+    )
+    try:
+        with (
+            criar_cliente(config.camara_api_url) as camara,
+            criar_cliente_github() as github,
+            criar_cliente_telegram() as telegram,
+        ):
+            execucoes = Execucoes(banco)
+            coleta = Coleta(
+                criar_fonte=lambda ao_receber, ao_tentar: CamaraApiV2(
+                    camara, ao_receber, ao_tentar=ao_tentar
+                ),
+                repositorio=Repositorio(banco),
+                brutos=ArmazemDeBrutos(banco, GravadorR2(s3, config.r2_bucket_brutos)),
+                execucoes=execucoes,
+                backup=BackupR2(
+                    config.database_url_escrita, ArmazenamentoR2(s3, config.r2_bucket_backup)
+                ),
+                publicador=PublicadorGitHub(
+                    github, config.github_repositorio, config.github_token_publicacao
+                ),
+                alertador=AlertadorTelegram(
+                    telegram, config.alerta_telegram_token, config.alerta_telegram_chat_id
+                ),
+                versao_codigo=versao_do_codigo(os.environ),
+                tempo_limite_s=config.tempo_limite_s,
+            )
+            yield coleta, execucoes
+    finally:
+        banco.fechar()
+
+
+def _coletar(config: Configuracao, gatilho: Gatilho) -> int:
+    with _montar(config) as (coleta, _):
+        return rodar(lambda: coleta.executar(gatilho))
+
+
+def _reserva(config: Configuracao) -> int:
+    with _montar(config) as (coleta, execucoes):
+        reserva = Reserva(execucoes, coleta, versao_do_codigo(os.environ))
+        return rodar(reserva.executar)
+
+
+def _agendado(config: Configuracao) -> int:
+    comando = comando_agendado(datetime.now(UTC))
+    log.info("execução agendada", extra={"comando": comando})
+    if comando == "coletar":
+        return _coletar(config, Gatilho.AGENDADA)
+    return _reserva(config)
+
+
+def _verificar_config(config: Configuracao) -> int:
+    def banco() -> None:
+        Banco.conectar(config.database_url_escrita, config.tempo_limite_s).fechar()
+
+    def r2() -> None:
+        s3 = criar_cliente_r2(
+            config.r2_account_id, config.r2_access_key_id, config.r2_secret_access_key
+        )
+        for bucket in (config.r2_bucket_brutos, config.r2_bucket_backup):
+            s3.head_bucket(Bucket=bucket)
+
+    def api_da_camara() -> None:
+        # a lista, nunca /deputados/{id}: aquele devolve CPF
+        with criar_cliente(config.camara_api_url) as cliente:
+            cliente.get("/deputados", params={"itens": 1}).raise_for_status()
+
+    return verificar({"banco": banco, "r2": r2, "api_da_camara": api_da_camara})
+
+
+def main(argumentos: list[str]) -> int:
+    registro.configurar()
+    try:
+        config = carregar(os.environ)
+    except ConfiguracaoInvalida as erro:
+        log.error(str(erro))
+        return SAIDA_CONFIGURACAO_INVALIDA
+
+    comando = interpretar(argumentos)
+    if comando.comando == "verificar-config":
+        return _verificar_config(config)
+    acoes: dict[str, Callable[[], int]] = {
+        "coletar": lambda: _coletar(config, comando.gatilho),
+        "reserva": lambda: _reserva(config),
+        "agendado": lambda: _agendado(config),
+    }
+    # o alertador não depende do banco: avisa mesmo quando o banco está fora do ar
+    with criar_cliente_telegram() as telegram:
+        alertador = AlertadorTelegram(
+            telegram, config.alerta_telegram_token, config.alerta_telegram_chat_id
+        )
+        return proteger(acoes[comando.comando], alertador)
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

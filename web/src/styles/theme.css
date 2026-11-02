@@ -1,0 +1,242 @@
+/* ARQUIVO GERADO por scripts/build-tokens.mjs — não edite à mão.
+   Fonte da verdade: tokens/*.tokens.json (W3C DTCG 2025.10). Rode `npm run tokens`. */
+
+/* Cores: o tema padrão do Tailwind é removido. Use apenas tokens semânticos (bg-background,
+   text-muted-foreground…) ou, em casos excepcionais, a escala primitiva (bg-gray-3, text-brand-11). */
+@theme inline {
+  --color-*: initial;
+  --color-white: var(--white);
+  --color-black: var(--black);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-brand-subtle: var(--brand-subtle);
+  --color-brand-border: var(--brand-border);
+  --color-brand-text: var(--brand-text);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-success-border: var(--success-border);
+  --color-success-text: var(--success-text);
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-warning-border: var(--warning-border);
+  --color-warning-text: var(--warning-text);
+  --color-danger-subtle: var(--danger-subtle);
+  --color-danger-border: var(--danger-border);
+  --color-danger-text: var(--danger-text);
+  --color-info: var(--info);
+  --color-info-subtle: var(--info-subtle);
+  --color-info-border: var(--info-border);
+  --color-info-text: var(--info-text);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-gray-1: var(--gray-1);
+  --color-gray-2: var(--gray-2);
+  --color-gray-3: var(--gray-3);
+  --color-gray-4: var(--gray-4);
+  --color-gray-5: var(--gray-5);
+  --color-gray-6: var(--gray-6);
+  --color-gray-7: var(--gray-7);
+  --color-gray-8: var(--gray-8);
+  --color-gray-9: var(--gray-9);
+  --color-gray-10: var(--gray-10);
+  --color-gray-11: var(--gray-11);
+  --color-gray-12: var(--gray-12);
+
+  --color-brand-1: var(--brand-1);
+  --color-brand-2: var(--brand-2);
+  --color-brand-3: var(--brand-3);
+  --color-brand-4: var(--brand-4);
+  --color-brand-5: var(--brand-5);
+  --color-brand-6: var(--brand-6);
+  --color-brand-7: var(--brand-7);
+  --color-brand-8: var(--brand-8);
+  --color-brand-9: var(--brand-9);
+  --color-brand-10: var(--brand-10);
+  --color-brand-11: var(--brand-11);
+  --color-brand-12: var(--brand-12);
+
+  --color-red-1: var(--red-1);
+  --color-red-2: var(--red-2);
+  --color-red-3: var(--red-3);
+  --color-red-4: var(--red-4);
+  --color-red-5: var(--red-5);
+  --color-red-6: var(--red-6);
+  --color-red-7: var(--red-7);
+  --color-red-8: var(--red-8);
+  --color-red-9: var(--red-9);
+  --color-red-10: var(--red-10);
+  --color-red-11: var(--red-11);
+  --color-red-12: var(--red-12);
+
+  --color-green-1: var(--green-1);
+  --color-green-2: var(--green-2);
+  --color-green-3: var(--green-3);
+  --color-green-4: var(--green-4);
+  --color-green-5: var(--green-5);
+  --color-green-6: var(--green-6);
+  --color-green-7: var(--green-7);
+  --color-green-8: var(--green-8);
+  --color-green-9: var(--green-9);
+  --color-green-10: var(--green-10);
+  --color-green-11: var(--green-11);
+  --color-green-12: var(--green-12);
+
+  --color-amber-1: var(--amber-1);
+  --color-amber-2: var(--amber-2);
+  --color-amber-3: var(--amber-3);
+  --color-amber-4: var(--amber-4);
+  --color-amber-5: var(--amber-5);
+  --color-amber-6: var(--amber-6);
+  --color-amber-7: var(--amber-7);
+  --color-amber-8: var(--amber-8);
+  --color-amber-9: var(--amber-9);
+  --color-amber-10: var(--amber-10);
+  --color-amber-11: var(--amber-11);
+  --color-amber-12: var(--amber-12);
+
+  --color-blue-1: var(--blue-1);
+  --color-blue-2: var(--blue-2);
+  --color-blue-3: var(--blue-3);
+  --color-blue-4: var(--blue-4);
+  --color-blue-5: var(--blue-5);
+  --color-blue-6: var(--blue-6);
+  --color-blue-7: var(--blue-7);
+  --color-blue-8: var(--blue-8);
+  --color-blue-9: var(--blue-9);
+  --color-blue-10: var(--blue-10);
+  --color-blue-11: var(--blue-11);
+  --color-blue-12: var(--blue-12);
+
+  /* Elevação: nomes do Tailwind/shadcn apontam para os tokens de elevação (mudam por modo) */
+  --shadow-raised: var(--elevation-raised);
+  --shadow-overlay: var(--elevation-overlay);
+  --shadow-modal: var(--elevation-modal);
+  --shadow-xs: var(--elevation-raised);
+  --shadow-sm: var(--elevation-raised);
+  --shadow-md: var(--elevation-overlay);
+  --shadow-lg: var(--elevation-overlay);
+  --shadow-xl: var(--elevation-modal);
+  --shadow-2xl: var(--elevation-modal);
+}
+
+@theme static {
+  /* Tipografia */
+  --font-sans: var(--font-face-sans, Inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-face-mono, "Geist Mono"), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-weight-normal: 400;
+  --font-weight-medium: 510;
+  --font-weight-semibold: 590;
+  --font-weight-bold: 680;
+
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1.273;
+  --text-2xs--letter-spacing: 0.11px;
+  --text-2xs--font-weight: 510;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.333;
+  --text-xs--letter-spacing: 0px;
+  --text-xs--font-weight: 400;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.538;
+  --text-sm--letter-spacing: -0.033px;
+  --text-sm--font-weight: 400;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.429;
+  --text-base--letter-spacing: -0.07px;
+  --text-base--font-weight: 400;
+  --text-md: 0.9375rem;
+  --text-md--line-height: 1.6;
+  --text-md--letter-spacing: -0.112px;
+  --text-md--font-weight: 400;
+  --text-lg: 1rem;
+  --text-lg--line-height: 1.5;
+  --text-lg--letter-spacing: -0.16px;
+  --text-lg--font-weight: 400;
+  --text-xl: 1.125rem;
+  --text-xl--line-height: 1.444;
+  --text-xl--letter-spacing: -0.225px;
+  --text-xl--font-weight: 510;
+  --text-2xl: 1.25rem;
+  --text-2xl--line-height: 1.4;
+  --text-2xl--letter-spacing: -0.3px;
+  --text-2xl--font-weight: 590;
+  --text-3xl: 1.5rem;
+  --text-3xl--line-height: 1.333;
+  --text-3xl--letter-spacing: -0.432px;
+  --text-3xl--font-weight: 590;
+  --text-4xl: 2rem;
+  --text-4xl--line-height: 1.188;
+  --text-4xl--letter-spacing: -0.704px;
+  --text-4xl--font-weight: 590;
+  --text-5xl: 2.5rem;
+  --text-5xl--line-height: 1.15;
+  --text-5xl--letter-spacing: -0.96px;
+  --text-5xl--font-weight: 590;
+  --text-6xl: 3rem;
+  --text-6xl--line-height: 1.125;
+  --text-6xl--letter-spacing: -1.248px;
+  --text-6xl--font-weight: 590;
+  --text-7xl: 4rem;
+  --text-7xl--line-height: 1.062;
+  --text-7xl--letter-spacing: -1.92px;
+  --text-7xl--font-weight: 590;
+
+  /* Raio */
+  --radius: 8px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Movimento — use com duration-(--duration-fast) ease-standard */
+  --duration-instant: 50ms;
+  --duration-fast: 100ms;
+  --duration-normal: 150ms;
+  --duration-moderate: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --ease-linear: cubic-bezier(0, 0, 1, 1);
+}
