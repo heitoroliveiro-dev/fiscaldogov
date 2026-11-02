@@ -27,13 +27,27 @@ def _da_legislatura(eventos: Iterable[EventoHistorico], legislatura: int) -> lis
 def derivar_periodos(
     eventos: Iterable[EventoHistorico], legislatura: int
 ) -> list[PeriodoDeExercicio]:
-    """Abre num evento em exercício e fecha no próximo evento fora de exercício."""
+    """Abre num evento em exercício e fecha no próximo evento fora de exercício.
+
+    Uma troca de condição em exercício (suplente efetivado como titular, sem
+    saída entre os dois) fecha o período e abre outro no mesmo instante: o
+    denominador por condição depende disso (princípios III e IV).
+    """
     periodos: list[PeriodoDeExercicio] = []
     entrada: tuple[EventoHistorico, Condicao] | None = None
     for evento in _da_legislatura(eventos, legislatura):
         if evento.em_exercicio is True and entrada is None:
             if evento.condicao is None:
                 raise ValueError(f"evento em exercício sem condição em {evento.data_hora}")
+            entrada = (evento, evento.condicao)
+        elif (
+            evento.em_exercicio is True
+            and entrada is not None
+            and evento.condicao is not None
+            and evento.condicao is not entrada[1]
+            and evento.data_hora > entrada[0].data_hora
+        ):
+            periodos.append(_periodo(*entrada, saida=evento))
             entrada = (evento, evento.condicao)
         elif evento.em_exercicio is False and entrada is not None:
             periodos.append(_periodo(*entrada, saida=evento))

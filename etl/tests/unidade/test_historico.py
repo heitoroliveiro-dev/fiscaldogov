@@ -238,3 +238,31 @@ def test_legislatura_sem_eventos_e_recusada() -> None:
 
     with pytest.raises(ValueError, match="57"):
         derivar_uf(eventos, LEGISLATURA)
+
+
+def test_troca_de_condicao_em_exercicio_fecha_um_periodo_e_abre_outro() -> None:
+    # suplente efetivado como titular sem evento de saída entre os dois
+    eventos = [
+        _evento("2023-04-01T12:00", condicao=Condicao.SUPLENTE, descricao="Entrada - Reassunção"),
+        _evento("2024-06-10T09:00", condicao=Condicao.TITULAR, descricao="Efetivação"),
+        _evento("2025-01-31T18:00", em_exercicio=False, condicao=None, descricao="Saída"),
+    ]
+
+    periodos = derivar_periodos(eventos, LEGISLATURA)
+
+    assert [(p.inicio, p.fim, p.condicao) for p in periodos] == [
+        (_momento("2023-04-01T12:00"), _momento("2024-06-10T09:00"), Condicao.SUPLENTE),
+        (_momento("2024-06-10T09:00"), _momento("2025-01-31T18:00"), Condicao.TITULAR),
+    ]
+    assert (periodos[0].motivo_fim, periodos[1].motivo_inicio) == ("Efetivação", "Efetivação")
+
+
+def test_mesmo_evento_de_exercicio_repetido_nao_parte_o_periodo() -> None:
+    eventos = [
+        _evento("2023-02-01T12:00"),
+        _evento("2023-08-01T12:00", descricao="Alteração de partido"),
+    ]
+
+    assert _intervalos(derivar_periodos(eventos, LEGISLATURA)) == [
+        (_momento("2023-02-01T12:00"), None)
+    ]

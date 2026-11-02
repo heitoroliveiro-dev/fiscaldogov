@@ -20,7 +20,13 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
-from etl.dominio.entidades import DadosDoParlamentar, IdentificadorExterno, Mandato, Parlamentar
+from etl.dominio.entidades import (
+    DadosDoParlamentar,
+    Historico,
+    IdentificadorExterno,
+    Mandato,
+    Parlamentar,
+)
 from etl.dominio.historico import derivar_filiacoes, derivar_periodos, derivar_uf
 from etl.dominio.selecao import selecionar_deputado
 from etl.pipeline.alertas import descrever_erro, montar_alerta
@@ -146,7 +152,7 @@ class Coleta:
         )
 
         try:
-            todos = self._coletar(fonte)
+            todos, lidos = self._coletar(fonte)
         except Exception as erro:
             self._guardar_brutos(execucao_id, respostas)
             return self._falha("coleta", erro, execucao_id)
@@ -159,7 +165,7 @@ class Coleta:
             progresso.pendencias.append(pendencia)
 
         try:
-            progresso.contagens = self.repositorio.gravar(todos)
+            progresso.contagens = {"lidos": lidos, "gravados": self.repositorio.gravar(todos)}
         except Exception as erro:
             return self._falha("gravacao", erro, execucao_id)
 
@@ -186,7 +192,8 @@ class Coleta:
             return StatusExecucao.COM_PENDENCIAS
         return status
 
-    def _coletar(self, fonte: FonteDaCasa) -> list[DadosDoParlamentar]:
+    def _coletar(self, fonte: FonteDaCasa) -> tuple[list[DadosDoParlamentar], dict[str, int]]:
+        """Devolve os dados de cada alvo e o que foi lido da fonte (FR-010)."""
         deputados = fonte.listar_em_exercicio()
         selecionado = selecionar_deputado(deputados)
         em_exercicio = {deputado.identificador: deputado for deputado in deputados}
@@ -196,13 +203,19 @@ class Coleta:
             for identificador in self.repositorio.parlamentares_armazenados()
             if identificador != selecionado.identificador
         ]
-        return [self._dados(fonte, alvo, em_exercicio.get(alvo)) for alvo in alvos]
+        historicos = {alvo: fonte.historico(alvo) for alvo in alvos}
+        lidos = {
+            "deputados_em_exercicio": len(deputados),
+            "historicos": len(historicos),
+            "eventos_do_historico": sum(len(h.eventos) for h in historicos.values()),
+        }
+        todos = [self._dados(alvo, em_exercicio.get(alvo), historicos[alvo]) for alvo in alvos]
+        return todos, lidos
 
     @staticmethod
     def _dados(
-        fonte: FonteDaCasa, identificador: IdentificadorExterno, parlamentar: Parlamentar | None
+        identificador: IdentificadorExterno, parlamentar: Parlamentar | None, historico: Historico
     ) -> DadosDoParlamentar:
-        historico = fonte.historico(identificador)
         return DadosDoParlamentar(
             identificador=identificador,
             parlamentar=parlamentar,

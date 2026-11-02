@@ -34,6 +34,8 @@ USER_AGENT = "fiscaldogov-etl (+https://github.com/heitoroliveiro-dev/fiscaldogo
 TEMPO_LIMITE_S = 30
 MAXIMO_SIMULTANEAS = 4
 ITENS_POR_PAGINA = 100
+# resposta que não é JSON (ex.: página de manutenção) guardada só até este tamanho
+LIMITE_DO_BRUTO_INVALIDO = 65_536
 MINIMO_EM_EXERCICIO = 500  # a Câmara tem 513 cadeiras (FR-007b)
 SEM_PARTIDO = "S.PART."
 # dataHora vem sem fuso; a Câmara registra no horário de Brasília (contrato da fonte)
@@ -113,6 +115,10 @@ class CamaraApiV2:
         try:
             conteudo = sanitizar(resposta.json())
         except ValueError as erro:
+            # o texto não passa pela sanitização de campos, mas só chamamos endpoints sem CPF
+            self._ao_receber(
+                url_consultada, {"json_invalido": resposta.text[:LIMITE_DO_BRUTO_INVALIDO]}
+            )
             raise RespostaInvalida(f"JSON inválido em {url_consultada}") from erro
         self._ao_receber(url_consultada, conteudo)
         return url_consultada, conteudo

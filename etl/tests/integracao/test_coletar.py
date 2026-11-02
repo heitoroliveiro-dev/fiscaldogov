@@ -283,7 +283,10 @@ def test_execucao_termina_sucesso_com_contagens_e_dispara_a_publicacao(
     )
     assert execucao.status == "sucesso"
     assert execucao.terminada_em is not None
-    assert execucao.contagens == {"parlamentar": 1, "periodo_exercicio": 7, "filiacao": 2}
+    assert execucao.contagens == {
+        "lidos": {"deputados_em_exercicio": 1, "historicos": 1, "eventos_do_historico": 22},
+        "gravados": {"parlamentar": 1, "periodo_exercicio": 7, "filiacao": 2},
+    }
     assert cenario.publicador.disparos == [resultado.execucao_id]
 
 

@@ -14,7 +14,12 @@ from zoneinfo import ZoneInfo
 import httpx
 import pytest
 
-from etl.adaptadores.camara.api_v2 import USER_AGENT, CamaraApiV2, criar_cliente
+from etl.adaptadores.camara.api_v2 import (
+    LIMITE_DO_BRUTO_INVALIDO,
+    USER_AGENT,
+    CamaraApiV2,
+    criar_cliente,
+)
 from etl.dominio.entidades import (
     Condicao,
     EventoHistorico,
@@ -191,6 +196,27 @@ def test_resposta_bruta_entregue_ja_sanitizada() -> None:
 def test_json_invalido_e_resposta_invalida() -> None:
     with pytest.raises(RespostaInvalida):
         _fonte(_Camara(historico=b"<html>manutencao</html>")).historico(CELSO_SABINO)
+
+
+def test_json_invalido_ainda_e_entregue_como_bruto_para_diagnostico() -> None:
+    # contrato da fonte (Falhas): "a resposta bruta é guardada para diagnóstico"
+    brutos: list = []
+
+    with pytest.raises(RespostaInvalida):
+        _fonte(_Camara(historico=b"<html>manutencao</html>"), brutos).historico(CELSO_SABINO)
+
+    ((url, conteudo),) = brutos
+    assert url == URL_HISTORICO
+    assert conteudo == {"json_invalido": "<html>manutencao</html>"}
+
+
+def test_bruto_de_json_invalido_e_truncado() -> None:
+    brutos: list = []
+
+    with pytest.raises(RespostaInvalida):
+        _fonte(_Camara(historico=b"x" * 200_000), brutos).historico(CELSO_SABINO)
+
+    assert len(brutos[0][1]["json_invalido"]) == LIMITE_DO_BRUTO_INVALIDO
 
 
 # --- histórico ----------------------------------------------------------------
