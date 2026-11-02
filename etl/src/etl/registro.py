@@ -44,6 +44,9 @@ class _FormatoJson(logging.Formatter):
             for chave, valor in vars(record).items()
             if chave not in _ATRIBUTOS_DO_LOGGING
         }
+        # "mensagem" é a do log; a de um erro descrito em extra vira "detalhe"
+        if "mensagem" in campos:
+            campos["detalhe"] = campos.pop("mensagem")
         linha = {
             **campos,
             "momento": datetime.fromtimestamp(record.created, UTC).isoformat(),

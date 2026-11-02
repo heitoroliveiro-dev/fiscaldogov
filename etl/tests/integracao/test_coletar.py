@@ -17,7 +17,7 @@ import pytest
 from apoio_coleta import AlertadorFalso, BackupFalso
 from sqlalchemy import Connection, func, select, text
 
-from etl.adaptadores.brutos_r2.armazem import ArmazemDeBrutos, GravadorEmDisco
+from etl.adaptadores.brutos_r2.armazem import CREDENCIAL_R2, ArmazemDeBrutos, GravadorEmDisco
 from etl.adaptadores.camara.api_v2 import CamaraApiV2, criar_cliente
 from etl.adaptadores.persistencia.banco import Banco
 from etl.adaptadores.persistencia.execucoes import Execucoes
@@ -33,7 +33,7 @@ from etl.dominio.entidades import (
     SistemaExterno,
 )
 from etl.pipeline.coletar import Coleta
-from etl.portas import Gatilho, StatusExecucao
+from etl.portas import CredencialInvalida, Gatilho, StatusExecucao
 
 FIXTURES = Path(__file__).parents[1] / "fixtures" / "camara"
 BASE = "https://dadosabertos.camara.leg.br/api/v2"
@@ -426,3 +426,48 @@ def test_falha_no_disparo_da_publicacao_vira_pendencia(
         "SELECT pendencias FROM execucao_etl WHERE id = :id", id=resultado.execucao_id
     )
     assert [p["etapa"] for p in execucao.pendencias] == ["publicacao"]
+
+
+class _PublicadorQueLeOStatus:
+    """Simula o build: no momento do disparo, a execução já tem que estar finalizada."""
+
+    def __init__(self, banco: Banco) -> None:
+        self._banco = banco
+        self.status_no_disparo: list[str] = []
+
+    def disparar(self, execucao_id: int) -> None:
+        with self._banco.transacao() as conexao:
+            self.status_no_disparo.append(
+                conexao.execute(
+                    text("SELECT status FROM execucao_etl WHERE id = :id"), {"id": execucao_id}
+                ).scalar_one()
+            )
+
+
+def test_execucao_ja_esta_finalizada_quando_a_publicacao_e_disparada(
+    cenario: _Cenario, banco: Banco, historico_celso: Historico
+) -> None:
+    publicador = _PublicadorQueLeOStatus(banco)
+    cenario.publicador = publicador
+
+    cenario.coletar([CELSO], {"204496": historico_celso})
+
+    # se o build lesse "em_andamento", publicaria dados novos com a data da execução anterior
+    assert publicador.status_no_disparo == ["sucesso"]
+
+
+class _GravadorSemCredencial:
+    def enviar(self, chave: str, conteudo: bytes) -> None:
+        raise CredencialInvalida(CREDENCIAL_R2, "InvalidAccessKeyId 403")
+
+
+def test_chave_do_r2_recusada_nos_brutos_e_nomeada_no_alerta(
+    cenario: _Cenario, historico_celso: Historico
+) -> None:
+    resultado = cenario.coletar(
+        [CELSO], {"204496": historico_celso}, gravador=_GravadorSemCredencial()
+    )
+
+    assert resultado.status is StatusExecucao.COM_PENDENCIAS
+    (alerta,) = cenario.alertador.textos
+    assert f"brutos: falha de autenticação: {CREDENCIAL_R2}" in alerta

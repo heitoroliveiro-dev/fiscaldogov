@@ -17,7 +17,7 @@ alerta não muda o resultado (FR-029).
 
 import logging
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from etl.dominio.entidades import DadosDoParlamentar, IdentificadorExterno, Mandato, Parlamentar
@@ -30,6 +30,7 @@ from etl.portas import (
     ArmazemDeBrutos,
     Backup,
     ColetaEmAndamento,
+    CredencialInvalida,
     FonteDaCasa,
     Gatilho,
     Publicador,
@@ -60,6 +61,26 @@ class Resultado:
     status: StatusExecucao
 
 
+@dataclass
+class _Progresso:
+    """O que já foi feito quando o vigia interrompe: decide entre falha e pendência."""
+
+    contagens: dict[str, Any] | None = None
+    pendencias: list[dict[str, Any]] = field(default_factory=list)
+    pelo_vigia: bool = False
+
+    def interrompido(self, vigia: dict[str, Any]) -> tuple[StatusExecucao, dict[str, Any]]:
+        self.pelo_vigia = True
+        if self.contagens is None:
+            # nada gravado: o rollback desfez a transação (FR-013a)
+            return StatusExecucao.FALHA, {"erros": [vigia]}
+        # dados já com COMMIT: não é "falha" (FR-010); a publicação fica para a próxima
+        return StatusExecucao.COM_PENDENCIAS, {
+            "contagens": self.contagens,
+            "pendencias": [*self.pendencias, vigia],
+        }
+
+
 @dataclass(frozen=True)
 class Coleta:
     criar_fonte: Callable[[AoReceber, AoTentar], FonteDaCasa]
@@ -87,32 +108,38 @@ class Coleta:
         execucao_id = abertura.execucao_id
         log.info("coleta iniciada", extra={"execucao_id": execucao_id, "gatilho": gatilho.value})
         tentativas: list[dict[str, Any]] = []
+        progresso = _Progresso()
         try:
             with limite_de_tempo(self.tempo_limite_s):
-                status, detalhes = self._etapas(execucao_id, tentativas)
+                status, detalhes = self._etapas(execucao_id, tentativas, progresso)
         except TempoEsgotado as erro:
             log.error("coleta interrompida pelo vigia", extra={"execucao_id": execucao_id})
-            status, detalhes = (
-                StatusExecucao.FALHA,
-                {"erros": [{"etapa": "vigia", **descrever_erro(erro)}]},
-            )
+            status, detalhes = progresso.interrompido({"etapa": "vigia", **descrever_erro(erro)})
 
         if tentativas:
             detalhes["tentativas"] = tentativas
+        # finaliza ANTES de publicar: o build lê a data e o id da última execução
+        # bem-sucedida, que tem que ser esta (FR-002, FR-028)
         self.execucoes.finalizar(execucao_id, status, **detalhes)
+
+        if status is StatusExecucao.SUCESSO or (
+            status is StatusExecucao.COM_PENDENCIAS and not progresso.pelo_vigia
+        ):
+            status = self._publicar(execucao_id, status, detalhes)
+
         log.info(
             "coleta terminada",
             extra={"execucao_id": execucao_id, "status": status.value, **detalhes},
         )
-
         if status in TITULOS_DO_ALERTA:
             problemas = detalhes.get("erros") or detalhes.get("pendencias") or []
             self._alertar(montar_alerta(TITULOS_DO_ALERTA[status], execucao_id, problemas))
         return Resultado(execucao_id, status)
 
     def _etapas(
-        self, execucao_id: int, tentativas: list[dict[str, Any]]
+        self, execucao_id: int, tentativas: list[dict[str, Any]], progresso: _Progresso
     ) -> tuple[StatusExecucao, dict[str, Any]]:
+        """Etapas 2 a 6; a publicação vem depois do registro do resultado."""
         respostas: list[tuple[str, Any]] = []
         fonte = self.criar_fonte(
             lambda url, conteudo: respostas.append((url, conteudo)), tentativas.append
@@ -124,13 +151,15 @@ class Coleta:
             self._guardar_brutos(execucao_id, respostas)
             return self._falha("coleta", erro, execucao_id)
 
-        pendencias: list[dict[str, Any]] = []
-        falhas_de_bruto = self._guardar_brutos(execucao_id, respostas)
+        falhas_de_bruto, credencial = self._guardar_brutos(execucao_id, respostas)
         if falhas_de_bruto:
-            pendencias.append({"etapa": "brutos", "falhas": falhas_de_bruto})
+            pendencia: dict[str, Any] = {"etapa": "brutos", "falhas": falhas_de_bruto}
+            if credencial:
+                pendencia["credencial"] = credencial
+            progresso.pendencias.append(pendencia)
 
         try:
-            contagens = self.repositorio.gravar(todos)
+            progresso.contagens = self.repositorio.gravar(todos)
         except Exception as erro:
             return self._falha("gravacao", erro, execucao_id)
 
@@ -139,16 +168,23 @@ class Coleta:
             log.info("backup conferido", extra={"execucao_id": execucao_id, "chaves": chaves})
         except Exception as erro:
             log.error("backup falhou", extra={"execucao_id": execucao_id})
-            pendencias.append({"etapa": "backup", **descrever_erro(erro)})
+            progresso.pendencias.append({"etapa": "backup", **descrever_erro(erro)})
 
+        status = StatusExecucao.COM_PENDENCIAS if progresso.pendencias else StatusExecucao.SUCESSO
+        return status, {"contagens": progresso.contagens, "pendencias": progresso.pendencias}
+
+    def _publicar(
+        self, execucao_id: int, status: StatusExecucao, detalhes: dict[str, Any]
+    ) -> StatusExecucao:
         try:
             self.publicador.disparar(execucao_id)
         except Exception as erro:
             log.error("disparo da publicação falhou", extra={"execucao_id": execucao_id})
-            pendencias.append({"etapa": "publicacao", **descrever_erro(erro)})
-
-        status = StatusExecucao.COM_PENDENCIAS if pendencias else StatusExecucao.SUCESSO
-        return status, {"contagens": contagens, "pendencias": pendencias}
+            pendencia = {"etapa": "publicacao", **descrever_erro(erro)}
+            detalhes["pendencias"] = [*detalhes.get("pendencias", []), pendencia]
+            self.execucoes.registrar_pendencia(execucao_id, pendencia)
+            return StatusExecucao.COM_PENDENCIAS
+        return status
 
     def _coletar(self, fonte: FonteDaCasa) -> list[DadosDoParlamentar]:
         deputados = fonte.listar_em_exercicio()
@@ -176,16 +212,23 @@ class Coleta:
             origem=historico.origem,
         )
 
-    def _guardar_brutos(self, execucao_id: int, respostas: list[tuple[str, Any]]) -> int:
-        """Guarda cada resposta; devolve quantas falharam (falha não interrompe a coleta)."""
-        falhas = 0
+    def _guardar_brutos(
+        self, execucao_id: int, respostas: list[tuple[str, Any]]
+    ) -> tuple[int, str | None]:
+        """Guarda cada resposta; devolve quantas falharam e a credencial recusada, se houve.
+
+        Falha não interrompe a coleta.
+        """
+        falhas, credencial = 0, None
         for url, conteudo in respostas:
             try:
                 self.brutos.guardar(execucao_id, url, conteudo)
-            except Exception:
+            except Exception as erro:
                 falhas += 1
+                if isinstance(erro, CredencialInvalida):
+                    credencial = erro.credencial
                 log.exception("resposta bruta não guardada", extra={"url": url})
-        return falhas
+        return falhas, credencial
 
     @staticmethod
     def _falha(

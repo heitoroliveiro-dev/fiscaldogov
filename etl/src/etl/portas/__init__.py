@@ -74,11 +74,11 @@ class Abertura:
 
 
 class RegistroDeExecucoes(Protocol):
-    def iniciar(self, gatilho: Gatilho, versao_codigo: str) -> int: ...
-
     def abrir(self, gatilho: Gatilho, versao_codigo: str) -> Abertura:
         """Fecha as travadas e inicia; ColetaEmAndamento se houver uma recente (FR-013a)."""
         ...
+
+    def registrar_pendencia(self, execucao_id: int, pendencia: dict[str, Any]) -> None: ...
 
     def houve_bem_sucedida_desde(self, momento: datetime) -> bool: ...
 

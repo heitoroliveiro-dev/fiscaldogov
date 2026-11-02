@@ -13,6 +13,25 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 
 from sqlalchemy import Connection, Engine, MetaData, Table, create_engine, make_url
+from sqlalchemy.exc import OperationalError
+
+from etl.portas import CredencialInvalida
+
+CREDENCIAL = "senha do banco (DATABASE_URL_ESCRITA, papel etl_escrita)"
+TEMPO_PARA_CONECTAR_S = 30
+
+
+def traduzir_erro_de_conexao(erro: BaseException) -> BaseException:
+    """Senha recusada vira CredencialInvalida, para o alerta nomear o que renovar (FR-020a)."""
+    texto = str(erro)
+    if isinstance(erro, OperationalError) and (
+        "password authentication failed" in texto
+        or ("role " in texto and "does not exist" in texto)
+        or "is not permitted to log in" in texto
+    ):
+        return CredencialInvalida(CREDENCIAL, "autenticação recusada pelo Postgres")
+    return erro
+
 
 TABELAS = (
     "casa_legislativa",
@@ -37,7 +56,11 @@ class Banco:
     def conectar(cls, url: str, tempo_limite_s: int) -> Banco:
         engine = create_engine(
             make_url(url).set(drivername="postgresql+psycopg"),
-            connect_args={"options": f"-c statement_timeout={tempo_limite_s * 1000}"},
+            connect_args={
+                "options": f"-c statement_timeout={tempo_limite_s * 1000}",
+                # sem isto, uma rede travada na conexão não tem limite próprio
+                "connect_timeout": TEMPO_PARA_CONECTAR_S,
+            },
         )
         metadados = MetaData()
         try:

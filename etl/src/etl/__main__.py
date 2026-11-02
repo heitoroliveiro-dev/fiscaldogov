@@ -21,14 +21,15 @@ from etl.adaptadores.alertas.telegram import AlertadorTelegram, criar_cliente_te
 from etl.adaptadores.backup_r2.backup import ArmazenamentoR2, BackupR2
 from etl.adaptadores.brutos_r2.armazem import ArmazemDeBrutos, GravadorR2, criar_cliente_r2
 from etl.adaptadores.camara.api_v2 import CamaraApiV2, criar_cliente
-from etl.adaptadores.persistencia.banco import Banco
+from etl.adaptadores.persistencia.banco import Banco, traduzir_erro_de_conexao
 from etl.adaptadores.persistencia.execucoes import Execucoes
 from etl.adaptadores.persistencia.repositorio import Repositorio
 from etl.adaptadores.publicacao.github import PublicadorGitHub, criar_cliente_github
 from etl.config import Configuracao, ConfiguracaoInvalida, carregar
+from etl.pipeline.alertas import descrever_erro, montar_alerta
 from etl.pipeline.coletar import Coleta, ColetaEmAndamento, Resultado
 from etl.pipeline.reserva import Reserva, comando_agendado
-from etl.portas import Gatilho, StatusExecucao
+from etl.portas import Alertador, Gatilho, StatusExecucao
 
 SAIDA_SUCESSO = 0
 SAIDA_FALHA = 1
@@ -50,6 +51,24 @@ def rodar(acao: Callable[[], Resultado]) -> int:
         log.warning(str(erro))
         return SAIDA_EM_ANDAMENTO
     return codigo_de_saida(resultado.status)
+
+
+def proteger(acao: Callable[[], int], alertador: Alertador) -> int:
+    """Falha antes de a execução existir (banco fora do ar, senha recusada) também alerta.
+
+    Sem isto, o erro subiria como traceback em texto puro, fora do registro
+    mascarado, sem linha em execucao_etl e sem alerta (FR-029, FR-020a).
+    """
+    try:
+        return acao()
+    except Exception as erro:
+        descricao = {"etapa": "inicio", **descrever_erro(traduzir_erro_de_conexao(erro))}
+        log.error("coleta não começou", extra=descricao)
+        try:
+            alertador.alertar(montar_alerta("coleta não começou", None, [descricao]))
+        except Exception:
+            log.error("alerta não enviado", extra={"etapa": "inicio"})
+        return SAIDA_FALHA
 
 
 def versao_do_codigo(ambiente: Mapping[str, str]) -> str:
@@ -175,13 +194,19 @@ def main(argumentos: list[str]) -> int:
         return SAIDA_CONFIGURACAO_INVALIDA
 
     comando = interpretar(argumentos)
-    if comando.comando == "coletar":
-        return _coletar(config, comando.gatilho)
-    if comando.comando == "reserva":
-        return _reserva(config)
-    if comando.comando == "agendado":
-        return _agendado(config)
-    return _verificar_config(config)
+    if comando.comando == "verificar-config":
+        return _verificar_config(config)
+    acoes: dict[str, Callable[[], int]] = {
+        "coletar": lambda: _coletar(config, comando.gatilho),
+        "reserva": lambda: _reserva(config),
+        "agendado": lambda: _agendado(config),
+    }
+    # o alertador não depende do banco: avisa mesmo quando o banco está fora do ar
+    with criar_cliente_telegram() as telegram:
+        alertador = AlertadorTelegram(
+            telegram, config.alerta_telegram_token, config.alerta_telegram_chat_id
+        )
+        return proteger(acoes[comando.comando], alertador)
 
 
 if __name__ == "__main__":

@@ -20,7 +20,11 @@ from pathlib import Path
 from typing import Any, Protocol
 from zoneinfo import ZoneInfo
 
+from boto3.exceptions import S3UploadFailedError
+from botocore.exceptions import ClientError
 from sqlalchemy import make_url
+
+from etl.adaptadores.brutos_r2.armazem import traduzir_erro_do_r2
 
 BRASILIA = ZoneInfo("America/Sao_Paulo")
 DOMINGO = 6
@@ -59,12 +63,21 @@ class ArmazenamentoR2:
 
     def enviar(self, chave: str, arquivo: Path) -> None:
         # upload_file divide arquivos grandes em partes sozinho
-        self._s3.upload_file(
-            str(arquivo), self._bucket, chave, ExtraArgs={"ContentType": "application/octet-stream"}
-        )
+        try:
+            self._s3.upload_file(
+                str(arquivo),
+                self._bucket,
+                chave,
+                ExtraArgs={"ContentType": "application/octet-stream"},
+            )
+        except (ClientError, S3UploadFailedError) as erro:
+            raise traduzir_erro_do_r2(erro) from erro
 
     def baixar(self, chave: str, destino: Path) -> None:
-        self._s3.download_file(self._bucket, chave, str(destino))
+        try:
+            self._s3.download_file(self._bucket, chave, str(destino))
+        except ClientError as erro:
+            raise traduzir_erro_do_r2(erro) from erro
 
 
 class ArmazenamentoEmDisco:

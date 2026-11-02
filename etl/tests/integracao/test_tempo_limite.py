@@ -127,3 +127,50 @@ def test_depois_do_tempo_esgotado_a_execucao_seguinte_roda(banco: Banco, tmp_pat
 class _SemPublicar:
     def disparar(self, execucao_id: int) -> None:
         raise AssertionError("não publica depois de falha")
+
+
+class _BackupLento:
+    def copiar(self) -> list[str]:
+        time.sleep(10)
+        return []
+
+
+def test_tempo_esgotado_depois_do_commit_e_pendencia_e_mantem_os_dados(
+    banco: Banco, tmp_path: Path
+) -> None:
+    publicador, alertador = _Publicacoes(), AlertadorFalso()
+    coleta = Coleta(
+        criar_fonte=lambda *_: _Fonte(),
+        repositorio=Repositorio(banco),
+        brutos=ArmazemDeBrutos(banco, GravadorEmDisco(tmp_path)),
+        execucoes=Execucoes(banco),
+        backup=_BackupLento(),
+        publicador=publicador,
+        alertador=alertador,
+        versao_codigo="teste",
+        tempo_limite_s=2,
+    )
+
+    resultado = coleta.executar(Gatilho.MANUAL)
+
+    # os dados já tinham COMMIT: a execução não pode dizer "falha" (= nada gravado, FR-010)
+    assert resultado.status is StatusExecucao.COM_PENDENCIAS
+    execucao = _erros(banco, resultado.execucao_id)
+    assert execucao.status == "com_pendencias"
+    (pendencia,) = linhas(
+        banco, "SELECT pendencias FROM execucao_etl WHERE id = :id", id=resultado.execucao_id
+    )[0]
+    assert pendencia[-1]["etapa"] == "vigia"
+    assert pendencia[-1]["tipo"] == "TempoEsgotado"
+    assert linhas(banco, "SELECT 1 FROM parlamentar WHERE nome_parlamentar = 'Celso Sabino'")
+    # a publicação ficou para a próxima execução bem-sucedida
+    assert publicador.disparos == []
+    assert any("coleta com pendências" in texto for texto in alertador.textos)
+
+
+class _Publicacoes:
+    def __init__(self) -> None:
+        self.disparos: list[int] = []
+
+    def disparar(self, execucao_id: int) -> None:
+        self.disparos.append(execucao_id)

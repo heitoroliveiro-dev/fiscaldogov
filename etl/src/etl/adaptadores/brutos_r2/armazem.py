@@ -17,9 +17,11 @@ from urllib.parse import urlsplit
 
 import boto3
 from botocore.config import Config
+from botocore.exceptions import ClientError
 from sqlalchemy import func, select
 
 from etl.adaptadores.persistencia.banco import Banco
+from etl.portas import CredencialInvalida
 
 FONTE = "camara_v2"
 _PREFIXO_DA_API = "/api/v2/"
@@ -52,6 +54,25 @@ def chave_do_bruto(url: str, sha256: str) -> str:
     return f"{_PREFIXO_DA_CHAVE}/{relativo}/{sha256}.json.gz"
 
 
+CREDENCIAL_R2 = "chave do R2 (R2_ACCESS_KEY_ID e R2_SECRET_ACCESS_KEY)"
+# códigos do S3 que o R2 devolve para chave inválida, assinatura errada ou sem permissão
+_CODIGOS_DE_CREDENCIAL = {"InvalidAccessKeyId", "SignatureDoesNotMatch", "AccessDenied"}
+
+
+def traduzir_erro_do_r2(erro: Exception) -> Exception:
+    """Chave recusada vira CredencialInvalida, para o alerta nomear o que renovar (FR-020a)."""
+    # upload_file embrulha o ClientError em S3UploadFailedError: procura na cadeia de causas
+    causa: BaseException | None = erro
+    while causa is not None and not isinstance(causa, ClientError):
+        causa = causa.__cause__ or causa.__context__
+    if isinstance(causa, ClientError):
+        codigo = causa.response.get("Error", {}).get("Code", "")
+        http = causa.response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+        if codigo in _CODIGOS_DE_CREDENCIAL or http == 401:
+            return CredencialInvalida(CREDENCIAL_R2, f"{codigo or 'HTTP'} {http}")
+    return erro
+
+
 class Gravador(Protocol):
     def enviar(self, chave: str, conteudo: bytes) -> None: ...
 
@@ -78,13 +99,16 @@ class GravadorR2:
         self._bucket = bucket
 
     def enviar(self, chave: str, conteudo: bytes) -> None:
-        self._s3.put_object(
-            Bucket=self._bucket,
-            Key=chave,
-            Body=conteudo,
-            ContentType="application/json",
-            ContentEncoding="gzip",
-        )
+        try:
+            self._s3.put_object(
+                Bucket=self._bucket,
+                Key=chave,
+                Body=conteudo,
+                ContentType="application/json",
+                ContentEncoding="gzip",
+            )
+        except ClientError as erro:
+            raise traduzir_erro_do_r2(erro) from erro
 
 
 class GravadorEmDisco:

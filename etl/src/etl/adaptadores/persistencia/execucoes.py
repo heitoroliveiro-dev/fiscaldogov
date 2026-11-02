@@ -9,7 +9,8 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Any
 
-from sqlalchemy import exists, func, select
+from sqlalchemy import exists, func, literal, select
+from sqlalchemy.dialects.postgresql import JSONB
 
 from etl.adaptadores.persistencia.banco import Banco
 from etl.portas import Abertura, ColetaEmAndamento, Gatilho, StatusExecucao
@@ -140,6 +141,24 @@ class Execucoes:
             ).rowcount
         if alteradas != 1:
             raise ExecucaoNaoEmAndamento(f"execução {execucao_id} não está em andamento")
+
+    def registrar_pendencia(self, execucao_id: int, pendencia: dict[str, Any]) -> None:
+        """Acrescenta pendência a uma execução já finalizada com dados (ex.: disparo que falhou)."""
+        t = self._tabela
+        with self._banco.engine.begin() as conexao:
+            alteradas = conexao.execute(
+                t.update()
+                .where(
+                    t.c.id == execucao_id,
+                    t.c.status.in_([status.value for status in BEM_SUCEDIDAS]),
+                )
+                .values(
+                    status=StatusExecucao.COM_PENDENCIAS.value,
+                    pendencias=t.c.pendencias.op("||")(literal([pendencia], type_=JSONB)),
+                )
+            ).rowcount
+        if alteradas != 1:
+            raise ValueError(f"execução {execucao_id} não terminou com dados gravados")
 
     def ultima_bem_sucedida(self) -> Execucao | None:
         """A mais recente com sucesso ou com_pendencias: é a que o site publica."""

@@ -5,18 +5,22 @@ senão uma execução com falha some sem deixar rastro (FR-012). Por isso estes
 testes gravam de verdade e apagam ao fim só o que criaram.
 """
 
+import threading
 from collections.abc import Iterator
+from datetime import datetime, timedelta
 
 import pytest
 from sqlalchemy import delete, func, select
 
 from etl.adaptadores.persistencia.banco import Banco
 from etl.adaptadores.persistencia.execucoes import (
+    TRAVA_DO_INICIO,
     ExecucaoNaoEmAndamento,
     Execucoes,
     Gatilho,
     StatusExecucao,
 )
+from etl.portas import ColetaEmAndamento
 
 VERSAO = "abc1234"
 
@@ -140,3 +144,85 @@ def test_ultima_bem_sucedida_ignora_falha_dispensada_e_em_andamento(
     assert ultima.status is StatusExecucao.COM_PENDENCIAS
     assert ultima.gatilho is Gatilho.MANUAL
     assert ultima.terminada_em is not None
+
+
+def test_houve_bem_sucedida_desde_conta_sucesso_e_com_pendencias(
+    banco: Banco, execucoes: Execucoes
+) -> None:
+    agora = _agora(banco)
+    hora = timedelta(hours=1)
+    execucoes.finalizar(execucoes.iniciar(Gatilho.AGENDADA, VERSAO), StatusExecucao.FALHA)
+    assert not execucoes.houve_bem_sucedida_desde(agora - hora)
+
+    execucoes.finalizar(execucoes.iniciar(Gatilho.AGENDADA, VERSAO), StatusExecucao.COM_PENDENCIAS)
+
+    assert execucoes.houve_bem_sucedida_desde(agora - hora)
+    # iniciada antes do momento consultado não conta (dia anterior em Brasília)
+    assert not execucoes.houve_bem_sucedida_desde(agora + hora)
+
+
+def test_dispensada_nao_conta_como_bem_sucedida(banco: Banco, execucoes: Execucoes) -> None:
+    agora = _agora(banco)
+
+    execucao_id = execucoes.registrar_dispensada(VERSAO)
+
+    linha = _linha(banco, execucao_id)
+    assert (linha.status, linha.gatilho, linha.versao_codigo) == ("dispensada", "reserva", VERSAO)
+    assert linha.terminada_em is not None
+    assert not execucoes.houve_bem_sucedida_desde(agora - timedelta(hours=1))
+
+
+def test_registrar_pendencia_depois_de_finalizada(banco: Banco, execucoes: Execucoes) -> None:
+    execucao_id = execucoes.iniciar(Gatilho.MANUAL, VERSAO)
+    execucoes.finalizar(execucao_id, StatusExecucao.SUCESSO, pendencias=[])
+
+    execucoes.registrar_pendencia(execucao_id, {"etapa": "publicacao", "tipo": "X"})
+
+    linha = _linha(banco, execucao_id)
+    assert (linha.status, linha.pendencias) == (
+        "com_pendencias",
+        [{"etapa": "publicacao", "tipo": "X"}],
+    )
+
+
+def test_registrar_pendencia_em_falha_e_recusado(execucoes: Execucoes) -> None:
+    execucao_id = execucoes.iniciar(Gatilho.MANUAL, VERSAO)
+    execucoes.finalizar(execucao_id, StatusExecucao.FALHA)
+
+    with pytest.raises(ValueError, match="dados gravados"):
+        execucoes.registrar_pendencia(execucao_id, {"etapa": "publicacao"})
+
+
+def test_abrir_espera_a_outra_abertura_e_ve_a_coleta_dela(
+    banco: Banco, execucoes: Execucoes
+) -> None:
+    """Outra abertura segura a trava e ainda não fez COMMIT: abrir espera, depois recusa.
+
+    Sem a trava, abrir não veria a em_andamento ainda não confirmada e começaria
+    uma segunda coleta junto com a primeira.
+    """
+    resultado: list[object] = []
+
+    def abrir() -> None:
+        try:
+            resultado.append(execucoes.abrir(Gatilho.MANUAL, VERSAO))
+        except ColetaEmAndamento as erro:
+            resultado.append(erro)
+
+    with banco.engine.begin() as outra:
+        outra.execute(select(func.pg_advisory_xact_lock(TRAVA_DO_INICIO)))
+        tabela = banco.tabelas["execucao_etl"]
+        outra.execute(tabela.insert().values(gatilho="agendada", versao_codigo=VERSAO))
+        concorrente = threading.Thread(target=abrir)
+        concorrente.start()
+        concorrente.join(timeout=1)
+        assert concorrente.is_alive(), "abrir não esperou pela trava da outra abertura"
+    concorrente.join(timeout=30)
+
+    (desfecho,) = resultado
+    assert isinstance(desfecho, ColetaEmAndamento)
+
+
+def _agora(banco: Banco) -> datetime:
+    with banco.transacao() as conexao:
+        return conexao.execute(select(func.now())).scalar_one()

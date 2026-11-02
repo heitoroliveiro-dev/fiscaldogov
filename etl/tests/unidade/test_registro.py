@@ -129,3 +129,15 @@ def test_mascara_senha_de_url_no_erro(saida: io.StringIO, log: logging.Logger) -
 
     assert "postgresql://etl_escrita:***@db:5432/railway" in linha["erro"]
     assert SENHA not in saida.getvalue()
+
+
+def test_campo_mensagem_do_erro_nao_e_engolido_pela_mensagem_do_log(
+    saida: io.StringIO, log: logging.Logger
+) -> None:
+    # descrever_erro usa a chave "mensagem"; antes ela era sobrescrita pelo texto do log
+    log.error("coleta falhou", extra={"tipo": "HTTPStatusError", "mensagem": "HTTP 503"})
+
+    linha = _unica_linha(saida)
+
+    assert linha["mensagem"] == "coleta falhou"
+    assert linha["detalhe"] == "HTTP 503"

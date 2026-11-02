@@ -4,8 +4,16 @@ O caminho completo de coletar contra o banco está em tests/integracao/test_cole
 """
 
 import pytest
+from sqlalchemy.exc import OperationalError
 
-from etl.__main__ import codigo_de_saida, interpretar, rodar, verificar, versao_do_codigo
+from etl.__main__ import (
+    codigo_de_saida,
+    interpretar,
+    proteger,
+    rodar,
+    verificar,
+    versao_do_codigo,
+)
 from etl.pipeline.coletar import ColetaEmAndamento, Resultado
 from etl.portas import Gatilho, StatusExecucao
 
@@ -94,3 +102,47 @@ def test_coleta_recusada_por_outra_em_andamento_sai_com_codigo_3() -> None:
 )
 def test_rodar_traduz_o_status_no_codigo(status: StatusExecucao, codigo: int) -> None:
     assert rodar(lambda: Resultado(1, status)) == codigo
+
+
+class _Alertador:
+    def __init__(self) -> None:
+        self.textos: list[str] = []
+
+    def alertar(self, texto: str) -> None:
+        self.textos.append(texto)
+
+
+def _operacional(mensagem: str) -> OperationalError:
+    return OperationalError("SELECT 1", {}, Exception(mensagem))
+
+
+def test_banco_fora_do_ar_antes_de_comecar_alerta_e_sai_com_1(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    alertador = _Alertador()
+
+    def falhar() -> int:
+        raise _operacional('connection to server at "127.0.0.1", port 1 failed: Connection refused')
+
+    assert proteger(falhar, alertador) == 1
+    (texto,) = alertador.textos
+    assert "coleta não começou" in texto
+    assert "OperationalError" in texto
+    assert "Traceback" not in caplog.text
+
+
+def test_senha_do_banco_recusada_nomeia_a_credencial() -> None:
+    alertador = _Alertador()
+
+    def falhar() -> int:
+        raise _operacional('FATAL:  password authentication failed for user "etl_escrita"')
+
+    assert proteger(falhar, alertador) == 1
+    assert "falha de autenticação: senha do banco (DATABASE_URL_ESCRITA" in alertador.textos[0]
+
+
+def test_proteger_nao_mexe_no_codigo_de_uma_execucao_normal() -> None:
+    alertador = _Alertador()
+
+    assert proteger(lambda: 3, alertador) == 3
+    assert alertador.textos == []
