@@ -39,6 +39,8 @@ export ETL_EXIGIR_INTEGRACAO=1
 uv run --frozen pytest
 ```
 
+O teste de backup (`tests/integracao/test_backup.py`) roda `pg_dump` e `pg_restore` **da major 18**, a mesma do servidor: instale `postgresql-client-18` ou aponte `PG_BIN_DIR` para a pasta com os binários. Com `ETL_EXIGIR_INTEGRACAO=1`, a falta deles é erro.
+
 Senhas acima são só de desenvolvimento e CI; as de produção ficam nos cofres dos provedores.
 
 - **Sem as variáveis de banco**, os testes de integração são pulados com a mensagem do motivo.

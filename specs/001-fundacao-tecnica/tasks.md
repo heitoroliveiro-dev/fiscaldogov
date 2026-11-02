@@ -343,8 +343,8 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 ## Phase 8: Polish & Cross-Cutting Concerns
 
 - [ ] T083 ⚠️ Configurar no Railway o alerta de gasto em US$ 10 e o limite rígido em US$ 20 (FR-031) e registrar a captura em `specs/001-fundacao-tecnica/evidencias.md`
-- [ ] T084 [P] Atualizar `CLAUDE.md` (seção Comandos com os comandos reais de `web/` e `etl/`), `README.md` (como rodar localmente), `CONTRIBUTING.md` (pre-commit novo) e `docs/03-testing/estrategia-testes.md` (cobertura mínima definida para a F2)
-- [ ] T085 [P] Conferir `docs/01-architecture/modelagem-dados.md` contra o `schema.prisma` final e corrigir divergências no mesmo PR
+- [X] T084 [P] Atualizar `CLAUDE.md` (seção Comandos com os comandos reais de `web/` e `etl/`), `README.md` (como rodar localmente), `CONTRIBUTING.md` (pre-commit novo) e `docs/03-testing/estrategia-testes.md` (cobertura mínima definida para a F2)
+- [X] T085 [P] Conferir `docs/01-architecture/modelagem-dados.md` contra o `schema.prisma` final e corrigir divergências no mesmo PR
 - [ ] T086 Executar o Lighthouse em perfil mobile no endereço publicado (SC-001, LCP ≤ 2,5 s; medição manual na F2 — automatizar no CI fica registrado no ROADMAP para a F3.3) e o `prisma migrate diff` contra produção (SC-008); anexar em `specs/001-fundacao-tecnica/evidencias.md`
 - [ ] T087 Review por subagente com contexto limpo contra `plan.md`, `spec.md` e `tasks.md` (prompt de `../sdd-method/05-ciclo-da-feature.md` §8); corrigir os achados e reexecutar as suítes
 - [ ] T088 Concluir a observação de 5 dias (R9.3, SC-002, horários de início dentro da janela de FR-013) e de custo (R10, SC-009); atualizar `CHANGELOG.md`, `docs/ROADMAP.md` (F2 ✓) e a fase em `CLAUDE.md`; abrir o PR `feature/001-fundacao-tecnica` → `develop` com a evidência

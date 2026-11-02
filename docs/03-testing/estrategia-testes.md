@@ -26,10 +26,15 @@
 
 ## Cobertura mínima (gate no CI)
 
-| Camada | Mínimo |
-|---|---|
-| Funções de cálculo de estatística | Pendente — proposta: 100% de linhas e ramos |
-| Geral | Pendente |
+| Camada | Mínimo | Medido na F2 (2026-11-01) |
+|---|---|---|
+| Funções de cálculo de estatística | Proposta: 100% de linhas e ramos | — (a F2 não calcula estatística) |
+| ETL geral (`etl/src/etl`) | Proposta: 90% de linhas e ramos | 92% (974 linhas, 178 ramos; unidade + integração) |
+| Site (`web/src`) | Pendente | não medido (exige `@vitest/coverage-v8`) |
+
+Medição do ETL: `uv run --with coverage coverage run --branch --source=src/etl -m pytest` em `etl/`, com o banco e o `PG_BIN_DIR` de `etl/README.md`. O ponto mais baixo é `__main__.py` (56%): é a montagem dos adaptadores reais, sem regra de negócio, e é exercitado pelo `verificar-config` e pela coleta em produção. O resto está entre 87% e 100%; `pipeline/coletar.py`, `reserva.py`, `vigia.py` e `alertas.py` estão em 100%.
+
+**As metas acima ainda são propostas.** O gate no CI só entra depois da decisão do responsável, junto com a dependência de cobertura no `pyproject.toml`.
 
 ## Regras
 

@@ -62,9 +62,16 @@ Ao concluir, mostre evidência. Critérios checáveis ("a taxa do deputado X no 
 ## Comandos
 
 ```
-# hooks: git config core.hooksPath .githooks   (uma vez por clone)
-# dev / test / lint / build / migrate / etl: definidos na F2 (stack: ADR-0001)
+git config core.hooksPath .githooks          # uma vez por clone (gitflow, segredos, lint, testes)
+docker compose up -d --wait                  # Postgres 18 local com os papéis de dev
+DATABASE_URL_DONO=postgresql://postgres:postgres@localhost:5432/fiscaldogov npm --prefix web run db:migrate:deploy
+npm --prefix web ci && npm --prefix web run db:generate
+npm --prefix web run lint | typecheck | test | build | test:e2e   # build exige DATABASE_URL_LEITURA
+uv run --directory etl --frozen pytest -m "not integration"       # integração: ver etl/README.md
+uv run --directory etl --frozen ruff check . && uv run --directory etl --frozen ruff format --check .
+python -m etl coletar | reserva | agendado | verificar-config      # contracts/etl-cli.md
 ```
+Produção: Railway (`etl`, `Postgres`), Cloudflare (Worker `fiscaldogov`, R2), GitHub (`publicar.yml`, ambiente `producao`). Operação: `docs/05-runbooks/`.
 
 ## Fase atual
 
