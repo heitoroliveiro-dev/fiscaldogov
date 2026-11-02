@@ -9,8 +9,8 @@ import httpx
 import pytest
 
 from etl.adaptadores.camara.api_v2 import CamaraApiV2, criar_cliente, erro_passageiro
+from etl.adaptadores.tentativas import ESPERAS_S, com_tentativas
 from etl.dominio.entidades import IdentificadorExterno, SistemaExterno
-from etl.pipeline.tentativas import ESPERAS_S, com_tentativas
 from etl.portas import RespostaInvalida
 
 BASE = "https://dadosabertos.camara.leg.br/api/v2"

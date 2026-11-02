@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { AlternarTema } from "@/components/alternar-tema";
 import { AvisoTestes } from "@/components/aviso-testes";
 import { FonteOficial } from "@/components/fonte-oficial";
+import { partidoEUf } from "@/lib/partido-uf";
 import { versaoPublicada } from "@/lib/versao";
 
 import { dadosDaPagina } from "./dados-da-pagina";
@@ -26,7 +27,7 @@ export default async function Pagina() {
         <div>
           <h1 className="text-3xl font-semibold lg:text-4xl">{parlamentar.nome}</h1>
           <p data-testid="partido-uf" className="mt-2 text-muted-foreground">
-            {parlamentar.siglaPartido ?? "Sem partido"} · {parlamentar.uf}
+            {partidoEUf(parlamentar.siglaPartido, parlamentar.uf)}
           </p>
         </div>
         <FonteOficial idCamara={parlamentar.idCamara} conferidoEm={execucao.terminadaEm} />

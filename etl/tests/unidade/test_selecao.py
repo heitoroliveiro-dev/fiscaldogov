@@ -57,3 +57,10 @@ def test_escolhe_o_primeiro_entre_varios() -> None:
 def test_lista_vazia_e_recusada() -> None:
     with pytest.raises(ValueError, match="nenhum deputado"):
         selecionar_deputado([])
+
+
+def test_espaco_vem_antes_de_letra_como_na_pagina() -> None:
+    # a página ordena nome_ordenacao com COLLATE "C" (migration 0002): mesma ordem do Python
+    escolhido = selecionar_deputado([_Deputado("Anabela"), _Deputado("Ana Paula")])
+
+    assert escolhido.nome_parlamentar == "Ana Paula"

@@ -290,7 +290,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 
 ### Implementação da US2
 
-- [X] T067 [P] [US2] Implementar `etl/src/etl/pipeline/tentativas.py` e usá-lo em `etl/src/etl/adaptadores/camara/api_v2.py` até T061 passar
+- [X] T067 [P] [US2] Implementar `etl/src/etl/adaptadores/tentativas.py` (movido de `pipeline/` no review da T087: adaptador não importa o pipeline) e usá-lo em `etl/src/etl/adaptadores/camara/api_v2.py` até T061 passar
 - [X] T068 [P] [US2] Implementar `etl/src/etl/adaptadores/alertas/telegram.py` (`sendMessage` com `ALERTA_TELEGRAM_TOKEN`/`ALERTA_TELEGRAM_CHAT_ID`, uma nova tentativa, sem token nos logs) até T065 passar
 - [X] T069 [US2] Implementar `etl/src/etl/pipeline/vigia.py` (`signal.alarm` com `ETL_TEMPO_LIMITE_S`, padrão 3600; rollback; motivo "tempo esgotado") até T064 passar
 - [X] T070 [US2] Implementar em `etl/src/etl/pipeline/coletar.py` a recusa com código 3, o fechamento de `em_andamento` com mais de 60 min e o envio de alerta para `falha`/`com_pendencias` (etapa 9 de `contracts/etl-cli.md`) até T063 e T066 passarem
@@ -346,7 +346,7 @@ Duas partes no mesmo repositório (plan.md → Project Structure): `web/` (Next.
 - [X] T084 [P] Atualizar `CLAUDE.md` (seção Comandos com os comandos reais de `web/` e `etl/`), `README.md` (como rodar localmente), `CONTRIBUTING.md` (pre-commit novo) e `docs/03-testing/estrategia-testes.md` (cobertura mínima definida para a F2)
 - [X] T085 [P] Conferir `docs/01-architecture/modelagem-dados.md` contra o `schema.prisma` final e corrigir divergências no mesmo PR
 - [ ] T086 Executar o Lighthouse em perfil mobile no endereço publicado (SC-001, LCP ≤ 2,5 s; medição manual na F2 — automatizar no CI fica registrado no ROADMAP para a F3.3) e o `prisma migrate diff` contra produção (SC-008); anexar em `specs/001-fundacao-tecnica/evidencias.md`
-- [ ] T087 Review por subagente com contexto limpo contra `plan.md`, `spec.md` e `tasks.md` (prompt de `../sdd-method/05-ciclo-da-feature.md` §8); corrigir os achados e reexecutar as suítes
+- [X] T087 Review por subagente com contexto limpo contra `plan.md`, `spec.md` e `tasks.md` (prompt de `../sdd-method/05-ciclo-da-feature.md` §8); corrigir os achados e reexecutar as suítes
 - [ ] T088 Concluir a observação de 5 dias (R9.3, SC-002, horários de início dentro da janela de FR-013) e de custo (R10, SC-009); atualizar `CHANGELOG.md`, `docs/ROADMAP.md` (F2 ✓) e a fase em `CLAUDE.md`; abrir o PR `feature/001-fundacao-tecnica` → `develop` com a evidência
 
 ---

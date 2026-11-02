@@ -1,7 +1,10 @@
-"""O domínio não conhece as fontes nem o banco (FR-023, ADR-0003).
+"""O domínio não conhece as fontes nem o banco, e os adaptadores não conhecem o pipeline
+(FR-023, ADR-0003).
 
 Nenhum módulo de etl/src/etl/dominio/ importa etl.adaptadores nem bibliotecas
 de I/O. A troca de formato de uma API muda o adaptador, nunca a regra de negócio.
+Nenhum módulo de etl/src/etl/adaptadores/ importa etl.pipeline: o pipeline usa
+os adaptadores pelas portas, nunca o contrário.
 """
 
 import ast
@@ -9,6 +12,7 @@ from pathlib import Path
 
 PACOTE = Path(__file__).parents[2] / "src" / "etl"
 DOMINIO = PACOTE / "dominio"
+ADAPTADORES = PACOTE / "adaptadores"
 
 PROIBIDOS = ("etl.adaptadores", "httpx", "sqlalchemy", "boto3", "psycopg")
 
@@ -33,11 +37,11 @@ def _importados(fonte: str, pacote: list[str]) -> list[str]:
     return modulos
 
 
-def _violacoes(fonte: str, pacote: list[str]) -> list[str]:
+def _violacoes(fonte: str, pacote: list[str], proibidos: tuple[str, ...] = PROIBIDOS) -> list[str]:
     return [
         modulo
         for modulo in _importados(fonte, pacote)
-        if any(modulo == p or modulo.startswith(f"{p}.") for p in PROIBIDOS)
+        if any(modulo == p or modulo.startswith(f"{p}.") for p in proibidos)
     ]
 
 
@@ -49,6 +53,23 @@ def test_dominio_nao_importa_adaptadores_nem_io() -> None:
         str(arquivo.relative_to(PACOTE)): encontrados
         for arquivo in arquivos
         if (encontrados := _violacoes(arquivo.read_text(), _pacote_do_modulo(arquivo)))
+    }
+
+    assert violacoes == {}
+
+
+def test_adaptadores_nao_importam_o_pipeline() -> None:
+    arquivos = sorted(ADAPTADORES.rglob("*.py"))
+    assert arquivos, f"pasta dos adaptadores não encontrada em {ADAPTADORES}"
+
+    violacoes = {
+        str(arquivo.relative_to(PACOTE)): encontrados
+        for arquivo in arquivos
+        if (
+            encontrados := _violacoes(
+                arquivo.read_text(), _pacote_do_modulo(arquivo), ("etl.pipeline",)
+            )
+        )
     }
 
     assert violacoes == {}

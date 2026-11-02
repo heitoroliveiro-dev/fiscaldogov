@@ -5,7 +5,7 @@
 ## Onde estou agora
 
 **Fase atual:** F2 — Fundação técnica · **Próximo marco:** M1 — Câmara no ar (proposto)
-**Próxima ação:** checkpoint da US1 — código pronto (T021–T050); falta a infraestrutura de produção (T051, ⚠️ responsável) e a validação ponta a ponta (T052). Depois, US3 → US4 → US2 → US5.
+**Próxima ação:** a 001 está com o código das cinco histórias pronto, testado, com CI verde e review por subagente feito (T087). Falta: PR #8 para `develop` → release para `main` → provas em produção (T052, T072 no serviço, T076, T082, T086) → fechar a F2 (T088).
 **Prazo:** M1 até 31/01/2027 · **Ritmo planejado:** 8 h/semana · **Próximo checkpoint:** 23/11 (F2).
 **Bloqueios:** nenhum. SP01 condiciona a RN03 (ver abaixo).
 
@@ -70,11 +70,8 @@ Espelha a §12 do contexto (a fonte é lá).
 
 | Item | Bloqueado por | O que desbloqueia | Impede o quê |
 |---|---|---|---|
-| Branch protection em `main`/`develop` no GitHub | ⚠️ configuração manual em Settings → Branches (sem `gh` nesta máquina) | Proteção real das branches no remoto | Hoje a proteção é só o hook local |
 | Domínio do site | ⚠️ nome definitivo | Registro do domínio; até lá, subdomínio provisório do provedor (spec 001, FR-027) | M1 (o site público precisa do domínio próprio) |
-| Bot do Telegram para alertas | ⚠️ criação pelo responsável (BotFather) | Token + chat id como variáveis de ambiente | Alertas de falha da coleta (RNF07), antecipados para a F2 (T075) |
-| Contas Cloudflare (Workers, R2, DNS) e token do GitHub para o ETL | ⚠️ criação pelo responsável | Publicação do site e backup (ADR-0002) | F2 (publicar o esqueleto) |
-| Postgres de produção na Railway (`postgres-ssl:18`) | ⚠️ deploys da Railway estavam pausados em 2026-10-20; conferir antes da T051 | Banco de produção e papéis (T050–T051) | Validação ponta a ponta da US1 (T052) |
+| Limite de gasto na Railway (alerta US$ 10, rígido US$ 20) | ⚠️ configuração do responsável (T083) | FR-031 | Fechar a F2 |
 
 ## Backlog futuro (fora do escopo atual)
 

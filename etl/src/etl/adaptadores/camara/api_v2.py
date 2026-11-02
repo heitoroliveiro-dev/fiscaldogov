@@ -17,6 +17,7 @@ from zoneinfo import ZoneInfo
 import httpx
 
 from etl.adaptadores.camara.sanitizacao import sanitizar
+from etl.adaptadores.tentativas import com_tentativas
 from etl.dominio.entidades import (
     Condicao,
     EventoHistorico,
@@ -27,7 +28,6 @@ from etl.dominio.entidades import (
     Partido,
     SistemaExterno,
 )
-from etl.pipeline.tentativas import com_tentativas
 from etl.portas import FonteIncompleta, RespostaInvalida
 
 USER_AGENT = "fiscaldogov-etl (+https://github.com/heitoroliveiro-dev/fiscaldogov)"

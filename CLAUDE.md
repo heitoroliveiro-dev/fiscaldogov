@@ -77,7 +77,7 @@ Produção: Railway (`etl`, `Postgres`), Cloudflare (Worker `fiscaldogov`, R2), 
 
 - **Fase:** F2 — Fundação técnica. **Feature ativa:** `specs/001-fundacao-tecnica` (tarefas prontas, implementação em andamento).
 - **Marco 1:** presença + perfil + metodologia, 57ª legislatura, até 31/01/2027 (contexto §4.1).
-- **Próximo:** US1 (exceto T052) e US3 da 001 concluídas. Falta: review por subagente contra o `plan.md` → PR #8 para `develop` → release para `main` → T052 (ponta a ponta em produção); depois US2 (ordem e progresso em `specs/001-fundacao-tecnica/tasks.md`).
+- **Próximo:** código das 5 histórias da 001 pronto, CI verde e review da T087 corrigido. Falta: PR #8 para `develop` → release para `main` → provas em produção (T052, T072 no serviço, T076, T082, T086) → T088 (ordem e progresso em `specs/001-fundacao-tecnica/tasks.md`).
 - Histórico completo: `docs/ROADMAP.md` e `CHANGELOG.md` (não duplicar aqui).
 
 ## Índice de documentação (carregar sob demanda)

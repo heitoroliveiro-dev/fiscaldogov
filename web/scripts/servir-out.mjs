@@ -18,6 +18,31 @@ const tipos = {
   ".txt": "text/plain; charset=utf-8",
 };
 
+// Imita a Cloudflare no essencial: aplica o bloco "/*" do _headers (o único que o
+// site usa), para o E2E conferir o X-Robots-Tag (FR-005). Outros blocos são ignorados.
+async function cabecalhosGlobais() {
+  let texto;
+  try {
+    texto = await readFile(join(raiz, "_headers"), "utf8");
+  } catch {
+    return {};
+  }
+  const cabecalhos = {};
+  let noBlocoGlobal = false;
+  for (const linha of texto.split("\n")) {
+    if (!linha.trim() || linha.trim().startsWith("#")) continue;
+    if (!/^\s/.test(linha)) {
+      noBlocoGlobal = linha.trim() === "/*";
+    } else if (noBlocoGlobal && linha.includes(":")) {
+      const [nome, ...valor] = linha.trim().split(":");
+      cabecalhos[nome.trim()] = valor.join(":").trim();
+    }
+  }
+  return cabecalhos;
+}
+
+const globais = await cabecalhosGlobais();
+
 async function localizar(caminho) {
   let arquivo = resolve(raiz, `.${caminho}`);
   if (arquivo !== raiz && !arquivo.startsWith(raiz + sep)) return null;
@@ -34,7 +59,10 @@ createServer(async (pedido, resposta) => {
   try {
     if (!arquivo) throw new Error("fora da raiz");
     const corpo = await readFile(arquivo);
-    resposta.writeHead(200, { "Content-Type": tipos[extname(arquivo)] ?? "application/octet-stream" });
+    resposta.writeHead(200, {
+      ...globais,
+      "Content-Type": tipos[extname(arquivo)] ?? "application/octet-stream",
+    });
     resposta.end(corpo);
   } catch {
     resposta.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" }).end("não encontrado");

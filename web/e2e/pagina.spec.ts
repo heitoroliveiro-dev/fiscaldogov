@@ -106,7 +106,9 @@ test("fora dos buscadores e com a versão publicada identificada (FR-005, FR-028
   page,
   request,
 }) => {
-  await page.goto("/");
+  const resposta = await page.goto("/");
+  // o cabeçalho vem do public/_headers, que a Cloudflare aplica (o servidor do E2E imita)
+  expect(resposta?.headers()["x-robots-tag"]).toBe("noindex");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await expect(page.locator("html")).toHaveAttribute("lang", "pt-BR");
 

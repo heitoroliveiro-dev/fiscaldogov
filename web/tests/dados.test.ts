@@ -117,6 +117,17 @@ describe.skipIf(!URL_TESTE)("buscarDadosDaPagina (FR-001, FR-016a)", () => {
     });
   });
 
+  it("ordena como o ETL: espaço vem antes de letra (ordem por código, não pelo idioma)", async () => {
+    await emTransacaoDesfeita(async (tx) => {
+      // en_US ignora o espaço e poria "anabela" antes de "ana paula"; o Python, não
+      await parlamentar(tx, { nome: "Anabela", idCamara: "5", uf: "BA", sigla: "PT" });
+      await parlamentar(tx, { nome: "Ana Paula", idCamara: "6", uf: "SE", sigla: "PL" });
+      await execucao(tx, "sucesso", 0);
+
+      expect((await buscarDadosDaPagina(tx)).parlamentar.nome).toBe("Ana Paula");
+    });
+  });
+
   it("sem filiação aberta, o partido é nulo", async () => {
     await emTransacaoDesfeita(async (tx) => {
       await parlamentar(tx, { nome: "Fulano Sem Partido", idCamara: "4", uf: "RJ" });

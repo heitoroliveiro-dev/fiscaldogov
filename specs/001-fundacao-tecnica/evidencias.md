@@ -344,3 +344,31 @@ outra falha, sem execucao_id                     → só título e link
 `actionlint` 1.7.12 e `shellcheck` sem achados.
 
 **Ensaio local do runbook de restauração (T081):** `pg_dump` como `etl_escrita` → `pg_restore --list` com 11 `TABLE DATA` → papéis recriados → `pg_restore --exit-on-error` com código 0 → `diff` das contagens por tabela: idênticas → **7 s**. O banco local quase não tem dados. O ensaio que vale para a SC-006 é o de produção (T082).
+
+## 2026-11-01 — review por subagente contra o plan.md (T087)
+
+Subagente com contexto limpo, prompt de `../sdd-method/05-ciclo-da-feature.md` §8, sobre `git diff develop...HEAD`. Resultado: 19 achados (1 alto, 5 médios, 13 baixos). Itens 1–6 do prompt: nenhum teste pré-existente apagado, pulado ou afrouxado; afirmações do plan.md conferem.
+
+| # | Sev. | Achado | Correção | Prova |
+|---|---|---|---|---|
+| 1 | ALTO | banco fora do ar ou senha recusada antes de a execução existir: traceback, sem alerta | `proteger` na CLI: log JSON, alerta "coleta não começou" com a credencial nomeada, código 1 | `test_cli.py` (3 casos); execução real com o banco inacessível |
+| 2 | MÉDIO | vigia depois do COMMIT marcava `falha` com dados gravados | `com_pendencias` com a pendência do vigia; a publicação fica para o próximo sucesso | `test_tempo_esgotado_depois_do_commit_e_pendencia_e_mantem_os_dados` |
+| 3 | MÉDIO | chave do R2 recusada não nomeada | `traduzir_erro_do_r2`, inclusive o `S3UploadFailedError` do `upload_file`; a pendência dos brutos leva a credencial | `test_r2_credencial.py` (8), `test_chave_do_r2_recusada_nos_brutos_e_nomeada_no_alerta` |
+| 4 | MÉDIO | contagens sem "lidos" | `{"lidos": …, "gravados": …}` | `test_execucao_termina_sucesso_com_contagens_e_dispara_a_publicacao` |
+| 5 | MÉDIO | FR-008 pede fonte e data em todo registro; `partido`, `mandato` e `identificador_externo` não têm | **decisão pendente do responsável** (emendar o FR-008 ou migration nova) | — |
+| 6 | MÉDIO | consultas da reserva sem teste contra o banco | 4 testes em `test_execucoes.py` | `houve_bem_sucedida_desde`, `registrar_dispensada`, `registrar_pendencia` |
+| 7 | BAIXO | publicação disparada antes de finalizar | finaliza antes; disparo que falha acrescenta a pendência (contrato etl-cli atualizado) | `test_execucao_ja_esta_finalizada_quando_a_publicacao_e_disparada` (vermelho antes) |
+| 8 | BAIXO | troca de condição em exercício ignorada | fecha um período e abre outro no mesmo instante | `test_troca_de_condicao_em_exercicio_fecha_um_periodo_e_abre_outro` |
+| 9 | BAIXO | página e ETL ordenavam nomes de forma diferente | migration `0002`: `nome_ordenacao COLLATE "C"`; `prisma migrate diff`: "No difference detected" | `dados.test.ts` "Ana Paula" × "Anabela" (vermelho antes: escolhia "Anabela"); `test_selecao.py` |
+| 10 | BAIXO | JSON inválido não virava bruto | entregue como `{"json_invalido": …}`, até 64 KB | 2 testes em `test_api_v2.py` |
+| 11 | BAIXO | "Sem partido · UF" e `X-Robots-Tag` sem teste | `partidoEUf` com teste; o servidor do E2E aplica o bloco `/*` do `_headers`, e o E2E confere o cabeçalho | `partido-uf.test.ts`; `curl` local: `X-Robots-Tag: noindex` |
+| 12 | BAIXO | `iniciar` na porta contornava a trava; teste de concorrência fraco | `iniciar` sai da porta; teste determinístico: `abrir` espera a trava e depois recusa | sem a trava: "abrir não esperou pela trava da outra abertura" |
+| 13 | BAIXO | conexão sem limite de tempo | `connect_timeout` de 30 s | — |
+| 14 | BAIXO | adaptador importava o pipeline | `tentativas.py` vai para `adaptadores/`; teste de arquitetura novo | com a importação antiga: `FAILED test_adaptadores_nao_importam_o_pipeline` |
+| 15 | BAIXO | versão do código "desconhecida" no deploy por `railway up` | resolve-se ao ligar o serviço à `main` no release; conferir na T052 | — |
+| 16 | BAIXO | docs fora do plano (catálogo de APIs gov.br, emendas) | aceito: registro pedido pelo responsável em 2026-10-28, só documentação | — |
+| 17 | BAIXO | ROADMAP e CLAUDE.md desatualizados | atualizados | — |
+| 18 | BAIXO | actions fixadas por tag | todas por SHA de commit, com a versão em comentário; `actionlint` sem achados | — |
+| 19 | BAIXO | `alerta-publicacao.sh` sem teste automatizado | `test_alerta_publicacao.py` (6) | sem a detecção do banco: 1 teste vermelho |
+
+**Achado extra, encontrado durante a correção:** o registro JSON sobrescrevia o campo `mensagem` dos extras com o texto do log, então a descrição do erro sumia dos logs de falha. Agora ela vai para `detalhe`; teste de regressão em `test_registro.py`, vermelho antes da correção.
